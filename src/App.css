@@ -85,7 +85,7 @@ footer {
 }
 
 .flip-container {
-    perspective: 1000px;
+    perspective: 1200px;
     display: inline-block;
     position: relative;
     width: 320px;
@@ -99,7 +99,7 @@ footer {
     backface-visibility: hidden;
     top: 0;
     left: 0;
-    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transition: transform 0.8s cubic-bezier(0.68, -0.9, 0.32, 1.9);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -109,21 +109,21 @@ footer {
 .flip-front {
     z-index: 2;
     background: transparent;
-    transform: rotateX(0deg) scale(1) rotateY(0deg) skewY(0deg);
+    transform: rotateX(0deg) scale(1) skew(0);
 }
 
 .flip-back {
     z-index: 1;
     background: transparent;
-    transform: rotateX(180deg) scale(0.5) rotateY(50deg) skewY(-50deg);
+    transform: rotateX(180deg) scale(0.3) skew(20deg);
 }
 
 .flip-container.flipped .flip-front {
-    transform: rotateX(180deg) scale(0.5) rotateY(50deg) skewY(-50deg);
+    transform: rotateX(180deg) scale(0.3) skew(-20deg);
 }
 
 .flip-container.flipped .flip-back {
-    transform: rotateX(0deg) scale(1) rotateY(0deg) skewY(0deg);
+    transform: rotateX(0deg) scale(1) skew(0);
 }
 
 .section {
@@ -171,5 +171,19 @@ footer {
     100% {
         transform: scaleX(1);
     }
+}
+
+.entry {
+    border-radius: var(--border-radius);
+}
+
+.entry::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--border-radius);
+    background: radial-gradient(var(--circle-width) circle at var(--x) var(--y),
+    oklch(var(--p)),
+    transparent);
 }
 

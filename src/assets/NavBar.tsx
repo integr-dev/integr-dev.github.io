@@ -24,7 +24,6 @@ export default function NavBar(props: Props) {
     onload = () => {
         const theme = JSON.parse(localStorage.getItem('theme')!);
         if (theme) {
-            document.documentElement.setAttribute('data-theme', theme);
             (document.querySelector(`input[value="${theme}"]`)! as HTMLInputElement).checked = true;
         }
         const themeControllers = document.querySelectorAll('.theme-controller');
@@ -140,7 +139,7 @@ export default function NavBar(props: Props) {
 
                     <div className="navbar-end">
                         <button className="btn btn-ghost btn-circle"
-                                onClick={() => window.open("https://github.com/Integr-0", '_blank')!.focus()}>
+                                onClick={() => window.open("https://github.com/integr-dev", '_blank')!.focus()}>
                             <FontAwesomeIcon icon={faGithub} size="xl"/>
                         </button>
                     </div>

@@ -3,20 +3,6 @@ import NavBar from "./assets/NavBar.tsx";
 import {useState} from "react";
 import RepoCard from "./assets/RepoCard.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import kotlinImg from "./assets/img/tool/kotlin.png";
-import csharpImg from "./assets/img/tool/csharp.png";
-import javaImg from "./assets/img/tool/java.png";
-import pythonImg from "./assets/img/tool/python.png";
-import javascriptImg from "./assets/img/tool/javascript.png";
-import typescriptImg from "./assets/img/tool/typescript.png";
-import htmlImg from "./assets/img/tool/html.png";
-import cssImg from "./assets/img/tool/css.png";
-import reactImg from "./assets/img/tool/react.png";
-import mongoImg from "./assets/img/tool/mongo.svg";
-import mysqlImg from "./assets/img/tool/mysql.svg";
-import springImg from "./assets/img/tool/spring.svg";
-import gitImg from "./assets/img/tool/git.png";
-import vueImg from "./assets/img/tool/vue.png";
 import cImg from "./assets/img/tool/c.png";
 import {
     faChevronDown,
@@ -29,6 +15,7 @@ import {
 import {Repos} from "./assets/Data.tsx";
 import HeroMainText from "./assets/HeroMainText.tsx";
 import Section from "./assets/Section.tsx";
+import MousePositionProvider from "./assets/MousePositionProvider.tsx";
 
 export interface ProjectWrapper {
     name: string
@@ -49,6 +36,7 @@ function App() {
 
     return (
         <>
+            <MousePositionProvider />
             <NavBar searchCallback={setSearch}/>
 
             <HeroElement search={search}/>
@@ -143,21 +131,24 @@ function SkillsElement(props: Props) {
 
                         <div className="flex justify-center flex-col">
                             <div>
-                                <ToolImage img={kotlinImg} alt={"Kotlin"}/>
-                                <ToolImage img={javaImg} alt={"Java"}/>
-                                <ToolImage img={csharpImg} alt={"C#"}/>
-                                <ToolImage img={pythonImg} alt={"Python"}/>
-                                <ToolImage img={javascriptImg} alt={"JavaScript"}/>
-                                <ToolImage img={typescriptImg} alt={"TypeScript"}/>
-                                <ToolImage img={htmlImg} alt={"HTML"}/>
-                                <ToolImage img={cssImg} alt={"CSS"}/>
-                                <ToolImage img={reactImg} alt={"React"}/>
-                                <ToolImage img={mongoImg} alt={"MongoDB"}/>
-                                <ToolImage img={mysqlImg} alt={"MySQL"}/>
-                                <ToolImage img={springImg} alt={"Spring"}/>
-                                <ToolImage img={gitImg} alt={"Git"}/>
-                                <ToolImage img={vueImg} alt={"Vue"}/>
-                                <ToolImage img={cImg} alt={"C"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg"} alt={"Kotlin"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg"} alt={"Java"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg"} alt={"C#"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg"} alt={"Python"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg"} alt={"JavaScript"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg"} alt={"TypeScript"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg"} alt={"HTML"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg"} alt={"CSS"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg"} alt={"React"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original-wordmark.svg"} alt={"MongoDB"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg"} alt={"MySQL"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg"} alt={"Spring"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg"} alt={"Git"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vuejs/vuejs-original.svg"} alt={"Vue"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/gradle/gradle-original.svg"} alt={"Gradle"} />
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg"} alt={"Tailwind"} />
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-plain.svg"} alt={"Docker"} />
+                                <ToolImage img={cImg} alt={"C"} />
                             </div>
                         </div>
                     </div>
