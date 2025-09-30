@@ -6,8 +6,8 @@
     --color-one: oklch(var(--p));
     --color-two: oklch(var(--s));
     --bg-size: 200%;
-
 }
+
 .main-shadow {
     height: 55px;
     background: linear-gradient(
@@ -174,7 +174,11 @@ footer {
 }
 
 .entry {
-    border-radius: var(--border-radius);
+    border-radius: 200px;
+}
+
+.no-pr {
+    padding-right: 0 !important;
 }
 
 .entry::before {
@@ -183,7 +187,6 @@ footer {
     inset: 0;
     border-radius: var(--border-radius);
     background: radial-gradient(var(--circle-width) circle at var(--x) var(--y),
-    oklch(var(--p)),
-    transparent);
+    var(--color-one), transparent);
 }
 

@@ -10,7 +10,7 @@ function Section({ id, className, children }: { id: string, className: string, c
                     ref.current?.classList.add("visible");
                 } else ref.current?.classList.remove("visible");
             },
-            { threshold: 0.1 }
+            { threshold: 0.01 }
         );
         if (ref.current) observer.observe(ref.current);
         return () => observer.disconnect();

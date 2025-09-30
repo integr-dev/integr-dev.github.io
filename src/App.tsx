@@ -15,7 +15,7 @@ import {
 import {Repos} from "./assets/Data.tsx";
 import HeroMainText from "./assets/HeroMainText.tsx";
 import Section from "./assets/Section.tsx";
-import MousePositionProvider from "./assets/MousePositionProvider.tsx";
+import GradientOutline from "./assets/GradientOutline.tsx";
 
 export interface ProjectWrapper {
     name: string
@@ -36,7 +36,6 @@ function App() {
 
     return (
         <>
-            <MousePositionProvider />
             <NavBar searchCallback={setSearch}/>
 
             <HeroElement search={search}/>
@@ -47,9 +46,11 @@ function App() {
 
             <div className="flex flex-col items-center bg-repeat point_back content-wrap" id="repos">
                 <div className="mt-20 flex flex-col items-center w-[100%]">
-                    {repos.map((repo: ProjectWrapper, index: number) => <RepoCard repo={repo} key={index} visible={shouldShow(repo)}/>)}
+                    {repos.map((repo: ProjectWrapper, index: number) => <RepoCard repo={repo} key={index}
+                                                                                  visible={shouldShow(repo)}/>)}
                 </div>
             </div>
+
 
             <FooterRenderer/>
         </>
@@ -64,20 +65,23 @@ function HeroElement(props: Props) {
     if (props.search === "") {
         return (
             <>
-                <div className="hero bg-base-200 min-h-screen">
+                <div className="hero bg-gradient-to-br from-base-200 to-base-300 min-h-screen ">
                     <div className="hero-content text-center">
-                        <div className="max-w-md flex flex-col items-center justify-center">
+                        <div className="max-w-md flex flex-col items-center justify-center lg:mr-52">
                             <div className="mb-10 avatar online">
                                 <div className="w-20 rounded-full">
-                                    <img src="https://avatars.githubusercontent.com/u/74710895" alt="Profile Picture" className="rounded-full w-20"/>
+                                    <img src="https://avatars.githubusercontent.com/u/74710895" alt="Profile Picture"
+                                         className="rounded-full w-20"/>
                                 </div>
                             </div>
 
-                            <h1 className="text-5xl font-bold"><FontAwesomeIcon icon={faFire} className="mr-2" size="xs"/>Hey there, i'm</h1>
+                            <h1 className="text-5xl font-bold"><FontAwesomeIcon icon={faFire} className="mr-2"
+                                                                                size="xs"/>Hey there, i'm</h1>
 
-                            <HeroMainText />
+                            <HeroMainText/>
                             <p className="py-6">
-                                I'm a <strong className="text-primary">{renderAge()}</strong> year old software developer
+                                I'm a <strong className="text-primary">{renderAge()}</strong> year old software
+                                developer
                                 from <strong className="text-primary">Austria</strong>.
                                 I'm passionate about open
                                 source and love to contribute to it's community. I'm also a huge fan of the <strong
@@ -85,9 +89,45 @@ function HeroElement(props: Props) {
                             </p>
 
                             <button className="btn btn-primary" onClick={() => {
-                                document.getElementById("skills")!.scrollIntoView()
-                            }}><FontAwesomeIcon icon={faCompass}/>Explore</button>
+                                scrollToElementWithOffset("skills")
+                            }}><FontAwesomeIcon icon={faCompass}/>Explore
+                            </button>
                         </div>
+
+                        <GradientOutline circleWidth="250px" borderRadius="1.5rem" className="hidden lg:block">
+                            <div className="mockup-code bg-base-100 border border-base-300 w-full text-start">
+                                <pre data-prefix="$"><code>npm run dev</code></pre>
+                                <pre><code></code></pre>
+
+                                <div className="flex">
+                                    <pre className="text-success no-pr"><code>VITE v5.4.8</code></pre>
+                                    <pre className="no-pr"><code>ready in</code></pre>
+                                    <pre className="text-base-content"><code>257 ms</code></pre>
+                                </div>
+
+                                <pre><code></code></pre>
+
+                                <div className="flex">
+                                    <pre className="text-success no-pr"><code>➜</code></pre>
+                                    <pre className="text-base-content no-pr"><code>Local:</code></pre>
+                                    <pre className="text-blue-500 underline"><code>http://localhost:5173/</code></pre>
+                                </div>
+                                <div className="flex">
+                                    <pre className="text-success no-pr"><code>➜</code></pre>
+                                    <pre className="no-pr"><code>Network: use</code></pre>
+                                    <pre className="text-base-content no-pr"><code>--host</code></pre>
+                                    <pre className=""><code> to expose</code></pre>
+                                </div>
+                                <div className="flex">
+                                    <pre className="text-success no-pr"><code>➜</code></pre>
+                                    <pre className="no-pr"><code>press</code></pre>
+                                    <pre className="text-base-content no-pr"><code>h + enter</code></pre>
+                                    <pre className=""><code>to show help</code></pre>
+                                </div>
+                            </div>
+
+                        </GradientOutline>
+
                     </div>
 
                     <div className="flex flex-col h-screen justify-end">
@@ -98,6 +138,22 @@ function HeroElement(props: Props) {
 
         )
     } else return (<></>)
+}
+
+function scrollToElementWithOffset(elementId: string) {
+    const element = document.getElementById(elementId);
+    const offsetElement = document.getElementById("navbar_anchor");
+    const offsetHeight = offsetElement?.offsetHeight || 0;
+
+    if (element) {
+        const elementPosition = element.offsetTop;
+        requestAnimationFrame(() => {
+            window.scrollTo({
+                top: elementPosition - offsetHeight,
+                behavior: "smooth",
+            });
+        });
+    }
 }
 
 function renderAge() {

@@ -28,7 +28,7 @@ export default function RepoCard(props: Props) {
         if (markdown != "") {
             return (
                 <div className="all-initial">
-                    <article className="prose">
+                    <article className="prose max-w-full">
                         <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{markdown}</Markdown>
                     </article>
                 </div>
@@ -61,26 +61,29 @@ export default function RepoCard(props: Props) {
     if (props.visible) {
         return (
             <>
-                <GradientOutline circleWidth="200px" className="w-[90vw] lg:w-9/12">
-                    <Section className="card bg-base-100 shadow-xl border-base-200 border-2 m-6" id={props.repo.name}>
+                <Section id={props.repo.name} className="w-[90vw] lg:w-9/12 m-5">
+                    <GradientOutline circleWidth="300px" borderRadius="1.4rem" className="">
+                        <div className="card bg-base-100 shadow-xl border-base-200 border-2">
                         <div className="card-body">
-                            <div className="flex justify-between flex-col lg:flex-row">
-                                <div>
-                                    <h2 className="card-title">{props.repo.name}</h2>
-                                    <p>{props.repo.description}</p>
+                                <div className="flex justify-between flex-col lg:flex-row">
+                                    <div>
+                                        <h2 className="card-title">{props.repo.name}</h2>
+                                        <p>{props.repo.description}</p>
+                                    </div>
+
+                                    <button className="btn btn-primary w-24 mt-3 lg:mt-0"
+                                            onClick={() => window.open(props.repo.projectUrl, '_blank')!.focus()}>
+                                        <FontAwesomeIcon
+                                            icon={faUpRightFromSquare}/>View
+                                    </button>
+
                                 </div>
 
-                                <button className="btn btn-primary w-24 mt-3 lg:mt-0"
-                                        onClick={() => window.open(props.repo.projectUrl, '_blank')!.focus()}><FontAwesomeIcon
-                                    icon={faUpRightFromSquare}/>View
-                                </button>
-
+                                <ReadmeRenderer/>
                             </div>
-
-                            <ReadmeRenderer/>
                         </div>
-                    </Section>
-                </GradientOutline>
+                    </GradientOutline>
+                </Section>
             </>
         )
     } else return <></>

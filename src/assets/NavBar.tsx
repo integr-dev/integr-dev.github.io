@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faBars,
@@ -14,8 +13,6 @@ export interface Props {
 }
 
 export default function NavBar(props: Props) {
-    const [searchFocused, setSearchFocused] = useState(false);
-
     const onThemeChange = () => {
         const theme = (document.querySelector('input[name="theme-dropdown"]:checked')! as HTMLInputElement).value;
         localStorage.setItem('theme', JSON.stringify(theme));
@@ -57,11 +54,11 @@ export default function NavBar(props: Props) {
                             <ul
                                 tabIndex={0}
                                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                                <li><a onClick={() => document.getElementById("skills")!.scrollIntoView()} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faCode}/>Skills</a></li>
-                                <li><a onClick={() => document.getElementById("libraries")!.scrollIntoView()} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faBook}/>Libraries</a></li>
-                                <li><a onClick={() => document.getElementById("timeline")!.scrollIntoView()} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faClock}/>Timeline</a></li>
-                                <li><a onClick={() => document.getElementById("favourites")!.scrollIntoView()} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faBoxesStacked}/>Favourite Stack</a></li>
-                                <li><a onClick={() => document.getElementById("repos")!.scrollIntoView()} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faFolder}/>Repositories</a></li>
+                                <li><a onClick={() => scrollToElementWithOffset("skills")} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faCode}/>Skills</a></li>
+                                <li><a onClick={() => scrollToElementWithOffset("libraries")} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faBook}/>Libraries</a></li>
+                                <li><a onClick={() => scrollToElementWithOffset("timeline")} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faClock}/>Timeline</a></li>
+                                <li><a onClick={() => scrollToElementWithOffset("favourites")} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faBoxesStacked}/>Favourite Stack</a></li>
+                                <li><a onClick={() => scrollToElementWithOffset("repos")} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faFolder}/>Repositories</a></li>
                             </ul>
                         </div>
 
@@ -120,7 +117,7 @@ export default function NavBar(props: Props) {
                     </div>
                     <div className="navbar-center">
                         <label
-                            className={`cursor-text input input-bordered hidden items-center gap-2 lg:w-96 lg:flex${searchFocused ? " input-primary" : ""}`}
+                            className="cursor-text input input-bordered hidden items-center gap-2 lg:w-96 lg:flex"
                         >
                             <FontAwesomeIcon icon={faMagnifyingGlass}/>
                             <input
@@ -129,8 +126,6 @@ export default function NavBar(props: Props) {
                                 id="search_bar"
                                 placeholder="Search"
                                 onKeyUp={() => props.searchCallback((document.getElementById("search_bar")! as HTMLInputElement).value)}
-                                onFocus={() => setSearchFocused(true)}
-                                onBlur={() => setSearchFocused(false)}
                             />
                             <kbd className="kbd kbd-sm select-none cursor-text">ctrl</kbd>
                             <kbd className="kbd kbd-sm select-none cursor-text">k</kbd>
@@ -149,4 +144,21 @@ export default function NavBar(props: Props) {
             </div>
         </>
     )
+}
+
+
+function scrollToElementWithOffset(elementId: string) {
+    const element = document.getElementById(elementId);
+    const offsetElement = document.getElementById("navbar_anchor");
+    const offsetHeight = offsetElement?.offsetHeight || 0;
+
+    if (element) {
+        const elementPosition = element.offsetTop;
+        requestAnimationFrame(() => {
+            window.scrollTo({
+                top: elementPosition - offsetHeight,
+                behavior: "smooth",
+            });
+        });
+    }
 }
