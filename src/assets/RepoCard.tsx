@@ -5,7 +5,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBook, faUpRightFromSquare} from "@fortawesome/free-solid-svg-icons";
 import {ProjectWrapper} from "../App.tsx";
 import {useEffect, useState} from "react";
-import Section from "./Section.tsx";
 import GradientOutline from "./GradientOutline.tsx";
 
 export interface Props {
@@ -61,9 +60,9 @@ export default function RepoCard(props: Props) {
     if (props.visible) {
         return (
             <>
-                <Section id={props.repo.name} className="w-[90vw] lg:w-9/12 m-5">
-                    <GradientOutline circleWidth="300px" borderRadius="1.4rem" className="">
-                        <div className="card bg-base-100 shadow-xl border-base-200 border-2">
+                <div className="w-[90vw] lg:w-9/12 m-5">
+                    <GradientOutline circleWidth="300px" borderRadius="var(--rounded-box, 1rem)" className="">
+                        <div className="card bg-base-100 bg-opacity-65 backdrop-blur-[10000px] shadow-xl">
                         <div className="card-body">
                                 <div className="flex justify-between flex-col lg:flex-row">
                                     <div>
@@ -83,7 +82,7 @@ export default function RepoCard(props: Props) {
                             </div>
                         </div>
                     </GradientOutline>
-                </Section>
+                </div>
             </>
         )
     } else return <></>

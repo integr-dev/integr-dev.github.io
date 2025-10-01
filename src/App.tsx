@@ -3,7 +3,6 @@ import NavBar from "./assets/NavBar.tsx";
 import {useState} from "react";
 import RepoCard from "./assets/RepoCard.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import cImg from "./assets/img/tool/c.png";
 import {
     faChevronDown,
     faCompass,
@@ -15,7 +14,6 @@ import {
 import {Repos} from "./assets/Data.tsx";
 import HeroMainText from "./assets/HeroMainText.tsx";
 import Section from "./assets/Section.tsx";
-import GradientOutline from "./assets/GradientOutline.tsx";
 
 export interface ProjectWrapper {
     name: string
@@ -44,7 +42,7 @@ function App() {
             <Timeline search={search}/>
             <FavouritesElement search={search}/>
 
-            <div className="flex flex-col items-center bg-repeat point_back content-wrap" id="repos">
+            <div className="back-grid flex flex-col items-center bg-repeat point_back content-wrap" id="repos">
                 <div className="mt-20 flex flex-col items-center w-[100%]">
                     {repos.map((repo: ProjectWrapper, index: number) => <RepoCard repo={repo} key={index}
                                                                                   visible={shouldShow(repo)}/>)}
@@ -65,9 +63,9 @@ function HeroElement(props: Props) {
     if (props.search === "") {
         return (
             <>
-                <div className="hero bg-gradient-to-br from-base-200 to-base-300 min-h-screen ">
+                <div className="hero back-grid min-h-screen">
                     <div className="hero-content text-center">
-                        <div className="max-w-md flex flex-col items-center justify-center lg:mr-52">
+                        <div className="max-w-md flex flex-col items-center justify-center">
                             <div className="mb-10 avatar online">
                                 <div className="w-20 rounded-full">
                                     <img src="https://avatars.githubusercontent.com/u/74710895" alt="Profile Picture"
@@ -93,40 +91,6 @@ function HeroElement(props: Props) {
                             }}><FontAwesomeIcon icon={faCompass}/>Explore
                             </button>
                         </div>
-
-                        <GradientOutline circleWidth="250px" borderRadius="1.5rem" className="hidden lg:block">
-                            <div className="mockup-code bg-base-100 border border-base-300 w-full text-start">
-                                <pre data-prefix="$"><code>npm run dev</code></pre>
-                                <pre><code></code></pre>
-
-                                <div className="flex">
-                                    <pre className="text-success no-pr"><code>VITE v5.4.8</code></pre>
-                                    <pre className="no-pr"><code>ready in</code></pre>
-                                    <pre className="text-base-content"><code>257 ms</code></pre>
-                                </div>
-
-                                <pre><code></code></pre>
-
-                                <div className="flex">
-                                    <pre className="text-success no-pr"><code>➜</code></pre>
-                                    <pre className="text-base-content no-pr"><code>Local:</code></pre>
-                                    <pre className="text-blue-500 underline"><code>http://localhost:5173/</code></pre>
-                                </div>
-                                <div className="flex">
-                                    <pre className="text-success no-pr"><code>➜</code></pre>
-                                    <pre className="no-pr"><code>Network: use</code></pre>
-                                    <pre className="text-base-content no-pr"><code>--host</code></pre>
-                                    <pre className=""><code> to expose</code></pre>
-                                </div>
-                                <div className="flex">
-                                    <pre className="text-success no-pr"><code>➜</code></pre>
-                                    <pre className="no-pr"><code>press</code></pre>
-                                    <pre className="text-base-content no-pr"><code>h + enter</code></pre>
-                                    <pre className=""><code>to show help</code></pre>
-                                </div>
-                            </div>
-
-                        </GradientOutline>
 
                     </div>
 
@@ -201,10 +165,6 @@ function SkillsElement(props: Props) {
                                 <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg"} alt={"Spring"}/>
                                 <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg"} alt={"Git"}/>
                                 <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vuejs/vuejs-original.svg"} alt={"Vue"}/>
-                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/gradle/gradle-original.svg"} alt={"Gradle"} />
-                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg"} alt={"Tailwind"} />
-                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-plain.svg"} alt={"Docker"} />
-                                <ToolImage img={cImg} alt={"C"} />
                             </div>
                         </div>
                     </div>

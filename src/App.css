@@ -67,8 +67,8 @@ body {
 
 html {
     scroll-behavior: smooth;
-    background: url('assets/img/point_pat.svg') repeat;
-    background-size: 30px;
+    background: oklch(var(--b2)) url('assets/img/graph-paper.svg') repeat center left 6.8rem fixed !important;
+    background-size: 10rem !important;
     background-blend-mode: exclusion;
     font-family: "Roboto", sans-serif !important;
 }
@@ -188,5 +188,23 @@ footer {
     border-radius: var(--border-radius);
     background: radial-gradient(var(--circle-width) circle at var(--x) var(--y),
     var(--color-one), transparent);
+}
+
+.back-grid {
+    background: linear-gradient(to bottom right, oklch(var(--b1)), oklch(var(--p) / 0.4));
+}
+.bg-transparent {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
+
+.bg-opacity-100 {
+    background: rgba(255, 255, 255, 0.9); /* Adjust as needed */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 

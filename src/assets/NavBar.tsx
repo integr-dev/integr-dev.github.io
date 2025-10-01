@@ -7,18 +7,28 @@ import {
     faPalette
 } from "@fortawesome/free-solid-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { useEffect, useState } from "react";
 
 export interface Props {
     searchCallback: (search: string) => void
 }
 
 export default function NavBar(props: Props) {
+    const [isAtTop, setIsAtTop] = useState(true);
+
+    useEffect(() => {
+        const onScroll = () => setIsAtTop(window.scrollY === 0);
+        window.addEventListener("scroll", onScroll);
+        onScroll();
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+
     const onThemeChange = () => {
         const theme = (document.querySelector('input[name="theme-dropdown"]:checked')! as HTMLInputElement).value;
         localStorage.setItem('theme', JSON.stringify(theme));
     }
 
-    onload = () => {
+    useEffect(() => {
         const theme = JSON.parse(localStorage.getItem('theme')!);
         if (theme) {
             (document.querySelector(`input[value="${theme}"]`)! as HTMLInputElement).checked = true;
@@ -27,25 +37,33 @@ export default function NavBar(props: Props) {
         themeControllers.forEach(controller => {
             controller.addEventListener('change', onThemeChange);
         });
-    }
 
-    onkeydown = (e: KeyboardEvent) => {
-        if (e.ctrlKey && e.key === 'k') {
-            document.getElementById("search_bar")!.focus();
-            e.preventDefault();
-        }
-
-        if (e.key === 'Escape') {
-            document.getElementById("search_bar")!.blur();
-            (document.getElementById("search_bar")! as HTMLInputElement).value = "";
-            props.searchCallback("");
-        }
-    }
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.ctrlKey && e.key === 'k') {
+                document.getElementById("search_bar")!.focus();
+                e.preventDefault();
+            }
+            if (e.key === 'Escape') {
+                document.getElementById("search_bar")!.blur();
+                (document.getElementById("search_bar")! as HTMLInputElement).value = "";
+                props.searchCallback("");
+            }
+        };
+        window.addEventListener("keydown", onKeyDown);
+        return () => {
+            window.removeEventListener("keydown", onKeyDown);
+        };
+    }, [props]);
 
     return (
         <>
             <div>
-                <div className="navbar bg-base-100 fixed z-10 border-b-2 border-b-base-300 h-[4.5rem]" id="navbar_anchor">
+                <div
+                    className={`navbar bg-base-100 backdrop-blur fixed z-10 border-b-2 border-b-base-300 h-[4.5rem] transition-all duration-300 ${
+                        isAtTop ? "bg-transparent shadow-none" : "bg-opacity-55 border-opacity-55"
+                    }`}
+                    id="navbar_anchor"
+                >
                     <div className="navbar-start">
                         <div className="dropdown">
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
@@ -117,7 +135,7 @@ export default function NavBar(props: Props) {
                     </div>
                     <div className="navbar-center">
                         <label
-                            className="cursor-text input input-bordered hidden items-center gap-2 lg:w-96 lg:flex"
+                            className="bg-opacity-20 cursor-text input input-bordered hidden items-center gap-2 lg:w-96 lg:flex"
                         >
                             <FontAwesomeIcon icon={faMagnifyingGlass}/>
                             <input
@@ -145,7 +163,6 @@ export default function NavBar(props: Props) {
         </>
     )
 }
-
 
 function scrollToElementWithOffset(elementId: string) {
     const element = document.getElementById(elementId);
