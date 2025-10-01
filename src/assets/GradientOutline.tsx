@@ -19,10 +19,19 @@ function notifyListeners() {
 
 function registerHandler() {
     if (!handlerRegistered) {
+        let animationFrameId: number | null = null;
+
         document.addEventListener("pointermove", (e: PointerEvent) => {
             mousePos = { x: e.clientX, y: e.clientY };
-            notifyListeners();
+
+            if (animationFrameId === null) {
+                animationFrameId = requestAnimationFrame(() => {
+                    notifyListeners();
+                    animationFrameId = null;
+                });
+            }
         });
+
         handlerRegistered = true;
     }
 }

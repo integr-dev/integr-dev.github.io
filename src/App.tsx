@@ -14,6 +14,7 @@ import {
 import {Repos} from "./assets/Data.tsx";
 import HeroMainText from "./assets/HeroMainText.tsx";
 import Section from "./assets/Section.tsx";
+import {MainAnimationDecorator} from "./assets/MainAnimationDecorator.tsx";
 
 export interface ProjectWrapper {
     name: string
@@ -59,14 +60,114 @@ interface Props {
     search: string
 }
 
+declare global {
+    interface Window {
+        _particles?: Array<{
+            sx: number;
+            sy: number;
+            x: number;
+            y: number;
+            vx: number;
+            vy: number;
+            trail: Array<{ x: number; y: number; alpha: number }>;
+        }>;
+    }
+}
+
+const renderFunc = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+    const cssVariable = getComputedStyle(document.documentElement).getPropertyValue('--p').trim();
+
+    if (!window._particles) {
+        window._particles = [];
+
+        const numParticles = 100;
+
+        while (window._particles!.length < numParticles) {
+            const sx = Math.random() * width;
+            const sy = Math.random() * height;
+
+            window._particles!.push({
+                x: sx,
+                y: sy,
+                sx: sx,
+                sy: sy,
+                vx: (0.15 + Math.random() * 0.1) * (width / 500),
+                vy: (0.15 + Math.random() * 0.1) * (height / 500),
+                trail: []
+            });
+        }
+
+        window._particles.sort((a, b) => {
+            const distA = Math.hypot(width - a.x, height - a.y);
+            const distB = Math.hypot(width - b.x, height - b.y);
+            return distB - distA;
+        });
+    }
+
+    const particles = window._particles;
+
+    ctx.clearRect(0, 0, width, height);
+
+    particles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        p.trail.push({ x: p.x, y: p.y, alpha: 1 });
+        if (p.trail.length > 60) p.trail.shift();
+
+        p.trail.forEach(point => {
+            point.alpha *= 0.96;
+        });
+
+        for (let i = 0; i < p.trail.length - 1; i++) {
+            const a = p.trail[i];
+            const b = p.trail[i + 1];
+            ctx.strokeStyle = `oklch(${cssVariable} / ${a.alpha * 0.2})`;
+
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = `oklch(${cssVariable} / 0.4)`;
+        ctx.fill();
+
+        if (p.x > width + 20 || p.y > height + 20) {
+            const { x, y } = getRandomXToRespawn(width, height);
+            p.x = x;
+            p.y = y;
+            p.vx = (0.15 + Math.random() * 0.1) * (width / 500);
+            p.vy = (0.15 + Math.random() * 0.1) * (height / 500);
+            p.trail = [];
+        }
+    });
+}
+
+function getRandomXToRespawn(width: number, height: number): { x: number, y: number } {
+    let currX = Math.random() * width;
+    let currY = Math.random() * height;
+
+    while (currY > height * 0.2 && currX > width * 0.2 || currX > width * 0.2 && currY > height * 0.2) {
+        currY = Math.random() * height;
+        currX = Math.random() * width;
+    }
+
+    return { x: currX, y: currY };
+}
+
 function HeroElement(props: Props) {
     if (props.search === "") {
         return (
             <>
                 <div className="hero back-grid min-h-screen">
+                    <MainAnimationDecorator renderFunction={renderFunc}/>
                     <div className="hero-content text-center">
                         <div className="max-w-md flex flex-col items-center justify-center">
-                            <div className="mb-10 avatar online">
+                            <div className="mb-10 avatar">
                                 <div className="w-20 rounded-full">
                                     <img src="https://avatars.githubusercontent.com/u/74710895" alt="Profile Picture"
                                          className="rounded-full w-20"/>

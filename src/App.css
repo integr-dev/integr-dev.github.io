@@ -153,9 +153,9 @@ footer {
 /*noinspection CssUnknownProperty,CssInvalidFunction,CssInvalidPropertyValue*/
 .progress-bar-before {
     position: fixed;
-    height: 5px;
+    height: 2px;
     width: 100%;
-    top: 4.25rem;
+    top: 4.4rem;
     transform-origin: 0 50%;
     z-index: 15;
     animation: scaleProgress auto linear;
