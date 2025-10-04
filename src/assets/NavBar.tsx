@@ -1,8 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faBars,
-    faBook, faBoxesStacked, faClock,
-    faCode, faFolder,
     faMagnifyingGlass,
     faPalette
 } from "@fortawesome/free-solid-svg-icons";
@@ -71,12 +69,12 @@ export default function NavBar(props: Props) {
                             </div>
                             <ul
                                 tabIndex={0}
-                                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                                <li><a onClick={() => scrollToElementWithOffset("skills")} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faCode}/>Skills</a></li>
-                                <li><a onClick={() => scrollToElementWithOffset("libraries")} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faBook}/>Libraries</a></li>
-                                <li><a onClick={() => scrollToElementWithOffset("timeline")} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faClock}/>Timeline</a></li>
-                                <li><a onClick={() => scrollToElementWithOffset("favourites")} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faBoxesStacked}/>Favourite Stack</a></li>
-                                <li><a onClick={() => scrollToElementWithOffset("repos")} className="btn btn-sm btn-block btn-ghost justify-start"><FontAwesomeIcon icon={faFolder}/>Repositories</a></li>
+                                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[60] mt-5 w-52 p-2 shadow">
+                                <li><a onClick={() => scrollToElementWithOffset("technologies")} className="btn btn-sm btn-block btn-ghost justify-start no-animation">Technologies</a></li>
+                                <li><a onClick={() => scrollToElementWithOffset("timeline")} className="btn btn-sm btn-block btn-ghost justify-start no-animation">Timeline</a></li>
+                                <li><a onClick={() => scrollToElementWithOffset("contact")} className="btn btn-sm btn-block btn-ghost justify-start no-animation">Contact</a></li>
+                                <li><a onClick={() => scrollToElementWithOffset("favourites")} className="btn btn-sm btn-block btn-ghost justify-start no-animation">Favourite Stack</a></li>
+                                <li><a onClick={() => scrollToElementWithOffset("projects")} className="btn btn-sm btn-block btn-ghost justify-start no-animation">Projects</a></li>
                             </ul>
                         </div>
 
@@ -84,13 +82,14 @@ export default function NavBar(props: Props) {
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
                                 <FontAwesomeIcon icon={faPalette}/>
                             </div>
-                            <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                            <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[60] mt-10 w-52 p-2 shadow">
                                 <li>
                                     <input
                                         type="radio"
                                         name="theme-dropdown"
-                                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start no-animation"
                                         aria-label="Sunset"
+                                        id="theme-sunset"
                                         value="sunset"
                                     />
                                 </li>
@@ -98,16 +97,16 @@ export default function NavBar(props: Props) {
                                     <input
                                         type="radio"
                                         name="theme-dropdown"
-                                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start no-animation"
                                         aria-label="Cupcake"
                                         value="cupcake"
                                     />
                                 </li>
                                 <li>
-                                    <input
+                                <input
                                         type="radio"
                                         name="theme-dropdown"
-                                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start no-animation"
                                         aria-label="Night"
                                         value="night"
                                     />
@@ -116,7 +115,7 @@ export default function NavBar(props: Props) {
                                     <input
                                         type="radio"
                                         name="theme-dropdown"
-                                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start no-animation"
                                         aria-label="Dim"
                                         value="dim"
                                     />
@@ -125,7 +124,7 @@ export default function NavBar(props: Props) {
                                     <input
                                         type="radio"
                                         name="theme-dropdown"
-                                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start no-animation"
                                         aria-label="Valentine"
                                         value="valentine"
                                     />
@@ -151,14 +150,19 @@ export default function NavBar(props: Props) {
                     </div>
 
                     <div className="navbar-end">
+                        {/* soon<button className="btn btn-ghost btn-circle"
+                                onClick={() => window.open("https://github.com/integr-dev", '_blank')!.focus()}>
+                            <FontAwesomeIcon icon={faTools} size="xl"/>
+                        </button*/}
                         <button className="btn btn-ghost btn-circle"
                                 onClick={() => window.open("https://github.com/integr-dev", '_blank')!.focus()}>
                             <FontAwesomeIcon icon={faGithub} size="xl"/>
                         </button>
+
                     </div>
                 </div>
-                <div className="progress-bar-before" />
-                <div className="progress-bar" />
+                <div className="progress-bar-before"/>
+                <div className="progress-bar"/>
             </div>
         </>
     )

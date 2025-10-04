@@ -8,10 +8,10 @@ import {
     faCompass,
     faCheckCircle,
     faCircleQuestion,
-    faUpRightFromSquare, faCode, faBook, faClock,
-    faBoxesStacked, faFire
+    faUpRightFromSquare, faClock,
+    faBoxesStacked, faWarning, faContactCard, faCode, faCopy, faCheck
 } from "@fortawesome/free-solid-svg-icons";
-import {Repos} from "./assets/Data.tsx";
+import {Projects} from "./assets/Data.tsx";
 import HeroMainText from "./assets/HeroMainText.tsx";
 import Section from "./assets/Section.tsx";
 import {MainAnimationDecorator} from "./assets/MainAnimationDecorator.tsx";
@@ -24,7 +24,7 @@ export interface ProjectWrapper {
 }
 
 function App() {
-    const repos = Repos
+    const projects = Projects
     const [search, setSearch] = useState("")
 
     const shouldShow = (repo: ProjectWrapper) => {
@@ -38,14 +38,14 @@ function App() {
             <NavBar searchCallback={setSearch}/>
 
             <HeroElement search={search}/>
-            <SkillsElement search={search}/>
-            <LibrariesElement search={search}/>
-            <Timeline search={search}/>
+            <TechnologiesElement search={search}/>
+            <TimelineElement search={search}/>
+            <ContactElement search={search}/>
             <FavouritesElement search={search}/>
 
-            <div className="back-grid flex flex-col items-center bg-repeat point_back content-wrap" id="repos">
+            <div className="back-grid flex flex-col items-center bg-repeat point_back content-wrap" id="projects">
                 <div className="mt-20 flex flex-col items-center w-[100%]">
-                    {repos.map((repo: ProjectWrapper, index: number) => <RepoCard repo={repo} key={index}
+                    {projects.map((repo: ProjectWrapper, index: number) => <RepoCard repo={repo} key={index}
                                                                                   visible={shouldShow(repo)}/>)}
                 </div>
             </div>
@@ -174,8 +174,7 @@ function HeroElement(props: Props) {
                                 </div>
                             </div>
 
-                            <h1 className="text-5xl font-bold"><FontAwesomeIcon icon={faFire} className="mr-2"
-                                                                                size="xs"/>Hey there, i'm</h1>
+                            <h1 className="text-5xl font-bold">Hey there, i'm</h1>
 
                             <HeroMainText/>
                             <p className="py-6">
@@ -183,14 +182,28 @@ function HeroElement(props: Props) {
                                 developer
                                 from <strong className="text-primary">Austria</strong>.
                                 I'm passionate about open
-                                source and love to contribute to it's community. I'm also a huge fan of the <strong
+                                source and I love to build new things. I'm also a huge fan of the <strong
                                 className="text-primary">Kotlin</strong> language.
                             </p>
 
-                            <button className="btn btn-primary" onClick={() => {
-                                scrollToElementWithOffset("skills")
-                            }}><FontAwesomeIcon icon={faCompass}/>Explore
-                            </button>
+                            <div>
+                                <button className="btn btn-ghost mr-2" onClick={() => {
+                                    scrollToElementWithOffset("projects")
+                                }}><FontAwesomeIcon icon={faCode}/>Projects
+                                </button>
+
+                                <button className="btn btn-primary mx-2" onClick={() => {
+                                    scrollToElementWithOffset("technologies")
+                                }}><FontAwesomeIcon icon={faCompass}/>Explore
+                                </button>
+
+                                <button className="btn btn-ghost ml-2" onClick={() => {
+                                    scrollToElementWithOffset("contact")
+                                }}><FontAwesomeIcon icon={faContactCard}/>Contact
+                                </button>
+                            </div>
+
+
                         </div>
 
                     </div>
@@ -233,27 +246,33 @@ function renderAge() {
     return <strong className="text-primary">{age}</strong>;
 }
 
-function SkillsElement(props: Props) {
+function TechnologiesElement(props: Props) {
     if (props.search === "") {
         return (
-            <div className="hero min-h-[600px] bg-base-100">
-                <Section className="hero-content text-center" id="skills">
+            <div className="hero min-h-[600px] bg-base-100" id="technologies">
+                <Section className="hero-content text-center">
                     <div className="max-w-2xl">
-                        <h1 className="text-5xl font-bold"><FontAwesomeIcon icon={faCode} className="mr-2" size="xs"/>Skills</h1>
+                        <h1 className="text-5xl font-bold">Technologies</h1>
                         <span className="badge badge-primary">Hover</span>
 
                         <p className="py-6">
-                            These are the skills that I have acquired over the years. I'm always learning new things and
-                            expanding my knowledge. My main focus is backend development, but I also have experience
-                            with
-                            frontend development.
+                            Below is a selection of languages and tools that I have experience with.
+                            The skill level per technology may vary. The list only contains items that i have a basic understanding of.
                         </p>
 
+                        <p className="pb-6 text-error">
+                            <FontAwesomeIcon icon={faWarning} className="mr-2" size="xs"/>
+                            The icons shown below are not an indication of my skill level with the respective technology and
+                            only give a rough overview of what I have worked with.
+                        </p>
 
                         <div className="flex justify-center flex-col">
                             <div>
                                 <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg"} alt={"Kotlin"}/>
                                 <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg"} alt={"Java"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/gradle/gradle-original.svg"} alt={"Gradle"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jetpackcompose/jetpackcompose-original.svg"} alt={"Jetpack Compose"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg"} alt={"Spring"}/>
                                 <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg"} alt={"C#"}/>
                                 <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg"} alt={"Python"}/>
                                 <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg"} alt={"JavaScript"}/>
@@ -261,11 +280,14 @@ function SkillsElement(props: Props) {
                                 <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg"} alt={"HTML"}/>
                                 <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg"} alt={"CSS"}/>
                                 <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg"} alt={"React"}/>
-                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original-wordmark.svg"} alt={"MongoDB"}/>
-                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg"} alt={"MySQL"}/>
-                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg"} alt={"Spring"}/>
-                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg"} alt={"Git"}/>
                                 <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vuejs/vuejs-original.svg"} alt={"Vue"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nuxt/nuxt-original.svg"} alt={"Nuxt"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg"} alt={"Vite"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original-wordmark.svg"} alt={"Mongo"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg"} alt={"MySQL"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg"} alt={"Git"}/>
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-plain.svg"} alt={"Docker"} />
+                                <ToolImage img={"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/opengl/opengl-plain.svg"} alt={"OpenGL"}/>
                             </div>
                         </div>
                     </div>
@@ -284,30 +306,29 @@ function ToolImage(props: { img: string, alt: string }) {
     )
 }
 
-function LibrariesElement(props: Props) {
+function ContactElement(props: Props) {
+    const [copied, setCopied] = useState(false);
+
     if (props.search === "") {
         return (
-            <div className="hero min-h-[600px] bg-base-200">
-                <Section className="hero-content text-center" id="libraries">
+            <div className="hero min-h-[600px] bg-base-100" id="contact">
+                <Section className="hero-content text-center">
                     <div className="max-w-2xl">
-                        <h1 className="text-5xl font-bold"><FontAwesomeIcon icon={faBook} className="mr-2" size="xs"/>Libraries</h1>
+                        <h1 className="text-5xl font-bold">Contact</h1>
 
                         <p className="py-6">
-                            I publish libraries on Maven (Sonatype) that I use in my projects. These libraries are open
-                            source and free.
-                            Feel free to use them in your projects. For more information, click the button below. Also,
-                            you
-                            can find the source code on my GitHub.
+                            Have any questions or want to get in touch? Feel free to reach out to me via email.
+                            Let's connect and discuss how we can collaborate or share ideas!
                         </p>
 
                         <div className="flex justify-center">
-                            <button className="btn btn-primary w-28 m-2"
-                                    onClick={() => window.open("https://central.sonatype.com/namespace/io.github.integr-0", "_blank")}>
-                                <FontAwesomeIcon icon={faUpRightFromSquare}/>Maven
+                            <button className="btn btn-primary m-2 w-32"
+                                    onClick={() => window.open("mailto:hello@integr.cloud?subject=Contact&body=Hello!", "_blank")}>
+                                <FontAwesomeIcon icon={faUpRightFromSquare}/>Send Email
                             </button>
-                            <button className="btn btn-info w-28 m-2"
-                                    onClick={() => window.open("https://github.com/Integr-0", "_blank")}>
-                                <FontAwesomeIcon icon={faUpRightFromSquare}/>Github
+                            <button className="btn btn-ghost m-2 w-32"
+                                    onClick={() => navigator.clipboard.writeText("hello@integr.cloud").then(() => setCopied(true))}>
+                                <FontAwesomeIcon icon={copied ? faCheck : faCopy}/>{copied ? "Copied" : "Copy Email"}
                             </button>
 
                         </div>
@@ -320,37 +341,29 @@ function LibrariesElement(props: Props) {
     } else return (<></>)
 }
 
-function Timeline(props: Props) {
+function TimelineElement(props: Props) {
     if (props.search === "") {
         return (
-            <div className="hero min-h-[600px] bg-base-100">
-                <Section className="hero-content text-center" id="timeline">
-                    <div className="max-w-2xl">
-                        <h1 className="text-5xl font-bold mb-10 mt-32"><FontAwesomeIcon icon={faClock} className="mr-2" size="xs"/>Timeline</h1>
-
-                        <ul className="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
+            <div className="hero min-h-[600px] bg-base-200" id="timeline">
+                <Section className="hero-content text-center w-full">
+                    <div className="w-full max-w-2xl">
+                        <h1 className="text-5xl font-bold mb-10 mt-32 w-full"><FontAwesomeIcon icon={faClock} className="mr-2" size="xs"/>Timeline</h1>
+                        <p className="py-6">
+                            A rough overview of my development journey so far.
+                            Please note that the timeline is not complete and only contains the most important and noteworthy
+                            events that have shaped my journey as a developer.
+                        </p>
+                        <ul className="timeline timeline-compact timeline-snap-icon timeline-vertical justify-center max-w-2xl">
                             <li>
                                 <FontAwesomeIcon icon={faCheckCircle} className="timeline-middle text-primary m-1"></FontAwesomeIcon>
 
-                                <Section className="timeline-start mb-10 md:text-end" id="beginnings">
-                                    <time className="font-mono">2019</time>
-                                    <div className="text-lg font-black">Beginnings</div>
-                                    In 2019, I started my journey as a software developer. I was fascinated by technology
-                                    and wanted to learn more about it. I started with python in the context of embedded programming on
-                                    a Raspberry Pi. I quickly fell in love with programming and started my journey.
-                                </Section>
-                                <hr className="bg-primary"/>
-                            </li>
-                            <li>
-                                <hr className="bg-primary"/>
-                                <FontAwesomeIcon icon={faCheckCircle} className="timeline-middle text-primary m-1"></FontAwesomeIcon>
-
-                                <Section className="timeline-end mb-10" id="java">
+                                <Section className="timeline-end ml-10 mb-10 text-start">
                                     <time className="font-mono">2021</time>
                                     <div className="text-lg font-black">Java</div>
-                                    In 2021, I started learning Java development. Although it was a bit challenging at first, I
-                                    quickly got the hang of it and started creating projects with it. I have been using Java
-                                    ever since and have developed many projects that I am proud of.
+                                    My coding journey started in 2021 with Java. I learned the basics of programming and
+                                    object-oriented programming. I created small projects and learned how to use
+                                    libraries and frameworks. Although I don't use Java much anymore, I am still grateful for the
+                                    knowledge I gained from it.
                                 </Section>
                                 <hr className="bg-primary"/>
                             </li>
@@ -358,12 +371,26 @@ function Timeline(props: Props) {
                                 <hr className="bg-primary"/>
                                 <FontAwesomeIcon icon={faCheckCircle} className="timeline-middle text-primary m-1"></FontAwesomeIcon>
 
-                                <Section className="timeline-start mb-10" id="kotlin">
+                                <Section className="timeline-end ml-10 mb-10 text-start">
                                     <time className="font-mono">2023</time>
                                     <div className="text-lg font-black">Kotlin</div>
-                                    In 2023, I first discovered Kotlin and fell in love with it. I have been using it ever since
-                                    and have been contributing to its community. I have created libraries and tools for Kotlin and
-                                    have been using it in my projects.
+                                    After using java for a while, I discovered Kotlin in 2023. I was amazed by its
+                                    simplicity and power. I started using it for my projects and quickly fell in love with it. I have been
+                                    using it ever since and have been excited to learn even the most advanced features of the language.
+                                </Section>
+                                <hr className="bg-primary"/>
+                            </li>
+                            <li>
+                                <hr className="bg-primary"/>
+                                <FontAwesomeIcon icon={faCheckCircle}
+                                                 className="timeline-middle text-primary m-1"></FontAwesomeIcon>
+
+                                <Section className="timeline-end ml-10 mb-10 text-start">
+                                    <time className="font-mono">2024</time>
+                                    <div className="text-lg font-black">Spring & Vue</div>
+                                    After using Kotlin, the next logical step was to learn some form of backend and frontend
+                                    framework. In 2024, I started learning Spring and also discovered Vue.
+                                    I have been using both frameworks for some time and have created several projects with them.
                                 </Section>
                                 <hr className="bg-primary"/>
                             </li>
@@ -371,24 +398,24 @@ function Timeline(props: Props) {
                                 <hr className="bg-primary"/>
                                 <FontAwesomeIcon icon={faCheckCircle} className="timeline-middle text-primary m-1"></FontAwesomeIcon>
 
-                                <Section className="timeline-end mb-10" id="spring">
-                                    <time className="font-mono">2024</time>
-                                    <div className="text-lg font-black">Spring & Vue</div>
-                                    In 2024, I started learning Spring and Vue. I was amazed by the power of these frameworks and
-                                    how they can be used to create powerful applications. I have been using them ever since and
-                                    I am still enjoying their use.
+                                <Section className="timeline-end ml-10 mb-10 text-start">
+                                    <time className="font-mono">2025</time>
+                                    <div className="text-lg font-black">Internship at Cloudflight Austria GmbH</div>
+                                    In 2025 I started had the opportunity to do an internship at Cloudflight Austria GmbH.
+                                    I had the chance to work on real-world projects and learn from experienced developers. It was a
+                                    great experience and I learned a lot.
                                 </Section>
-                                <hr />
+                                <hr/>
                             </li>
                             <li>
-                                <hr />
+                                <hr/>
                                 <FontAwesomeIcon icon={faCircleQuestion} className="timeline-middle m-1"></FontAwesomeIcon>
 
-                                <Section className="timeline-start mb-10 md:text-end" id="end">
+                                <Section className="timeline-end ml-10 mb-10 text-start">
                                     <time className="font-mono">...</time>
                                     <div className="text-lg font-black">Next up</div>
-                                    Who knows what the future holds? I'm excited to see what the next big thing will be. I'm
-                                    looking forward to new technologies and innovations that will shape our world.
+                                    I am excited to see what the future holds for me. I am always looking for new
+                                    technologies to learn and new projects to work on.
                                 </Section>
                             </li>
                         </ul>
@@ -402,14 +429,16 @@ function Timeline(props: Props) {
 function FavouritesElement(props: Props) {
     if (props.search === "") {
         return (
-            <div className="hero min-h-[600px] bg-base-200">
-                <Section className="hero-content text-center" id="favourites">
+            <div className="hero min-h-[600px] bg-base-200" id="favourites">
+                <Section className="hero-content text-center">
                     <div className="max-w-2xl">
-                        <h1 className="text-5xl font-bold"><FontAwesomeIcon icon={faBoxesStacked} className="mr-2" size="xs"/>Favourite Stack</h1>
+                        <h1 className="text-5xl font-bold"><FontAwesomeIcon icon={faBoxesStacked} className="mr-2"
+                                                                            size="xs"/>Favourite Stack</h1>
 
                         <p className="py-6">
                             Below you can find my favourite tech stack that I use in my projects.
-                            I can only recommend the tools shown to you. They are all free or worth the price (in my opinion).
+                            I can only recommend the tools shown to you. They are all free or worth the price (in my
+                            opinion).
                             Many of them are open source and have a large community.
                         </p>
 

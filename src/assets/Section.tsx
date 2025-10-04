@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-function Section({ id, className, children }: { id: string, className: string, children: React.ReactNode }) {
+function Section({ className, children }: { className: string, children: React.ReactNode }) {
     const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -17,7 +17,7 @@ function Section({ id, className, children }: { id: string, className: string, c
     }, []);
 
     return (
-        <div id={id} className={className + " section"} ref={ref}>
+        <div className={className + " section"} ref={ref}>
             {children}
         </div>
     );

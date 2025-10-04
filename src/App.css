@@ -8,6 +8,11 @@
     --bg-size: 200%;
 }
 
+* {
+    transition: border-radius 0.3s ease; /* Smooth transition for border-radius */
+
+}
+
 .main-shadow {
     height: 55px;
     background: linear-gradient(
@@ -185,7 +190,9 @@ footer {
     content: '';
     position: absolute;
     inset: 0;
+    /*noinspection CssUnresolvedCustomProperty*/
     border-radius: var(--border-radius);
+    /*noinspection CssUnresolvedCustomProperty*/
     background: radial-gradient(var(--circle-width) circle at var(--x) var(--y),
     var(--color-one), transparent);
 }
@@ -193,6 +200,11 @@ footer {
 .back-grid {
     background: linear-gradient(to bottom right, oklch(var(--b1)), oklch(var(--p) / 0.4));
 }
+
+.back-grid-invert {
+    background: linear-gradient(to top right, oklch(var(--b1)), oklch(var(--p) / 0.4));
+}
+
 .bg-transparent {
     background: transparent !important;
     box-shadow: none !important;
