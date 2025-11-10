@@ -48,7 +48,7 @@ export default function RepoCard(props: Props) {
         return (
             <div className="collapse collapse-arrow border-base-300 bg-base-200 border mt-3 hidden lg:grid">
                 <input type="checkbox"/>
-                <div className="collapse-title text-xl font-medium"><FontAwesomeIcon icon={faBook} className="mr-2"/> Show Readme
+                <div className="collapse-title text-xl font-medium"><FontAwesomeIcon icon={faBook} className="mr-2"/> Show More
                 </div>
                 <div className="collapse-content">
                     <MarkdownRenderer/>

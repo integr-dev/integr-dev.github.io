@@ -37,7 +37,7 @@ export default function NavBar(props: Props) {
         });
 
         const onKeyDown = (e: KeyboardEvent) => {
-            if (e.ctrlKey && e.key === 'k') {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
                 document.getElementById("search_bar")!.focus();
                 e.preventDefault();
             }
@@ -134,7 +134,7 @@ export default function NavBar(props: Props) {
                     </div>
                     <div className="navbar-center">
                         <label
-                            className="bg-opacity-20 cursor-text input input-bordered hidden items-center gap-2 lg:w-96 lg:flex"
+                            className="bg-opacity-20 cursor-text input pr-1.5 input-bordered hidden items-center gap-2 lg:w-96 lg:flex"
                         >
                             <FontAwesomeIcon icon={faMagnifyingGlass}/>
                             <input
@@ -144,8 +144,7 @@ export default function NavBar(props: Props) {
                                 placeholder="Search"
                                 onKeyUp={() => props.searchCallback((document.getElementById("search_bar")! as HTMLInputElement).value)}
                             />
-                            <kbd className="kbd kbd-sm select-none cursor-text">ctrl</kbd>
-                            <kbd className="kbd kbd-sm select-none cursor-text">k</kbd>
+                            <kbd className="kbd kbd-md select-none cursor-text">{getCtrl()} k</kbd>
                         </label>
                     </div>
 
@@ -166,6 +165,10 @@ export default function NavBar(props: Props) {
             </div>
         </>
     )
+}
+
+function getCtrl() {
+    return navigator.platform.match("Mac") ? "⌘" : "ctrl";
 }
 
 function scrollToElementWithOffset(elementId: string) {

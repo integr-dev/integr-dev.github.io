@@ -1,38 +1,62 @@
 export const Projects = [
     {
-        name: "Castl3d-Frontend",
-        description: "Frontend for the Castl3d chess app.",
-        projectUrl: "https://github.com/integr-dev/Castl3d-Frontend",
-        readme: "Castl3d-Frontend.md"
+        name: "Castl3d",
+        description: "Full Stack Chess Application to play against Bots",
+        projectUrl: "https://github.com/integr-dev/castl3d-backend",
+        readme: "Castl3d.md"
     },
     {
-        name: "Castl3d-Backend",
-        description: "Backend for the Castl3d chess app.",
-        projectUrl: "https://github.com/integr-dev/Castl3d-Backend",
-        readme: "Castl3d-Backend.md"
+        name: "Portfolio Page",
+        description: "My personal portfolio page built with React and TypeScript hosted on github pages and domains by is-a.dev",
+        projectUrl: "https://github.com/integr-dev/integr-dev.github.io",
+        readme: "PortfolioPage.md"
     },
     {
         name: "Helix",
-        description: "A utility mod adding various features.",
-        projectUrl: "https://github.com/integr-dev/Helix",
+        description: "A minecraft utility mod adding various features to enhance your gameplay",
+        projectUrl: "https://github.com/integr-dev/helix",
         readme: "Helix.md"
     },
     {
-        name: "ContentAutomation",
+        name: "Content Automation",
         description: "Automated bot to generate content for various social media platforms",
-        projectUrl: "https://github.com/integr-dev/ContentAutomation",
+        projectUrl: "https://github.com/integr-dev/content-automation",
         readme: "ContentAutomation.md"
     },
     {
         name: "InHttp",
         description: "Simple but effective HTTP Client for Kotlin",
-        projectUrl: "https://github.com/integr-dev/InHttp",
+        projectUrl: "https://github.com/integr-dev/in-http",
         readme: "InHttp.md"
     },
     {
-        name: "RegistryTracker",
-        description: "Track entries in JSON format",
-        projectUrl: "https://github.com/integr-dev/RegistryTracker",
+        name: "Aether",
+        description: "A socket transport library with kotlinx.serialization support and coroutine support",
+        projectUrl: "https://github.com/integr-dev/aether",
+        readme: "Aether.md"
+    },
+    {
+        name: "Registry Tracker",
+        description: "A kotlin compose for desktop application to track text entries",
+        projectUrl: "https://github.com/integr-dev/registry-tracker",
         readme: "RegistryTracker.md",
+    },
+    {
+        name: "Kai",
+        description: "Kotlin AI Interface for the Groq AI platform",
+        projectUrl: "https://github.com/integr-dev/kai",
+        readme: "Kai.md"
+    },
+    {
+        name: "Parabol Renderer",
+        description: "A minecraft rendering library abstraction for kotlin mods",
+        projectUrl: "https://github.com/integr-dev/parabol-renderer",
+        readme: "ParabolRenderer.md"
+    },
+    {
+        name: "Konvert",
+        description: "A very simple json parser and serializer for kotlin",
+        projectUrl: "https://github.com/integr-dev/konvert",
+        readme: "Konvert.md"
     }
 ]
