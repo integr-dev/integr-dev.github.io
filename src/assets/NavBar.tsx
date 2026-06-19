@@ -1,8 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+    faA,
+    faAt,
     faBars,
     faMagnifyingGlass,
-    faPalette
+    faPalette,
 } from "@fortawesome/free-solid-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { useEffect, useState } from "react";
@@ -82,7 +84,7 @@ export default function NavBar(props: Props) {
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
                                 <FontAwesomeIcon icon={faPalette}/>
                             </div>
-                            <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[60] mt-10 w-52 p-2 shadow">
+                            <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[60] mt-5 w-52 p-2 shadow">
                                 <li>
                                     <input
                                         type="radio"
@@ -103,7 +105,7 @@ export default function NavBar(props: Props) {
                                     />
                                 </li>
                                 <li>
-                                <input
+                                    <input
                                         type="radio"
                                         name="theme-dropdown"
                                         className="theme-controller btn btn-sm btn-block btn-ghost justify-start no-animation"
@@ -149,15 +151,27 @@ export default function NavBar(props: Props) {
                     </div>
 
                     <div className="navbar-end">
-                        {/* soon<button className="btn btn-ghost btn-circle"
-                                onClick={() => window.open("https://github.com/integr-dev", '_blank')!.focus()}>
-                            <FontAwesomeIcon icon={faTools} size="xl"/>
-                        </button*/}
-                        <button className="btn btn-ghost btn-circle"
-                                onClick={() => window.open("https://github.com/integr-dev", '_blank')!.focus()}>
-                            <FontAwesomeIcon icon={faGithub} size="xl"/>
-                        </button>
-
+                        <div className="dropdown dropdown-end">
+                            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+                                <FontAwesomeIcon icon={faGithub} size="lg"/>
+                            </div>
+                            <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[60] mt-5 w-52 p-2 shadow">
+                                <li>
+                                    <button className="btn btn-sm btn-block btn-ghost justify-start no-animation"
+                                            onClick={() => window.open("https://github.com/e-reitbauer", '_blank')!.focus()}>
+                                        <FontAwesomeIcon icon={faAt}/>
+                                        e-reitbauer
+                                    </button>
+                                </li>
+                                <li>
+                                    <button className="btn btn-sm btn-block btn-ghost justify-start no-animation"
+                                            onClick={() => window.open("https://github.com/integr-dev", '_blank')!.focus()}>
+                                        <FontAwesomeIcon icon={faAt}/>
+                                        integr-dev
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div className="progress-bar-before"/>
