@@ -44,6 +44,14 @@ onBeforeUnmount(() => {
 <template>
   <div v-if="profile" class="sheet intro">
     <div class="intro-text">
+      <!-- first in the markup so they are drawn first; placed top right by CSS -->
+      <ul class="intro-links mono" data-build="chips" data-nopen>
+        <li v-for="s in shortcuts" :key="s.sheet">
+          <button type="button" @click="open(s.sheet)">
+            {{ s.label }} <FontAwesomeIcon icon="arrow-right" />
+          </button>
+        </li>
+      </ul>
       <figure class="intro-figure">
         <PixelAvatar />
         <figcaption class="mono muted" data-build="type">184 × 184 px, 1:1</figcaption>
@@ -66,13 +74,6 @@ onBeforeUnmount(() => {
       <p class="intro-looking" data-build="type">
         {{ profile.lookingFor }}
       </p>
-      <ul class="intro-links mono" data-build="chips" data-nopen>
-        <li v-for="s in shortcuts" :key="s.sheet">
-          <button type="button" @click="open(s.sheet)">
-            {{ s.label }} <FontAwesomeIcon icon="arrow-right" />
-          </button>
-        </li>
-      </ul>
       <p class="intro-hint mono muted" data-build="fade" data-nopen>
         <span><kbd>→</kbd> projects</span>
         <span><kbd>/</kbd> search</span>
@@ -206,9 +207,20 @@ kbd {
 }
 
 @media (max-width: 767px) {
+  /* on phones the shortcuts sit below the text again */
+  .intro-text {
+    display: flex;
+    flex-direction: column;
+  }
+
   .intro-links {
     position: static;
+    order: 1;
     margin-top: 28px;
+  }
+
+  .intro-hint {
+    order: 2;
   }
 
   .intro {
