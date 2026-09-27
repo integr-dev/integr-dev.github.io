@@ -219,8 +219,10 @@ kbd {
     margin-top: 28px;
   }
 
+  /* the image size note and keyboard hints mean nothing on a phone */
+  .intro-figure figcaption,
   .intro-hint {
-    order: 2;
+    display: none;
   }
 
   .intro {

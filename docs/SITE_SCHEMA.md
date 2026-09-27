@@ -73,7 +73,9 @@ The site is a 2D grid of sheets:
 ### Small screens (< 768px)
 
 - The deck turns into one vertical scroll: sheets stack top to bottom and `stack` slides are shown inline.
-- Nothing about sheet order or content changes. Only the navigation axis changes.
+- Sheet order stays the same, but phones get only the essentials (CSS, each component's `max-width: 767px` block):
+  - left out: readme pages and the More page (a deep link to one lands on its sheet), the flagship body text and visuals, the project list body text, post tags and the RSS link, timeline details, the intro's image caption and keyboard hints
+  - kept: name, pitch, what I'm looking for, shortcuts, flagship title, tagline, why, stats, stack and links, the post list and posts, skills, contact
 
 ### Reduced motion
 

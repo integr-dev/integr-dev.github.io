@@ -149,6 +149,11 @@ const { timeline } = await useSiteContent()
     display: none;
   }
 
+  /* phones: when and what, without the details */
+  .t-card p {
+    display: none;
+  }
+
   .above .t-card,
   .below .t-card {
     padding: 0;

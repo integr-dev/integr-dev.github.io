@@ -8,13 +8,19 @@ const nav = useDeckNav()
 
 const slug = (path: string) => path.split('/').pop()!
 
-// on phones the deck is one vertical scroll, so scroll there instead of switching pages
+// on phones the deck is one vertical scroll: the post unfolds below the list and is scrolled to
 function open(path: string) {
   const id = slug(path)
-  if (window.matchMedia('(max-width: 767px)').matches) {
-    document.getElementById(`slide-posts-${id}`)?.scrollIntoView({ behavior: 'smooth' })
+  const phone = window.matchMedia('(max-width: 767px)').matches
+  // scroll once the post is actually shown: the path changes asynchronously
+  if (phone && nav.slideId.value !== id) {
+    watch(nav.slideId, () => scrollToPost(id), { once: true, flush: 'post' })
   }
-  else nav.goTo('posts', id)
+  if (!nav.goTo('posts', id) && phone) scrollToPost(id)
+}
+
+function scrollToPost(id: string) {
+  document.getElementById(`slide-posts-${id}`)?.scrollIntoView({ behavior: 'smooth' })
 }
 </script>
 
@@ -138,6 +144,11 @@ function open(path: string) {
   .p-item {
     grid-template-columns: 1fr;
     gap: 4px;
+  }
+
+  .p-tags,
+  .p-rss {
+    display: none;
   }
 }
 </style>

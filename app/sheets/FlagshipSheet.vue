@@ -451,6 +451,12 @@ const asOf = computed(() => {
 }
 
 @media (max-width: 767px) {
+  /* phones: what it is, why it matters, the numbers and the links; no long text or visuals */
+  .flagship .f-body,
+  .flagship .f-visual {
+    display: none;
+  }
+
   .visual-left,
   .visual-right {
     grid-template-columns: 1fr;

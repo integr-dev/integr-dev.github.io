@@ -126,6 +126,13 @@ const slug = (stem: string) => stem.split('/').pop()!
   margin-left: 2px;
 }
 
+/* phones: title, tagline, stack and links; the longer text stays on larger screens */
+@media (max-width: 767px) {
+  .r-body {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .r-cols {
     grid-template-columns: 1fr;

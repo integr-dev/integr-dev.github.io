@@ -212,8 +212,10 @@ onMounted(() => {
   // on phones the deck is one long scroll: start at the position the link points to
   else if (narrow.value && route.path !== '/') {
     const sheet = nav.sheet.value
-    const id = sheet.mode === 'stack' && nav.y.value > 0 ? `slide-${sheet.id}-${nav.slideId.value}` : `sheet-${sheet.id}`
-    document.getElementById(id)?.scrollIntoView()
+    const slide = sheet.mode === 'stack' && nav.y.value > 0 ? document.getElementById(`slide-${sheet.id}-${nav.slideId.value}`) : null
+    // pages left out on phones (readme, More) fall back to their sheet
+    const target = slide?.getClientRects().length ? slide : document.getElementById(`sheet-${sheet.id}`)
+    target?.scrollIntoView()
   }
   requestAnimationFrame(() => requestAnimationFrame(() => (instant.value = false)))
   // the first sheet is drawn once the viewport frame has been traced
@@ -272,6 +274,8 @@ function setFeed(id: string, el: unknown) {
               :id="`slide-${sheet.id}-${slide.id}`"
               :key="slide.id"
               class="deck-slide"
+              :data-slide="slide.id"
+              :data-folded="sheet.slidesFrom === 'posts' && slide.id !== nav.slideId.value && slide.id !== nav.slidesOf(sheet)[0]?.id ? '' : undefined"
               data-build-root
             >
               <component :is="componentFor(slide.component)" v-bind="slide.props" :sheet-id="sheet.id" />
@@ -412,6 +416,17 @@ function setFeed(id: string, el: unknown) {
   .deck-feed {
     height: auto;
     overflow: visible;
+  }
+
+  /* phones get the essentials: no readme pages, no list of older projects */
+  .deck-slide[data-slide='readme'],
+  .deck-slide[data-slide='more'] {
+    display: none;
+  }
+
+  /* posts stay folded under the list; only the one opened from it is shown */
+  .deck-slide[data-folded] {
+    display: none;
   }
 }
 </style>

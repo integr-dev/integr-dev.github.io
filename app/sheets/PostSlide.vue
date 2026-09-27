@@ -7,10 +7,11 @@ const nav = useDeckNav()
 
 /** Straight back to the list, however many posts down this one is. */
 function backToList() {
+  // on phones this also folds the post away again; scroll once it is gone
   if (window.matchMedia('(max-width: 767px)').matches) {
-    document.getElementById('slide-posts-list')?.scrollIntoView({ behavior: 'smooth' })
+    watch(nav.slideId, () => document.getElementById('slide-posts-list')?.scrollIntoView({ behavior: 'smooth' }), { once: true, flush: 'post' })
   }
-  else nav.goTo('posts', 'list')
+  nav.goTo('posts', 'list')
 }
 
 const { data: post } = await useAsyncData(`post-slide-${props.path}`, () =>
