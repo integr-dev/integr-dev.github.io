@@ -86,7 +86,6 @@ li {
   gap: 12px;
   padding: 9px 0;
   font-size: 1.05rem;
-  border-bottom: 1px dashed var(--bg-grid-strong);
 }
 
 .s-icon {
@@ -102,10 +101,6 @@ li {
   width: 18px;
   height: 18px;
   fill: currentColor;
-}
-
-li:hover .s-icon {
-  color: var(--line);
 }
 
 @media (max-width: 1000px) {
