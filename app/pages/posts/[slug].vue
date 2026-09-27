@@ -37,7 +37,7 @@ useHead({
         '@type': 'BlogPosting',
         'headline': post.value.title,
         'description': post.value.summary,
-        'datePublished': post.value.date,
+        'datePublished': new Date(post.value.date).toISOString(),
         'url': url,
         'mainEntityOfPage': url,
         'image': OG_IMAGE,

@@ -102,7 +102,7 @@ export function useHomeSeo({ profile, skills, projects }: SiteContent) {
             'name': title,
             'description': description,
             'inLanguage': 'en',
-            'dateModified': new Date().toISOString().slice(0, 10),
+            'dateModified': new Date().toISOString(),
             'isPartOf': { '@id': `${SITE_URL}/#website` },
             'mainEntity': { '@id': `${SITE_URL}/#person` },
           },
