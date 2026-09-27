@@ -112,7 +112,8 @@ To add a flagship: add `content/projects/<slug>.md` with `tier: flagship`, then 
 ## 5. Sheets: content
 
 ### 00 · Intro
-- Flip text "Integr ↔ Erik"
+- Flip text "integr ↔ erik"
+- Drawn shortcut buttons: Projects, Posts, Contact
 - Live age (computed from the birth year and month, which are not shown), "Austria"
 - One-line pitch (Kotlin-first developer, open source)
 - Hint: "press / to search" and "→ to continue"
@@ -270,7 +271,7 @@ categories:
 ```
 ```yaml
 # profile.yml
-handle: Integr
+handle: integr
 name: Erik
 birth: { year: 2009, month: 5 }   # only used to compute age; never rendered
 location: Austria

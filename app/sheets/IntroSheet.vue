@@ -1,10 +1,28 @@
 <script setup lang="ts">
 import PixelAvatar from './PixelAvatar.vue'
+import { useDeckNav } from '~/deck/useDeckNav'
 
 const { profile } = await useSiteContent()
 
 // Render the build-time age, then refresh it in the browser so a static build never goes stale.
 const age = useState('intro-age', () => (profile.value ? ageFrom(profile.value.birth) : null))
+
+const nav = useDeckNav()
+
+// shortcuts from the first screen to the places people look for most
+const shortcuts = [
+  { label: 'Projects', sheet: 'osmium' },
+  { label: 'Posts', sheet: 'posts' },
+  { label: 'Contact', sheet: 'contact' },
+]
+
+// on phones the deck is one vertical scroll, so scroll there instead of switching sheets
+function open(sheet: string) {
+  if (window.matchMedia('(max-width: 767px)').matches) {
+    document.getElementById(`sheet-${sheet}`)?.scrollIntoView({ behavior: 'smooth' })
+  }
+  else nav.goTo(sheet)
+}
 
 const flipped = ref(false)
 let timer: ReturnType<typeof setInterval> | undefined
@@ -35,7 +53,7 @@ onBeforeUnmount(() => {
         <span class="sr-only">{{ profile.fullName }}, also known as {{ profile.handle }}</span>
         <span class="flip" :class="{ 'is-flipped': flipped }" aria-hidden="true">
           <span class="flip-a" data-build="type">{{ profile.handle }}</span>
-          <span class="flip-b">{{ profile.name }}</span>
+          <span class="flip-b">{{ profile.name.toLowerCase() }}</span>
         </span>
       </h1>
       <span class="rule" data-build="line" />
@@ -48,6 +66,13 @@ onBeforeUnmount(() => {
       <p class="intro-looking" data-build="type">
         {{ profile.lookingFor }}
       </p>
+      <ul class="intro-links mono" data-build="chips" data-nopen>
+        <li v-for="s in shortcuts" :key="s.sheet">
+          <button type="button" @click="open(s.sheet)">
+            {{ s.label }} <FontAwesomeIcon icon="arrow-right" />
+          </button>
+        </li>
+      </ul>
       <p class="intro-hint mono muted" data-build="fade" data-nopen>
         <span><kbd>→</kbd> projects</span>
         <span><kbd>/</kbd> search</span>
@@ -126,6 +151,37 @@ figcaption {
   color: var(--line);
 }
 
+.intro-links {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  /* top right corner of the sheet, inside the frame */
+  position: absolute;
+  top: calc(var(--frame-gap) + var(--pad));
+  right: calc(var(--frame-gap) + var(--pad));
+}
+
+.intro-links button {
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.intro-links button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .intro-hint {
   display: flex;
   gap: 24px;
@@ -142,6 +198,11 @@ kbd {
 }
 
 @media (max-width: 767px) {
+  .intro-links {
+    position: static;
+    margin-top: 28px;
+  }
+
   .intro {
     min-height: 100svh;
   }
