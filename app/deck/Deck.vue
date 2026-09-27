@@ -6,11 +6,18 @@ import { sheetComponents } from '~/sheets'
 import SearchBar from './SearchBar.vue'
 import { useDeckNav } from './useDeckNav'
 import { useBuild } from './useBuild'
-import type { SheetDef } from './types'
+import type { SheetDef, SlideDef } from './types'
 
 const nav = useDeckNav()
 const route = useRoute()
-const { profile } = await useSiteContent()
+const { profile, posts } = await useSiteContent()
+
+// one page below the post list per post (sheets.config: slidesFrom 'posts')
+useState<SlideDef[]>('deck-post-slides').value = posts.value.map(p => ({
+  id: p.path.split('/').pop()!,
+  component: 'PostSlide',
+  props: { path: p.path },
+}))
 const searchOpen = useState('search-open', () => false)
 const lightbox = useLightbox()
 const highlight = useState<{ anchor: string, nonce: number } | null>('deck-highlight', () => null)

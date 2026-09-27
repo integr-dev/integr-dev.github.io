@@ -16,6 +16,8 @@ export interface SheetDef {
   component?: string
   /** For 'stack'. */
   slides?: SlideDef[]
+  /** For 'stack': more slides generated from content, appended after `slides` (one page per post). */
+  slidesFrom?: 'posts'
   props?: Record<string, unknown>
 }
 

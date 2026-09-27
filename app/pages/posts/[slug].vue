@@ -56,7 +56,7 @@ const date = computed(() =>
   <div class="post-page">
     <component :is="theme.ThemeBackground" :x="0" :total="1" />
     <article v-if="post" class="post">
-      <NuxtLink to="/#/posts" class="post-back mono">
+      <NuxtLink :to="`/#/posts/${route.params.slug}`" class="post-back mono">
         <FontAwesomeIcon icon="arrow-left" /> Posts
       </NuxtLink>
       <header>

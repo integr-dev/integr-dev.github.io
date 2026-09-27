@@ -17,7 +17,8 @@ export async function useSearchIndex() {
     }
 
     for (const p of posts.value) {
-      entries.push({ label: p.title, kind: 'post', text: `${p.summary} ${(p.tags ?? []).join(' ')}`, sheetId: 'posts', to: p.path })
+      const slug = p.path.split('/').pop()!
+      entries.push({ label: p.title, kind: 'post', text: `${p.summary} ${(p.tags ?? []).join(' ')}`, sheetId: 'posts', slideId: slug, anchor: `post-${slug}` })
     }
 
     timeline.value.forEach((t, i) => {

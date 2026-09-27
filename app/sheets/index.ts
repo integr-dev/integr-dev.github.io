@@ -4,6 +4,7 @@ import FlagshipSheet from './FlagshipSheet.vue'
 import ProjectListSlide from './ProjectListSlide.vue'
 import ReadmeSlide from './ReadmeSlide.vue'
 import PostFeedSheet from './PostFeedSheet.vue'
+import PostSlide from './PostSlide.vue'
 import TimelineSheet from './TimelineSheet.vue'
 import SkillsSheet from './SkillsSheet.vue'
 import ContactSheet from './ContactSheet.vue'
@@ -15,6 +16,7 @@ export const sheetComponents: Record<string, Component> = {
   ProjectListSlide,
   ReadmeSlide,
   PostFeedSheet,
+  PostSlide,
   TimelineSheet,
   SkillsSheet,
   ContactSheet,

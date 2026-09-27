@@ -56,7 +56,14 @@ export const sheets: SheetDef[] = [
       { id: 'more', component: 'ProjectListSlide', props: { tier: 'more' } },
     ],
   },
-  { id: 'posts', title: 'Posts', mode: 'feed', component: 'PostFeedSheet' },
+  {
+    id: 'posts',
+    title: 'Posts',
+    mode: 'stack',
+    // the list on top, then one page per post below it
+    slides: [{ id: 'list', component: 'PostFeedSheet' }],
+    slidesFrom: 'posts',
+  },
   { id: 'timeline', title: 'Timeline', mode: 'single', component: 'TimelineSheet' },
   { id: 'skills', title: 'Skills', mode: 'single', component: 'SkillsSheet' },
   { id: 'contact', title: 'Contact', mode: 'single', component: 'ContactSheet' },

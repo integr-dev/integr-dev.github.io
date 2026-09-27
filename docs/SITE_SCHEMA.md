@@ -151,9 +151,10 @@ Whenever there is a page below the current one, an animated down arrow sits at t
 - **Slide `more`:** **Aether, konvert, Content Automation**, same column layout.
 - Card slots: `title`, `tagline`, `stack`, `links`, optional `stats`.
 
-### 07 · Posts (`feed`)
-- Free-scrolling vertical list, newest first.
-- Each entry: title, date, tags, summary, "read" → `/posts/<slug>`.
+### 07 · Posts (`stack`)
+- Top page: the list, newest first, full width (date · title and summary · read). It scrolls inside the page when long.
+- Below it one page per post (`PostSlide`), generated from the content (`slidesFrom: 'posts'` in `sheets.config.ts`, filled in by `Deck.vue`). Clicking a post, the down arrow or `/#/posts/<slug>` opens it; the text scrolls inside the page.
+- Each post also keeps its own URL `/posts/<slug>` (for search engines and sharing; the page links back to its deck page).
 - Empty state: "Nothing here yet."
 
 ### 08 · Timeline
