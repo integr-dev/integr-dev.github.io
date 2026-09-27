@@ -5,6 +5,8 @@ import BarChart from './diagrams/BarChart.vue'
 import type { Component } from 'vue'
 import { theme } from '~/themes/active'
 
+const lightbox = useLightbox()
+
 const props = withDefaults(defineProps<{ project: string, visual?: 'left' | 'right', sheetId?: string }>(), { visual: 'left' })
 const { project: find } = await useSiteContent()
 const p = computed(() => find(props.project))
@@ -122,13 +124,16 @@ const asOf = computed(() => {
 
             <div v-else-if="v.kind === 'images'" class="f-images" :class="`count-${v.images?.length ?? 0}`">
               <img
-                v-for="img in v.images"
+                v-for="(img, n) in v.images"
                 :key="img.src"
                 :src="img.src"
                 :alt="img.alt"
                 :width="img.width"
                 :height="img.height"
+                :style="img.width && img.height ? { '--ar': img.width / img.height } : undefined"
+                class="f-shot"
                 data-build="image"
+                @click="lightbox.open(v.images!, n)"
               >
             </div>
           </div>
@@ -364,6 +369,7 @@ const asOf = computed(() => {
 
 /* Backbone: the code is the picture */
 .f-code :deep(pre) {
+  border: 0;
   padding: 22px 24px;
   font-size: clamp(0.72rem, 1.05vw, 0.92rem);
   line-height: 1.6;
@@ -411,16 +417,30 @@ const asOf = computed(() => {
   color: var(--line);
 }
 
+/* justified rows: every image grows in proportion to its aspect ratio, so each row fills the
+   width at one common height and nothing is left hanging at the top */
 .project-helix .f-images {
-  columns: 3 160px;
-  column-gap: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .project-helix .f-images img {
-  width: 100%;
-  margin-bottom: 12px;
-  break-inside: avoid;
+  flex: var(--ar, 1.5) 1 calc(var(--ar, 1.5) * 120px);
+  width: 0;
+  min-width: 0;
+  height: auto;
   image-rendering: pixelated;
+}
+
+/* keeps the last row from stretching */
+.project-helix .f-images::after {
+  content: '';
+  flex: 999 1 0;
+}
+
+.f-shot {
+  cursor: zoom-in;
 }
 
 @media (max-width: 1100px) and (min-width: 768px) {

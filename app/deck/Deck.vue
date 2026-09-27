@@ -10,6 +10,7 @@ const nav = useDeckNav()
 const route = useRoute()
 const { profile } = await useSiteContent()
 const searchOpen = useState('search-open', () => false)
+const lightbox = useLightbox()
 const highlight = useState<{ anchor: string, nonce: number } | null>('deck-highlight', () => null)
 const narrow = ref(false)
 // true for the first frames after load: a deep link jumps straight to its sheet, no slide from the intro
@@ -72,6 +73,7 @@ function isTyping(e: Event) {
 }
 
 function onKey(e: KeyboardEvent) {
+  if (lightbox.isOpen.value) return
   // Space, Enter or Escape while a sheet is being drawn: show it at once
   if (build.building.value && !isTyping(e) && !searchOpen.value && [' ', 'Enter', 'Escape'].includes(e.key)) {
     e.preventDefault()
@@ -127,7 +129,7 @@ let lastWheel = 0
 let acc = 0
 
 function onWheel(e: WheelEvent) {
-  if (narrow.value || searchOpen.value) return
+  if (narrow.value || searchOpen.value || lightbox.isOpen.value) return
   const now = performance.now()
   const gap = now - lastWheel
   lastWheel = now
@@ -222,7 +224,7 @@ onBeforeUnmount(() => {
 /** A click on the page (not on a link or control) while a sheet is being drawn skips the drawing. */
 function onPointerDown(e: PointerEvent) {
   if (!build.building.value || narrow.value) return
-  if ((e.target as HTMLElement).closest('a, button, input, [data-scroll]')) return
+  if ((e.target as HTMLElement).closest('a, button, input, [data-scroll], .f-shot')) return
   build.skip()
 }
 
@@ -298,6 +300,7 @@ function setFeed(id: string, el: unknown) {
     </button>
 
     <SearchBar />
+    <ImageLightbox />
     <ClientOnly>
       <component :is="theme.BuildOverlay" v-if="theme.BuildOverlay" />
       <component :is="theme.Ornament" v-if="theme.Ornament" :target="highlight" />
