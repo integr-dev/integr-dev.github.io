@@ -1,0 +1,52 @@
+/* Theme: drafting. Every color, font and motion value the structure layer reads comes from here. */
+
+:root {
+  --font-display: 'Schibsted Grotesk', ui-sans-serif, sans-serif;
+  --font-body: 'Schibsted Grotesk', ui-sans-serif, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --radius: 2px;
+  --frame-gap: clamp(12px, 2vw, 24px);
+  --transition-duration: 700ms;
+  --transition-ease: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* light: paper */
+  --bg: #f2eddb;
+  --surface: #e9e3cd;
+  --surface-raised: #fbf8ee;
+  --bg-grid: rgb(79 122 58 / 0.1);
+  --bg-grid-strong: rgb(79 122 58 / 0.18);
+  --fg: #1f2a20;
+  --fg-muted: #55604f;
+  --line: #4f7a3a;
+  --secondary: #6e7236;
+  --line-strong: #6b5638;
+  --accent: #9a7a1e;
+  --accent-wash: rgb(232 213 106 / 0.55);
+  --accent-contrast: #fbf8ee;
+  --code-bg: #e4ddc4;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* dark: night garden */
+    --bg: #111812;
+    --surface: #1b241c;
+    --surface-raised: #212c22;
+    --bg-grid: rgb(128 181 95 / 0.07);
+    --bg-grid-strong: rgb(128 181 95 / 0.13);
+    --fg: #ece4c8;
+    --fg-muted: #b9b08c;
+    --line: #80b55f;
+    --secondary: #91964e;
+    --line-strong: #6b5638;
+    --accent: #e8d56a;
+    --accent-wash: rgb(232 213 106 / 0.28);
+    --accent-contrast: #111812;
+    --code-bg: #182019;
+
+    color-scheme: dark;
+  }
+}

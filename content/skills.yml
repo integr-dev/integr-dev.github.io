@@ -1,0 +1,9 @@
+categories:
+  - category: Languages
+    items: [Kotlin, Java, JavaScript, TypeScript, Go, C, C#, Python]
+  - category: Databases
+    items: [Oracle, MySQL, SQLite, MongoDB, Postgres]
+  - category: Frameworks
+    items: [Kotlin Multiplatform, JavaFX, Vue, Nuxt, Spring, Quarkus, React]
+  - category: Tools & DevOps
+    items: [Git, GitHub, Docker, Podman, Kubernetes, Linux, Windows, Vite, Gradle, Maven]

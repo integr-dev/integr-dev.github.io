@@ -1,0 +1,272 @@
+/* Theme: drafting. Decoration only: line work, draw-in motion, highlights, code colors. */
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+}
+
+a {
+  color: var(--line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--fg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--accent-wash);
+  color: var(--fg);
+}
+
+/* ---------- build states ----------
+   builder.ts marks every [data-build] element: no class = not drawn yet, .b-run = being drawn,
+   .b-done = drawn. Without JS or with reduced motion nothing is hidden. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-build-root] [data-build]:not(.b-run, .b-done) {
+    visibility: hidden;
+  }
+
+  /* typing: characters appear one by one behind a caret */
+  [data-build='type'].b-run .ch:not(.on) {
+    visibility: hidden;
+  }
+
+  .caret {
+    display: inline-block;
+    width: 0.5em;
+    height: 0.9em;
+    margin-left: 0.04em;
+    vertical-align: -0.08em;
+    background: var(--accent);
+  }
+
+  /* printing: revealed top to bottom in line-sized steps */
+  [data-build='print'].b-run {
+    animation: print var(--b-dur) steps(var(--b-lines, 3), end) both;
+  }
+
+  @keyframes print {
+    from { clip-path: inset(0 0 100% 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+
+  /* ruling */
+  [data-build='line'].b-run {
+    transform-origin: left center;
+    animation: rule-x var(--b-dur) var(--transition-ease) both;
+  }
+
+  [data-build='vline'].b-run {
+    animation: rule-y var(--b-dur) var(--transition-ease) both;
+  }
+
+  @keyframes rule-x {
+    from { transform: scaleX(0); }
+  }
+
+  @keyframes rule-y {
+    from { transform: scaleY(0); }
+  }
+
+  /* svg strokes (pathLength="1") */
+  [data-build='path'].b-run {
+    stroke-dasharray: 1;
+    animation: stroke var(--b-dur) var(--transition-ease) both;
+  }
+
+  @keyframes stroke {
+    from { stroke-dashoffset: 1; }
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* images: a canvas laid over the image draws it block by block (builder.ts) */
+  img[data-build='image'].b-run {
+    visibility: hidden;
+  }
+
+  /* lists of chips appear one after another */
+  [data-build='chips'].b-run > :not(.on) {
+    visibility: hidden;
+  }
+
+  [data-build='chips'].b-run > .on {
+    animation: stamp 180ms ease-out both;
+  }
+
+  @keyframes stamp {
+    from { opacity: 0; transform: translateY(3px); }
+  }
+
+  [data-build='fade'].b-run {
+    animation: fade-in var(--b-dur) ease both;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+  }
+}
+
+/* ---------- search hit ---------- */
+
+@property --hit {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
+.is-search-hit {
+  --hit: var(--accent-wash);
+  background-image: linear-gradient(var(--hit), var(--hit));
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  /* the delay lets the butterfly land first */
+  animation: hit-sweep 2.6s ease 0.8s both;
+}
+
+@keyframes hit-sweep {
+  0% { background-size: 0% 100%; --hit: var(--accent-wash); }
+  15% { background-size: 100% 100%; --hit: var(--accent-wash); }
+  70% { --hit: var(--accent-wash); }
+  100% { background-size: 100% 100%; --hit: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-search-hit {
+    animation: none;
+  }
+}
+
+/* ---------- shared bits the sheets use ---------- */
+
+.rule {
+  display: block;
+  height: 1px;
+  background: var(--line);
+  border: 0;
+}
+
+.rule-strong {
+  background: var(--line-strong);
+}
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--secondary);
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  padding: 0.1rem 0.4rem;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.muted {
+  color: var(--fg-muted);
+}
+
+/* code blocks (shiki, everforest pair) */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--bg-grid-strong);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+}
+
+pre code .line {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  .shiki,
+  .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: transparent !important;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .shiki,
+  .shiki span {
+    color: var(--shiki-default) !important;
+    background-color: transparent !important;
+  }
+}
+
+/* ---------- down arrow: there is a page below ---------- */
+
+.deck-down {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--frame-gap) + 14px);
+  z-index: 20;
+  translate: -50% 0;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+  animation: nudge 1.6s var(--transition-ease) infinite;
+}
+
+.deck-down:hover {
+  border-color: var(--accent);
+}
+
+@keyframes nudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck-down {
+    animation: none;
+  }
+}
+
+/* ---------- next arrow on the first sheet ---------- */
+
+.deck-next {
+  position: fixed;
+  right: calc(var(--frame-gap) + 18px);
+  top: 50%;
+  z-index: 20;
+  translate: 0 -50%;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+  animation: nudge-x 1.6s var(--transition-ease) infinite;
+}
+
+.deck-next:hover {
+  border-color: var(--accent);
+}
+
+@keyframes nudge-x {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck-next {
+    animation: none;
+  }
+}

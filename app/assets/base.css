@@ -1,0 +1,81 @@
+/* Structure only. No colors or fonts here: those come from the active theme's tokens. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* width/height attributes reserve the space before an image loads; keep the ratio when scaled */
+img {
+  height: auto;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+ol,
+figure {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Content area of one sheet, inside the viewport frame. */
+.sheet {
+  --pad: clamp(24px, 5vw, 80px);
+  position: relative;
+  height: 100%;
+  padding: calc(var(--frame-gap) + var(--pad)) calc(var(--frame-gap) + var(--pad));
+  /* room for the title block in the bottom-right corner */
+  padding-bottom: calc(var(--frame-gap) + 150px);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  html {
+    font-size: 16px;
+  }
+
+  .sheet {
+    --pad: 16px;
+    height: auto;
+    min-height: 0;
+    padding: 56px var(--pad);
+  }
+}

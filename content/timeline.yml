@@ -1,0 +1,22 @@
+entries:
+  - when: "2021"
+    title: Started with Java
+    detail: Object-oriented basics, small projects, first libraries.
+  - when: "2023"
+    title: Switched to Kotlin
+    detail: Has been my main language since.
+  - when: "2024"
+    title: Spring and Vue
+    detail: Backends in Spring, frontends in Vue. First published mod, Helix.
+  - when: "07/2025 – 08/2025"
+    title: Internship, Cloudflight Austria GmbH
+    detail: Mobile app for employees, built with Kotlin Multiplatform.
+  - when: "2026"
+    title: Backbone, Clay, Granum, Osmium
+    detail: Server framework, docs toolchain, Claude Code memory, agent orchestration.
+  - when: "07/2026 – 08/2026"
+    title: Internship, Cloudflight Austria GmbH
+    detail: Android app for last mile management, Kotlin and Jetpack Compose.
+  - when: next
+    title: Next up
+    detail: Whatever turns out to be interesting.

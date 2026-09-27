@@ -1,0 +1,63 @@
+import type { SheetDef } from './types'
+
+export const sheets: SheetDef[] = [
+  { id: 'intro', title: 'Intro', mode: 'single', component: 'IntroSheet' },
+  {
+    id: 'osmium',
+    title: 'Osmium',
+    mode: 'stack',
+    slides: [
+      { id: 'main', component: 'FlagshipSheet', props: { project: 'osmium', visual: 'left' } },
+      { id: 'readme', component: 'ReadmeSlide', props: { project: 'osmium' } },
+    ],
+  },
+  {
+    id: 'clay',
+    title: 'Clay',
+    mode: 'stack',
+    slides: [
+      { id: 'main', component: 'FlagshipSheet', props: { project: 'clay', visual: 'left' } },
+      { id: 'readme', component: 'ReadmeSlide', props: { project: 'clay' } },
+    ],
+  },
+  {
+    id: 'forkcast',
+    title: 'Forkcast',
+    mode: 'stack',
+    slides: [
+      { id: 'main', component: 'FlagshipSheet', props: { project: 'forkcast', visual: 'right' } },
+      { id: 'readme', component: 'ReadmeSlide', props: { project: 'forkcast' } },
+    ],
+  },
+  {
+    id: 'backbone',
+    title: 'Backbone',
+    mode: 'stack',
+    slides: [
+      { id: 'main', component: 'FlagshipSheet', props: { project: 'backbone', visual: 'right' } },
+      { id: 'readme', component: 'ReadmeSlide', props: { project: 'backbone' } },
+    ],
+  },
+  {
+    id: 'helix',
+    title: 'Helix',
+    mode: 'stack',
+    slides: [
+      { id: 'main', component: 'FlagshipSheet', props: { project: 'helix', visual: 'left' } },
+      { id: 'readme', component: 'ReadmeSlide', props: { project: 'helix' } },
+    ],
+  },
+  {
+    id: 'projects',
+    title: 'Projects',
+    mode: 'stack',
+    slides: [
+      { id: 'main', component: 'ProjectListSlide', props: { tier: 'featured' } },
+      { id: 'more', component: 'ProjectListSlide', props: { tier: 'more' } },
+    ],
+  },
+  { id: 'posts', title: 'Posts', mode: 'feed', component: 'PostFeedSheet' },
+  { id: 'timeline', title: 'Timeline', mode: 'single', component: 'TimelineSheet' },
+  { id: 'skills', title: 'Skills', mode: 'single', component: 'SkillsSheet' },
+  { id: 'contact', title: 'Contact', mode: 'single', component: 'ContactSheet' },
+]

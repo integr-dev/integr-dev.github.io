@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://integr.is-a.dev/sitemap.xml

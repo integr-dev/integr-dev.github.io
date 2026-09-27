@@ -1,0 +1,397 @@
+<script setup lang="ts">
+import { theme } from '~/themes/active'
+import { sheetComponents } from '~/sheets'
+import SearchBar from './SearchBar.vue'
+import { useDeckNav } from './useDeckNav'
+import { useBuild } from './useBuild'
+import type { SheetDef } from './types'
+
+const nav = useDeckNav()
+const route = useRoute()
+const { profile } = await useSiteContent()
+const searchOpen = useState('search-open', () => false)
+const highlight = useState<{ anchor: string, nonce: number } | null>('deck-highlight', () => null)
+const narrow = ref(false)
+// true for the first frames after load: a deep link jumps straight to its sheet, no slide from the intro
+const instant = ref(true)
+const feeds = ref<Record<string, HTMLElement>>({})
+
+// The server never sees the hash, so it renders the first sheet. The client hydrates that
+// same state and only then jumps to the hash, which keeps hydration consistent.
+if (import.meta.server) nav.applyHash('')
+watch(() => route.hash, h => nav.applyHash(h))
+
+const build = useBuild(nav, narrow)
+watch(nav.unlocked, () => build.refresh())
+
+const titles = nav.sheets.map(s => s.title)
+const ids = nav.sheets.map(s => s.id)
+
+function componentFor(name?: string) {
+  return name ? sheetComponents[name] : undefined
+}
+
+function slideIndex(sheet: SheetDef) {
+  return sheet.id === nav.sheet.value.id ? nav.y.value : 0
+}
+
+// ---------- input ----------
+
+/** The element that scrolls on the current position: the posts feed, or a [data-scroll] area in a slide. */
+function feedEl(): HTMLElement | undefined {
+  const sheet = nav.sheet.value
+  if (sheet.mode === 'feed') return feeds.value[sheet.id]
+  if (sheet.mode === 'stack') {
+    return document.getElementById(`slide-${sheet.id}-${nav.slideId.value}`)?.querySelector<HTMLElement>('[data-scroll]') ?? undefined
+  }
+  return undefined
+}
+
+/** Is there a page below the current one? Drives the down arrow. */
+const hasBelow = computed(() => nav.sheet.value.mode === 'stack' && nav.y.value < nav.yTotal.value - 1)
+
+function canScroll(el: HTMLElement | undefined, dy: number) {
+  if (!el) return false
+  if (dy > 0) return el.scrollTop + el.clientHeight < el.scrollHeight - 1
+  return el.scrollTop > 0
+}
+
+function down() {
+  if (nav.sheet.value.mode === 'stack') return nav.nextSlide() || nav.nextSheet()
+  return nav.nextSheet()
+}
+
+function up() {
+  if (nav.sheet.value.mode === 'stack') return nav.prevSlide() || nav.prevSheet()
+  return nav.prevSheet()
+}
+
+function isTyping(e: Event) {
+  const t = e.target as HTMLElement | null
+  return !!t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)
+}
+
+function onKey(e: KeyboardEvent) {
+  // Space, Enter or Escape while a sheet is being drawn: show it at once
+  if (build.building.value && !isTyping(e) && !searchOpen.value && [' ', 'Enter', 'Escape'].includes(e.key)) {
+    e.preventDefault()
+    build.skip()
+    return
+  }
+  const openSearch = (e.key === '/' && !isTyping(e))
+    || (e.key.toLowerCase() === 'k' && (e.metaKey || e.ctrlKey))
+    || (e.code === 'Space' && e.altKey)
+  if (openSearch) {
+    e.preventDefault()
+    searchOpen.value = true
+    return
+  }
+  if (searchOpen.value || isTyping(e) || narrow.value || e.metaKey || e.ctrlKey || e.altKey) return
+
+  const feed = feedEl()
+  switch (e.key) {
+    case 'ArrowRight':
+    case 'PageDown':
+      e.preventDefault(); nav.nextSheet(); break
+    case 'ArrowLeft':
+    case 'PageUp':
+      e.preventDefault(); nav.prevSheet(); break
+    case 'ArrowDown':
+      e.preventDefault()
+      if (feed && canScroll(feed, 1)) feed.scrollBy({ top: 120, behavior: 'smooth' })
+      else down()
+      break
+    case 'ArrowUp':
+      e.preventDefault()
+      if (feed && canScroll(feed, -1)) feed.scrollBy({ top: -120, behavior: 'smooth' })
+      else up()
+      break
+    case 'Home':
+      e.preventDefault()
+      if (feed) feed.scrollTo({ top: 0 })
+      else nav.go(0)
+      break
+    case 'End':
+      e.preventDefault()
+      if (feed) feed.scrollTo({ top: feed.scrollHeight })
+      else nav.go(nav.sheets.length - 1)
+      break
+  }
+}
+
+// Wheel and trackpad: one gesture moves one step. Momentum after a step is swallowed
+// until the wheel goes quiet, so a single swipe never skips sheets.
+let locked = false
+let lastMove = 0
+let lastWheel = 0
+let acc = 0
+
+function onWheel(e: WheelEvent) {
+  if (narrow.value || searchOpen.value) return
+  const now = performance.now()
+  const gap = now - lastWheel
+  lastWheel = now
+  const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
+  const d = horizontal ? e.deltaX : e.deltaY
+
+  e.preventDefault()
+
+  const scroller = feedEl()
+  if (!horizontal && canScroll(scroller, d)) {
+    // Scroll the feed or readme ourselves, wherever the pointer is. The browser would only scroll
+    // it with the pointer on top of it and let the event through to page navigation otherwise.
+    const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? scroller!.clientHeight : 1
+    scroller!.scrollTop += d * unit
+    acc = 0
+    // momentum that reaches the end must not carry on into the next page
+    locked = true
+    lastMove = now
+    return
+  }
+
+  if (locked) {
+    if (now - lastMove > 650 && gap > 140) locked = false
+    else return
+  }
+  if (gap > 200) acc = 0
+  acc += d
+  if (Math.abs(acc) < 30) return
+
+  const forward = acc > 0
+  acc = 0
+  const moved = horizontal
+    ? (forward ? nav.nextSheet() : nav.prevSheet())
+    : (forward ? down() : up())
+  if (moved) {
+    locked = true
+    lastMove = now
+  }
+}
+
+let touchStart: { x: number, y: number } | null = null
+
+function onTouchStart(e: TouchEvent) {
+  const t = e.touches[0]
+  touchStart = t ? { x: t.clientX, y: t.clientY } : null
+}
+
+function onTouchEnd(e: TouchEvent) {
+  if (!touchStart || narrow.value || searchOpen.value) return
+  const t = e.changedTouches[0]
+  if (!t) return
+  const dx = t.clientX - touchStart.x
+  const dy = t.clientY - touchStart.y
+  touchStart = null
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < 50) return
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (dx < 0) nav.nextSheet()
+    else nav.prevSheet()
+  }
+  else if (!canScroll(feedEl(), -dy)) {
+    if (dy < 0) down()
+    else up()
+  }
+}
+
+let mq: MediaQueryList | undefined
+const onMq = () => (narrow.value = !!mq?.matches)
+
+onMounted(() => {
+  mq = window.matchMedia('(max-width: 767px)')
+  onMq()
+  nav.applyHash(route.hash)
+  requestAnimationFrame(() => requestAnimationFrame(() => (instant.value = false)))
+  // the first sheet is drawn once the viewport frame has been traced
+  nextTick(() => build.start(route.hash ? 400 : 900))
+  mq.addEventListener('change', onMq)
+  window.addEventListener('keydown', onKey)
+  window.addEventListener('wheel', onWheel, { passive: false })
+  window.addEventListener('touchstart', onTouchStart, { passive: true })
+  window.addEventListener('touchend', onTouchEnd, { passive: true })
+})
+
+onBeforeUnmount(() => {
+  build.stop()
+  mq?.removeEventListener('change', onMq)
+  window.removeEventListener('keydown', onKey)
+  window.removeEventListener('wheel', onWheel)
+  window.removeEventListener('touchstart', onTouchStart)
+  window.removeEventListener('touchend', onTouchEnd)
+})
+
+/** A click on the page (not on a link or control) while a sheet is being drawn skips the drawing. */
+function onPointerDown(e: PointerEvent) {
+  if (!build.building.value || narrow.value) return
+  if ((e.target as HTMLElement).closest('a, button, input, [data-scroll]')) return
+  build.skip()
+}
+
+function setFeed(id: string, el: unknown) {
+  if (el instanceof HTMLElement) feeds.value[id] = el
+}
+</script>
+
+<template>
+  <div class="deck" :class="{ 'is-instant': instant }" :style="{ '--x': nav.x.value }">
+    <component :is="theme.ThemeBackground" :x="narrow ? 0 : nav.x.value" :total="nav.sheets.length" />
+    <component :is="theme.ViewportFrame" />
+
+    <main class="deck-viewport" @pointerdown="onPointerDown">
+      <div class="deck-track">
+        <section
+          v-for="(sheet, i) in nav.sheets"
+          :id="`sheet-${sheet.id}`"
+          :key="sheet.id"
+          class="deck-sheet"
+          :class="[`mode-${sheet.mode}`, { 'is-active': i === nav.x.value }]"
+          :aria-label="sheet.title"
+          :inert="!narrow && i !== nav.x.value ? true : undefined"
+        >
+          <div v-if="sheet.mode === 'single'" class="deck-slide" data-build-root>
+            <component :is="componentFor(sheet.component)" v-bind="sheet.props" />
+          </div>
+
+          <div v-else-if="sheet.mode === 'stack'" class="deck-stack" :style="{ '--y': slideIndex(sheet) }">
+            <div
+              v-for="slide in nav.slidesOf(sheet)"
+              :id="`slide-${sheet.id}-${slide.id}`"
+              :key="slide.id"
+              class="deck-slide"
+              data-build-root
+            >
+              <component :is="componentFor(slide.component)" v-bind="slide.props" :sheet-id="sheet.id" />
+            </div>
+          </div>
+
+          <div v-else :ref="el => setFeed(sheet.id, el)" class="deck-feed" data-build-root>
+            <component :is="componentFor(sheet.component)" v-bind="sheet.props" />
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <component
+      :is="theme.DeckIndicator"
+      :x="nav.x.value"
+      :total="nav.sheets.length"
+      :y="nav.y.value"
+      :y-total="nav.yTotal.value"
+      :titles="titles"
+      :ids="ids"
+      :visited="nav.visited.value"
+      :handle="profile?.handle ?? ''"
+      :progress="build.progress.value"
+      @go="(i: number) => nav.go(i)"
+      @prev="nav.prevSheet()"
+      @next="nav.nextSheet()"
+      @up="nav.prevSlide()"
+      @down="nav.nextSlide()"
+      @search="searchOpen = true"
+    />
+
+    <button v-if="nav.x.value === 0 && !narrow" type="button" class="deck-next" aria-label="Next sheet: projects" @click="nav.nextSheet()">
+      <FontAwesomeIcon icon="arrow-right" />
+    </button>
+
+    <button v-if="hasBelow && !narrow" type="button" class="deck-down" aria-label="Next page below" @click="down()">
+      <FontAwesomeIcon icon="arrow-down" />
+    </button>
+
+    <SearchBar />
+    <ClientOnly>
+      <component :is="theme.BuildOverlay" v-if="theme.BuildOverlay" />
+      <component :is="theme.Ornament" v-if="theme.Ornament" :target="highlight" />
+    </ClientOnly>
+  </div>
+</template>
+
+<style scoped>
+.deck {
+  position: relative;
+  height: 100dvh;
+  overflow: clip;
+}
+
+.deck-viewport {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  overflow: clip;
+}
+
+.deck-track {
+  display: flex;
+  height: 100%;
+  transform: translateX(calc(var(--x) * -100vw));
+  transition: transform var(--transition-duration) var(--transition-ease);
+}
+
+.deck-sheet {
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100%;
+  overflow: clip;
+}
+
+.deck-stack {
+  height: 100%;
+  transform: translateY(calc(var(--y) * -100%));
+  transition: transform var(--transition-duration) var(--transition-ease);
+}
+
+.deck-slide {
+  height: 100%;
+  overflow: clip;
+}
+
+.deck-feed {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck-track,
+  .deck-stack {
+    transition: none;
+  }
+}
+
+.is-instant .deck-track,
+.is-instant .deck-stack,
+.is-instant :deep(.paper) {
+  transition: none;
+}
+
+@media (max-width: 767px) {
+  .deck {
+    height: auto;
+    overflow: visible;
+  }
+
+  .deck-viewport {
+    overflow: visible;
+  }
+
+  .deck-track {
+    display: block;
+    transform: none;
+  }
+
+  .deck-sheet {
+    width: auto;
+    height: auto;
+    overflow: visible;
+  }
+
+  .deck-stack {
+    transform: none;
+  }
+
+  .deck-slide,
+  .deck-feed {
+    height: auto;
+    overflow: visible;
+  }
+}
+</style>
