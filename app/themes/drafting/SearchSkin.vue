@@ -56,7 +56,7 @@ function onKey(e: KeyboardEvent) {
 
 <template>
   <div v-if="shown" class="search-scrim" :class="{ 'is-closing': !open }" @mousedown.self="emit('close')">
-    <div id="search-panel" ref="panel" class="search" role="dialog" aria-label="Search" data-build-root>
+    <div id="search-panel" ref="panel" class="search" role="dialog" aria-label="Search" data-build-root data-nopen>
       <!-- outline first -->
       <span class="edge edge-t" data-build="line" />
       <span class="edge edge-r" data-build="vline" />
@@ -140,15 +140,11 @@ function onKey(e: KeyboardEvent) {
   to { background: transparent; }
 }
 
-/* the panel is paper with a grid, its outline is drawn by the four edges */
+/* the panel is plain paper, its outline is drawn by the four edges */
 .search {
   position: relative;
   width: min(640px, calc(100vw - 32px));
-  background-color: var(--bg);
-  background-image:
-    linear-gradient(to right, var(--bg-grid) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--bg-grid) 1px, transparent 1px);
-  background-size: 16px 16px;
+  background: var(--bg);
   padding: 14px 18px 10px;
 }
 

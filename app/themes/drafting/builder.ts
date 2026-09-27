@@ -345,7 +345,10 @@ export const builder: Builder = {
     }
     const lists = steps.filter(s => s.kind === 'chips').map(s => s.el)
     root.classList.add('is-building')
-    pen.building = true
+    // a root marked data-nopen (the search panel) is drawn without the pen, and the resting
+    // butterfly stays where it is
+    const penless = root.hasAttribute('data-nopen')
+    if (!penless) pen.building = true
     const leads = steps.map(s => (s.kind === 'item' ? 70 : s.kind === 'chips' ? 0 : lead(s.el, s.kind)))
     const total = leads.reduce((a, b) => a + b, 0)
     const budget = TOTAL_LEAD / speed
@@ -388,8 +391,10 @@ export const builder: Builder = {
         list.classList.remove('b-run')
         list.classList.add('b-done')
       }
-      pen.visible = false
-      pen.guide = null
+      if (!penless) {
+        pen.visible = false
+        pen.guide = null
+      }
       await Promise.all(running)
       root.classList.add('is-built')
       onProgress(1)
@@ -398,9 +403,11 @@ export const builder: Builder = {
       if (!(e instanceof Aborted)) throw e
     }
     finally {
-      pen.visible = false
-      pen.guide = null
-      pen.building = false
+      if (!penless) {
+        pen.visible = false
+        pen.guide = null
+        pen.building = false
+      }
       root.classList.remove('is-building')
     }
   },
