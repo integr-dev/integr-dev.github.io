@@ -1,156 +1,110 @@
 <script setup lang="ts">
-// Osmium in one picture: the dashboard sends a job to a host, the host runs four agents, and each
-// agent builds its own strip of the schematic, bottom layer first, snaking back and forth.
-// The builder triggers the fill every time the sheet is drawn.
+// Osmium's architecture: the dashboard talks to the backend, the backend keeps state in Postgres,
+// hosts dial out to the backend and drive the agents, and only the hosts hold Minecraft
+// credentials and proxies. Facts from the repository README and package manifests.
 
-const COLS = 16
-const ROWS = 10
-const CELL = 28
-const GX = 56 // grid origin
-const GY = 262
-const STRIP = COLS / 4
-const PER_STRIP = STRIP * ROWS
-const TOTAL = PER_STRIP * 4
-const SPEED = [2600, 3300, 2200, 3700] // ms per strip, agents are not equally fast
-
-const stripX = (s: number) => GX + s * STRIP * CELL
-const agentX = (s: number) => stripX(s) + (STRIP * CELL) / 2
-
-// fill order inside one strip: bottom row first, alternating direction
-const order = Array.from({ length: PER_STRIP }, (_, i) => {
-  const row = ROWS - 1 - Math.floor(i / STRIP)
-  const k = i % STRIP
-  const col = Math.floor(i / STRIP) % 2 === 0 ? k : STRIP - 1 - k
-  return { row, col }
-})
-
-const filled = ref([0, 0, 0, 0])
-const t = ref(0)
-const history = ref<number[]>([])
-let raf = 0
-
-const left = computed(() => TOTAL - filled.value.reduce((a, b) => a + b, 0))
-const cells = computed(() =>
-  filled.value.flatMap((n, s) => order.slice(0, n).map(c => ({ x: stripX(s) + c.col * CELL, y: GY + c.row * CELL, s }))),
-)
-const working = (s: number) => filled.value[s]! < PER_STRIP && filled.value[s]! > 0
-// a packet travelling down each busy wire
-const packetY = (s: number) => 196 + ((t.value / 380 + s * 0.27) % 1) * (GY - 196 - 6)
-const spark = computed(() => history.value.map((v, i) => `${378 + i * 6},${92 - v * 26}`).join(' '))
-const tower = computed(() => 1 - left.value / TOTAL)
-
-const root = ref<SVGGElement>()
-
-function stop() {
-  cancelAnimationFrame(raf)
-}
-
-function reset() {
-  stop()
-  filled.value = [0, 0, 0, 0]
-  history.value = []
-  t.value = 0
-}
-
-function finish() {
-  stop()
-  filled.value = [PER_STRIP, PER_STRIP, PER_STRIP, PER_STRIP]
-}
-
-function run(e: Event) {
-  const { resolve, signal, speed = 1 } = (e as CustomEvent<{ resolve: () => void, signal: AbortSignal, speed?: number }>).detail
-  reset()
-  const start = performance.now()
-  let last = 0
-  let lastSample = start
-  const step = (now: number) => {
-    if (signal.aborted) return
-    t.value = now - start
-    filled.value = SPEED.map(ms => Math.min(PER_STRIP, Math.floor((t.value * speed / ms) * PER_STRIP)))
-    if (now - lastSample > 120) {
-      const placed = TOTAL - left.value
-      history.value = [...history.value.slice(-26), Math.min(1, (placed - last) / 7)]
-      last = placed
-      lastSample = now
-    }
-    if (left.value > 0) raf = requestAnimationFrame(step)
-    else resolve()
-  }
-  raf = requestAnimationFrame(step)
-}
-
-onMounted(() => {
-  root.value?.addEventListener('build-run', run)
-  root.value?.addEventListener('build-reset', reset)
-  root.value?.addEventListener('build-finish', finish)
-})
-onBeforeUnmount(stop)
+const backendModules = [
+  ['auth', 'accounts', 'hosts', 'agents'],
+  ['schematics', 'build plans', 'jobs'],
+]
+const dashboardParts = ['build pipeline', 'world viewer', 'map', 'storage']
+const hosts = [{ x: 8 }, { x: 216 }]
 </script>
 
 <template>
   <figure class="diagram">
-    <svg viewBox="0 0 560 560" role="img" aria-label="Osmium: the dashboard sends a job to a host, the host runs four agents, and each agent builds one strip of the schematic, layer by layer.">
-
+    <svg viewBox="0 0 560 612" role="img" aria-label="Osmium architecture: a Vue dashboard talks to a Spring Boot backend over REST; the backend stores state in PostgreSQL; hosts written in TypeScript dial out to the backend over a WebSocket, hold the Minecraft credentials and proxies, and drive mineflayer agents on Minecraft servers.">
       <!-- dashboard -->
-      <rect class="box strong" x="8" y="8" width="544" height="104" pathLength="1" data-build="path" data-pen />
-      <text class="label" x="22" y="30" data-build="fade">dashboard</text>
-
-      <rect class="panel" x="22" y="42" width="160" height="56" pathLength="1" data-build="path" />
-      <text class="note" x="30" y="56" data-build="fade">map</text>
-      <g class="map" data-build="fade">
-        <rect v-for="s in 4" :key="s" :x="72 + (s - 1) * 26" :y="92 - 30 * (filled[s - 1]! / PER_STRIP)" width="20" :height="30 * (filled[s - 1]! / PER_STRIP)" />
-      </g>
-
-      <rect class="panel" x="194" y="42" width="160" height="56" pathLength="1" data-build="path" />
-      <text class="note" x="202" y="56" data-build="fade">3D view</text>
-      <g class="iso" data-build="fade" :transform="`translate(290 ${80 - tower * 22})`">
-        <path d="M0,-8 L20,0 L0,8 L-20,0 Z" />
-        <path :d="`M-20,0 V${tower * 22} L0,${8 + tower * 22} L20,${tower * 22} V0`" />
-        <path :d="`M0,8 V${8 + tower * 22}`" />
-      </g>
-
-      <rect class="panel" x="366" y="42" width="172" height="56" pathLength="1" data-build="path" />
-      <text class="note" x="374" y="56" data-build="fade">blocks left</text>
-      <text class="counter" x="530" y="60" text-anchor="end" data-build="fade">{{ left }}</text>
-      <polyline class="spark" :points="spark" data-build="fade" />
-
-      <!-- job -->
-      <path class="wire" d="M280,112 V150" pathLength="1" data-build="path" />
-      <text class="note" x="288" y="136" data-build="fade">job</text>
-
-      <!-- host and agents -->
-      <rect class="box" x="8" y="150" width="544" height="46" pathLength="1" data-build="path" data-pen />
-      <text class="label" x="22" y="178" data-build="fade">host</text>
-      <g v-for="s in 4" :key="`a${s}`">
-        <!-- working state on a wrapper: the builder owns the rect's classes -->
-        <g :class="{ 'is-working': working(s - 1) }">
-          <rect
-            class="agent"
-            :x="agentX(s - 1) - 10"
-            y="163"
-            width="20"
-            height="20"
-            pathLength="1"
-            data-build="path"
-          />
+      <rect class="box strong" x="8" y="8" width="400" height="92" pathLength="1" data-build="path" data-pen />
+      <text class="label" x="22" y="32" data-build="fade">dashboard</text>
+      <text class="note" x="394" y="32" text-anchor="end" data-build="fade">665 tests</text>
+      <text class="note" x="22" y="52" data-build="fade">Vue 3 · Pinia · vue-router · OpenAPI client</text>
+      <g data-build="fade">
+        <g v-for="(part, i) in dashboardParts" :key="part">
+          <rect class="cell" :x="22 + i * 94" y="64" width="88" height="24" />
+          <text class="cell-text" :x="66 + i * 94" y="80" text-anchor="middle">{{ part }}</text>
         </g>
-        <text class="note" :x="agentX(s - 1) + 16" y="177" data-build="fade">a{{ s }}</text>
-        <path class="wire" :d="`M${agentX(s - 1)},183 V${GY}`" pathLength="1" data-build="path" />
-        <rect v-if="working(s - 1)" class="packet" :x="agentX(s - 1) - 3" :y="packetY(s - 1)" width="6" height="6" />
       </g>
 
-      <!-- schematic -->
-      <text class="label" :x="GX + 68" :y="GY - 8" data-build="fade">schematic</text>
-      <rect class="box strong" :x="GX" :y="GY" :width="COLS * CELL" :height="ROWS * CELL" pathLength="1" data-build="path" data-pen />
-      <path
-        class="split"
-        :d="[1, 2, 3].map(s => `M${stripX(s)},${GY} V${GY + ROWS * CELL}`).join(' ')"
-        data-build="fade"
-      />
-      <g ref="root" data-build="custom" data-pen>
-        <rect v-for="(c, i) in cells" :key="i" class="cell" :class="`s${c.s}`" :x="c.x + 2" :y="c.y + 2" :width="CELL - 4" :height="CELL - 4" />
+      <!-- dashboard ↔ backend -->
+      <path class="wire" d="M208,100 V150" pathLength="1" data-build="path" />
+      <path class="head" d="M203,144 L208,150 L213,144" pathLength="1" data-build="path" />
+      <path class="flow down" d="M208,100 V150" data-build="fade" />
+      <text class="note" x="218" y="129" data-build="fade">REST (OpenAPI) + JWT, live updates</text>
+
+      <!-- backend -->
+      <rect class="box strong" x="8" y="150" width="400" height="150" pathLength="1" data-build="path" data-pen />
+      <text class="label" x="22" y="174" data-build="fade">backend</text>
+      <text class="note" x="394" y="174" text-anchor="end" data-build="fade">695 tests</text>
+      <text class="note" x="22" y="194" data-build="fade">Spring Boot 4.1 · Kotlin · Spring Security · JPA</text>
+      <g data-build="fade">
+        <template v-for="(row, r) in backendModules" :key="r">
+          <g v-for="(m, i) in row" :key="m">
+            <rect class="cell" :x="22 + i * 94" :y="208 + r * 36" width="88" height="26" />
+            <text class="cell-text" :x="66 + i * 94" :y="225 + r * 36" text-anchor="middle">{{ m }}</text>
+          </g>
+        </template>
+        <rect class="cell socket" x="304" y="244" width="88" height="26" />
+        <text class="cell-text" x="348" y="261" text-anchor="middle">WebSocket</text>
       </g>
-      <text v-for="s in 4" :key="`seg${s}`" class="note" :x="stripX(s - 1) + 6" :y="GY + ROWS * CELL + 16" data-build="fade">segment {{ s }}</text>
+
+      <!-- database -->
+      <path class="wire" d="M408,225 H440" pathLength="1" data-build="path" />
+      <g class="db" data-build="fade" data-pen>
+        <path d="M440,190 v70 a56,12 0 0 0 112,0 v-70" />
+        <ellipse cx="496" cy="190" rx="56" ry="12" />
+        <text class="label" x="496" y="228" text-anchor="middle">PostgreSQL</text>
+        <text class="note" x="496" y="246" text-anchor="middle">Flyway migrations</text>
+      </g>
+
+      <!-- hosts dial out to the backend -->
+      <g v-for="(h, i) in hosts" :key="`up${i}`">
+        <path class="wire" :d="`M${h.x + 96},360 V300`" pathLength="1" data-build="path" />
+        <path class="head" :d="`M${h.x + 91},306 L${h.x + 96},300 L${h.x + 101},306`" pathLength="1" data-build="path" />
+        <path class="flow up" :d="`M${h.x + 96},360 V300`" data-build="fade" />
+      </g>
+      <text class="note" x="112" y="336" data-build="fade">WebSocket, hosts dial out</text>
+
+      <!-- hosts -->
+      <g v-for="(h, i) in hosts" :key="`host${i}`">
+        <rect class="box" :x="h.x" y="360" width="192" height="140" pathLength="1" data-build="path" data-pen />
+        <g data-build="fade">
+          <text class="label" :x="h.x + 14" y="384">host</text>
+          <text class="note" :x="h.x + 14" y="402">TypeScript · mineflayer</text>
+          <g v-for="a in 3" :key="a">
+            <rect class="agent" :x="h.x + 14 + (a - 1) * 30" y="414" width="22" height="22" />
+          </g>
+          <text class="note" :x="h.x + 110" y="430">agents</text>
+          <!-- lock: credentials stay here -->
+          <path class="lock" :d="`M${h.x + 18},456 v-5 a5,5 0 0 1 10,0 v5`" />
+          <rect class="lock-body" :x="h.x + 15" y="456" width="16" height="12" />
+          <text class="note key" :x="h.x + 38" y="466">credentials, proxies</text>
+          <text class="note" :x="h.x + 14" y="488">prismarine-auth · SOCKS</text>
+        </g>
+      </g>
+      <text class="note" x="408" y="514" text-anchor="end" data-build="fade">host program: 702 tests</text>
+
+      <!-- host CLI -->
+      <path class="wire dashed" d="M408,420 H428" pathLength="1" data-build="path" />
+      <rect class="box" x="428" y="394" width="124" height="52" pathLength="1" data-build="path" data-pen />
+      <g data-build="fade">
+        <text class="label" x="440" y="416">osmium-link</text>
+        <text class="note" x="440" y="434">accounts, proxies</text>
+      </g>
+
+      <!-- hosts → Minecraft -->
+      <g v-for="(h, i) in hosts" :key="`down${i}`">
+        <path class="wire" :d="`M${h.x + 96},500 V548`" pathLength="1" data-build="path" />
+        <path class="head" :d="`M${h.x + 91},542 L${h.x + 96},548 L${h.x + 101},542`" pathLength="1" data-build="path" />
+        <path class="flow down" :d="`M${h.x + 96},500 V548`" data-build="fade" />
+      </g>
+      <text class="note" x="112" y="528" data-build="fade">Minecraft protocol, through the proxies</text>
+
+      <rect class="box strong" x="8" y="548" width="400" height="56" pathLength="1" data-build="path" data-pen />
+      <g data-build="fade">
+        <text class="label" x="22" y="572">Minecraft servers</text>
+        <text class="note" x="22" y="592">where the agents walk, fly and build</text>
+      </g>
     </svg>
   </figure>
 </template>
@@ -163,10 +117,7 @@ onBeforeUnmount(stop)
   font-family: var(--font-mono);
 }
 
-.box,
-.panel,
-.agent,
-.split {
+.box {
   fill: none;
   stroke: var(--line-strong);
   stroke-width: 1.2;
@@ -176,62 +127,77 @@ onBeforeUnmount(stop)
   stroke: var(--line);
 }
 
-.panel {
+.cell {
+  fill: color-mix(in srgb, var(--line) 10%, transparent);
   stroke: var(--bg-grid-strong);
 }
 
-.split {
-  stroke-dasharray: 4 4;
+.cell.socket {
+  stroke: var(--accent);
+}
+
+.cell-text {
+  font-size: 10px;
+  fill: var(--fg);
+}
+
+.wire,
+.head {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.wire.dashed {
+  stroke-dasharray: 3 3;
+}
+
+/* traffic moving along the wires once the sheet is drawn */
+.flow {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 3 12;
+  opacity: 0;
+}
+
+.is-built .flow {
+  opacity: 0.9;
+  animation: flow 1.2s linear infinite;
+}
+
+.is-built .flow.up {
+  animation-direction: reverse;
+}
+
+@keyframes flow {
+  to { stroke-dashoffset: -30; }
+}
+
+.db path,
+.db ellipse {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.2;
 }
 
 .agent {
-  stroke: var(--line);
+  fill: color-mix(in srgb, var(--secondary) 40%, transparent);
+  stroke: var(--secondary);
 }
 
-.is-working .agent {
-  fill: var(--accent);
-  stroke: var(--accent);
-}
-
-.wire {
+.lock {
   fill: none;
-  stroke: var(--line);
-  stroke-width: 1;
+  stroke: var(--accent);
+  stroke-width: 1.5;
 }
 
-.packet {
+.lock-body {
   fill: var(--accent);
 }
 
-.cell {
-  fill: var(--secondary);
-}
-
-.cell.s1,
-.cell.s3 {
-  fill: var(--line);
-}
-
-.map rect {
-  fill: var(--line);
-}
-
-.iso path {
-  fill: none;
-  stroke: var(--line);
-  stroke-width: 1;
-}
-
-.spark {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 1;
-}
-
-.counter {
-  font-size: 18px;
-  fill: var(--fg);
-  font-weight: 700;
+.key {
+  fill: var(--accent);
 }
 
 .label {
@@ -242,5 +208,11 @@ onBeforeUnmount(stop)
 .note {
   font-size: 10px;
   fill: var(--fg-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-built .flow {
+    animation: none;
+  }
 }
 </style>

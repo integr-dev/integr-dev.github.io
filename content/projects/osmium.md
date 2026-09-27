@@ -11,10 +11,10 @@ stats:
     - { label: commits, value: "352" }
     - { label: of them mine, value: "341" }
     - { label: first commit, value: "Aug 2026" }
-stack: [TypeScript, Kotlin, Vue, WebSockets, Three.js]
+stack: [TypeScript, Kotlin, Vue, Spring Boot, PostgreSQL, mineflayer]
 links:
   - { label: Source, href: https://github.com/integr-dev/osmium }
 visuals:
-  - { kind: diagram, label: Diagram, diagram: osmium }
+  - { kind: diagram, label: Architecture, diagram: osmium }
 ---
 Agents sign in through a host process, walk or fly to their segment and place it course by course. The dashboard shows live 3D views, a shared map the agents chart as they move, inventories, telemetry and an audit log. Configuration is stored centrally and replayed to hosts on every reconnect.

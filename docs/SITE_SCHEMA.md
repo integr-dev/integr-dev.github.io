@@ -342,7 +342,7 @@ Sheets mark elements, and the order in the DOM is the drawing order. The pen vis
 | `fade` | fades in |
 | `custom` | the element animates itself: it receives `build-run` (`detail: { resolve, signal }`), `build-reset` and `build-finish` |
 
-While drawing, the drafting theme moves the pen (a butterfly with an `x / y` readout) to the bottom-right corner of each element. The element the pen is on gets construction marks: extension lines through its corners, a dashed box with corner ticks, its width and height, and a baseline under headings. Only the current element is marked; the marks vanish the moment the pen moves on. For text the box fits the text itself, not its container. The marks sit behind the sheets, so they never cross text. Custom elements on this site are the Osmium schematic (agents fill their strips live) and the intro avatar (drawn block by block).
+While drawing, the drafting theme moves the pen (a butterfly with an `x / y` readout) to the bottom-right corner of each element. The element the pen is on gets construction marks: extension lines through its corners, a dashed box with corner ticks, its width and height, and a baseline under headings. Only the current element is marked; the marks vanish the moment the pen moves on. For text the box fits the text itself, not its container. The marks sit behind the sheets, so they never cross text. The custom element on this site is the intro avatar (drawn block by block). The Osmium architecture diagram shows traffic flowing along its wires once the sheet is drawn (`.is-built`).
 
 Search hits get the class `.is-search-hit` for a few seconds, and the theme styles it.
 
@@ -393,7 +393,7 @@ A technical-drawing look in moss green. Colors come from the Osmium theme and th
 
 **Animation.**
 - First load: paper and grid fade in, a pen dot traces the frame, then the intro is drawn.
-- Every visit to a sheet: the sheet slides in empty and is drawn live (see Build system above), about 2 seconds. Custom animations like the Osmium schematic may keep going a little longer.
+- Every visit to a sheet: the sheet slides in empty and is drawn live (see Build system above), about 2 seconds. Images drawn block by block may keep going a little longer.
 - Horizontal move: the paper slides and the grid scrolls continuously, like one long roll. The frame stays fixed. Vertical moves work the same way on y.
 - Search pick: navigate there, then a highlighter wash on the match that fades.
 - `prefers-reduced-motion`: everything is shown already drawn, with no transitions.
