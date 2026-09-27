@@ -34,8 +34,9 @@ export default defineNuxtConfig({
       // per page titles, descriptions and social cards: app/composables/useSiteSeo.ts
       titleTemplate: '%s',
       meta: [
-        { name: 'theme-color', content: '#111812', media: '(prefers-color-scheme: dark)' },
-        { name: 'theme-color', content: '#F2EDDB', media: '(prefers-color-scheme: light)' },
+        // one plain theme-color: Discord colours the embed rail with it and ignores
+        // media-scoped (light/dark) variants
+        { name: 'theme-color', content: '#80B55F' },
         { name: 'robots', content: 'index, follow, max-image-preview:large' },
         { name: 'google-site-verification', content: 'UqFlowAj-jpBkiNTFlVk9K2h6Udzl4luSeYDUNVqZuI' },
       ],
