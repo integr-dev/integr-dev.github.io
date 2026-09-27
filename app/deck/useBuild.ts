@@ -29,7 +29,25 @@ export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean
     return document.getElementById(`sheet-${sheetId}`)?.querySelector<HTMLElement>('[data-build-root]') ?? null
   }
 
-  async function run(root: HTMLElement, delay: number, track: boolean) {
+  /**
+   * Resolves once the deck has stopped moving: every running slide transition on the track and
+   * the vertical stacks has finished (or was cancelled by a newer move). Capped as a fallback.
+   */
+  async function motionSettled() {
+    await nextTick()
+    // let the new transform reach the style engine so its transition exists
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+    const moving = [...document.querySelectorAll<HTMLElement>('.deck-track, .deck-stack')]
+      .flatMap(el => el.getAnimations())
+    if (!moving.length) return
+    await Promise.race([
+      Promise.allSettled(moving.map(a => a.finished)),
+      new Promise(r => setTimeout(r, transitionMs() * 2 + 200)),
+    ])
+  }
+
+  /** delay: ms to wait, or 'motion' to wait until the slide to this sheet has finished. */
+  async function run(root: HTMLElement, delay: number | 'motion', track: boolean) {
     controllers.get(root)?.abort()
     const ctrl = new AbortController()
     controllers.set(root, ctrl)
@@ -41,7 +59,8 @@ export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean
       window.dispatchEvent(new CustomEvent('deck:built', { detail: root }))
       return
     }
-    await new Promise(r => setTimeout(r, delay))
+    if (delay === 'motion') await motionSettled()
+    else await new Promise(r => setTimeout(r, delay))
     if (ctrl.signal.aborted) return
     const speed = seen.has(root) ? REVISIT : FIRST_VISIT
     seen.add(root)
@@ -75,7 +94,7 @@ export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean
     }, after)
   }
 
-  function onPositionChange(delay: number) {
+  function onPositionChange(delay: number | 'motion') {
     if (narrow.value || !started) return
     const sheet = nav.sheet.value
     const root = rootFor(sheet.id, sheet.mode === 'stack' ? nav.slideId.value : null)
@@ -117,7 +136,8 @@ export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean
     }
   }
 
-  watch([nav.x, nav.slideId], () => onPositionChange(transitionMs()))
+  // start drawing only once the slide to the new sheet has come to rest
+  watch([nav.x, nav.slideId], () => onPositionChange('motion'))
   watch(narrow, () => nextTick(setMode))
 
   return {
