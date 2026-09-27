@@ -7,6 +7,17 @@ import type { useDeckNav } from './useDeckNav'
  * after it has left, so every visit draws it again. The deck layout uses the navigation
  * position; the narrow layout uses scroll visibility.
  */
+/**
+ * A CSS time value in ms. Handles both units: the production CSS minifier rewrites `700ms` as
+ * `.7s`, and a plain parseFloat would read that as 0.7 ms.
+ */
+function cssTime(value: string) {
+  const v = value.trim()
+  const n = parseFloat(v)
+  if (Number.isNaN(n)) return 0
+  return v.endsWith('ms') ? n : v.endsWith('s') ? n * 1000 : n
+}
+
 export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean>) {
   const progress = useState('build-progress', () => 0)
   const building = ref(false)
@@ -22,7 +33,7 @@ export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean
 
   const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const transitionMs = () =>
-    parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--transition-duration')) || 700
+    cssTime(getComputedStyle(document.documentElement).getPropertyValue('--transition-duration')) || 700
 
   function rootFor(sheetId: string, slideId: string | null) {
     if (slideId) return document.getElementById(`slide-${sheetId}-${slideId}`)
