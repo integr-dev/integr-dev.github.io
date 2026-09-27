@@ -40,12 +40,14 @@ a:hover {
     visibility: hidden;
   }
 
+  /* a thin line caret, the same as the one in the intro name. It takes no room in the line
+     (the negative margin cancels its width), so the text never moves while it is typed */
   .caret {
     display: inline-block;
-    width: 0.5em;
-    height: 0.9em;
-    margin-left: 0.04em;
-    vertical-align: -0.08em;
+    width: max(2px, 0.08em);
+    height: 0.82em;
+    margin-right: calc(-1 * max(2px, 0.08em));
+    vertical-align: -0.04em;
     background: var(--accent);
   }
 

@@ -115,7 +115,7 @@ To add a flagship: add `content/projects/<slug>.md` with `tier: flagship`, then 
 ## 5. Sheets: content
 
 ### 00 · Intro
-- Flip text "integr ↔ erik"
+- Big name types itself, then keeps deleting and retyping "integr" ↔ "erik" (a `data-build="custom"` part, so the builder starts it)
 - Drawn shortcut buttons: Projects, Posts, Contact
 - Live age (computed from the birth year and month, which are not shown), "Austria"
 - One-line pitch (Kotlin-first developer, open source)
