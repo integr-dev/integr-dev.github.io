@@ -55,6 +55,25 @@ function show(i: number) {
   }, 220)
 }
 
+/**
+ * Where screenshot i of n sits in the stack, in % of the stack box. Up to three zig-zag down
+ * like Forkcast's; more go into two columns, row by row, so each one stays mostly visible.
+ * The first is on top.
+ */
+function stackStyle(i: number, n: number) {
+  const side = i % 2 ? 'right' : 'left'
+  if (n <= 3) {
+    const h = 55
+    const top = n > 1 ? (i / (n - 1)) * (100 - h) : 0
+    return { top: `${top}%`, [side]: `${Math.floor(i / 2) * 10}%`, maxWidth: '74%', maxHeight: `${h}%`, zIndex: n - i }
+  }
+  const rows = Math.ceil(n / 2)
+  const row = Math.floor(i / 2)
+  const h = Math.min(55, 125 / rows)
+  const top = rows > 1 ? (row / (rows - 1)) * (100 - h) : 0
+  return { top: `${top}%`, [side]: `${row * 3}%`, maxWidth: '56%', maxHeight: `${h}%`, zIndex: n - i }
+}
+
 const asOf = computed(() => {
   const d = p.value?.stats?.asOf
   return d ? formatDate(d, false) : ''
@@ -125,7 +144,7 @@ const asOf = computed(() => {
               <BarChart :chart="v.chart" />
             </template>
 
-            <div v-else-if="v.kind === 'images'" class="f-images" :class="`count-${v.images?.length ?? 0}`">
+            <div v-else-if="v.kind === 'images'" class="f-images" :class="[`count-${v.images?.length ?? 0}`, { 'is-stack': (v.images?.length ?? 0) > 1 }]">
               <img
                 v-for="(img, n) in v.images"
                 :key="img.src"
@@ -133,7 +152,7 @@ const asOf = computed(() => {
                 :alt="img.alt"
                 :width="img.width"
                 :height="img.height"
-                :style="img.width && img.height ? { '--ar': img.width / img.height } : undefined"
+                :style="{ ...((v.images?.length ?? 0) > 1 ? stackStyle(n, v.images!.length) : {}), ...(img.width && img.height ? { '--ar': img.width / img.height } : {}) }"
                 class="f-shot"
                 data-build="image"
                 @click="lightbox.open(v.images!, n)"
@@ -355,20 +374,19 @@ const asOf = computed(() => {
   object-fit: contain;
 }
 
-/* Forkcast: screenshots overlap */
-.project-forkcast .f-images {
+/* several screenshots overlap like a loose stack (placed by stackStyle). The stack lives in a
+   box of fixed proportions, so it never grows taller than the sheet: the carousel's hidden pages
+   still take up room. */
+.f-images.is-stack {
   position: relative;
   aspect-ratio: 1.25;
 }
 
-.project-forkcast .f-images img {
+.f-images.is-stack img {
   position: absolute;
-  width: 74%;
+  width: auto;
+  height: auto;
 }
-
-.project-forkcast .f-images img:nth-of-type(1) { top: 0; left: 0; z-index: 3; }
-.project-forkcast .f-images img:nth-of-type(2) { top: 22%; right: 0; z-index: 2; }
-.project-forkcast .f-images img:nth-of-type(3) { top: 46%; left: 10%; z-index: 1; }
 
 /* Backbone: the code is the picture */
 .f-code :deep(pre) {
@@ -420,26 +438,8 @@ const asOf = computed(() => {
   color: var(--line);
 }
 
-/* justified rows: every image grows in proportion to its aspect ratio, so each row fills the
-   width at one common height and nothing is left hanging at the top */
-.project-helix .f-images {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
 .project-helix .f-images img {
-  flex: var(--ar, 1.5) 1 calc(var(--ar, 1.5) * 120px);
-  width: 0;
-  min-width: 0;
-  height: auto;
   image-rendering: pixelated;
-}
-
-/* keeps the last row from stretching */
-.project-helix .f-images::after {
-  content: '';
-  flex: 999 1 0;
 }
 
 .f-shot {
@@ -463,17 +463,6 @@ const asOf = computed(() => {
   .visual-right {
     grid-template-columns: 1fr;
     grid-template-areas: 'main' 'visual';
-  }
-
-  .project-forkcast .f-images {
-    aspect-ratio: auto;
-    display: grid;
-    gap: 12px;
-  }
-
-  .project-forkcast .f-images img {
-    position: static;
-    width: 100%;
   }
 }
 </style>
