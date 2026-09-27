@@ -4,6 +4,7 @@ import ClayDiagram from './diagrams/ClayDiagram.vue'
 import BarChart from './diagrams/BarChart.vue'
 import type { Component } from 'vue'
 import { theme } from '~/themes/active'
+import { useLightbox } from '~/composables/useLightbox'
 
 const lightbox = useLightbox()
 

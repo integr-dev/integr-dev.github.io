@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { theme } from '~/themes/active'
+import { useLightbox } from '~/composables/useLightbox'
+import ImageLightbox from '~/components/ImageLightbox.vue'
 import { sheetComponents } from '~/sheets'
 import SearchBar from './SearchBar.vue'
 import { useDeckNav } from './useDeckNav'

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useLightbox } from '~/composables/useLightbox'
+
 // Large preview of a screenshot. ←/→ move through the screenshots of the same project,
 // Esc or a click outside the image closes it.
 const lightbox = useLightbox()
