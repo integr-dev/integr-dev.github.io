@@ -24,7 +24,7 @@ const emit = defineEmits<{
 const current = computed(() => props.titles[props.x] ?? '')
 
 // Expanded while hovered or keyboard-focused. A click on a marker collapses it until the pointer
-// leaves. Changes are announced on window so the butterfly can react.
+// leaves or moves on. Changes are announced on window so the butterfly can react.
 const hovered = ref(false)
 const focused = ref(false)
 const suppressed = ref(false)
@@ -43,8 +43,20 @@ function onFocusIn(e: FocusEvent) {
   focused.value = (e.target as HTMLElement).matches(':focus-visible')
 }
 
+// where the marker was clicked: moving away from it opens the block again
+let clickAt: { x: number, y: number } | null = null
+
+function onMove(e: MouseEvent) {
+  if (!suppressed.value || !clickAt) return
+  if (Math.hypot(e.clientX - clickAt.x, e.clientY - clickAt.y) > 8) {
+    suppressed.value = false
+    clickAt = null
+  }
+}
+
 function pick(i: number, e: MouseEvent) {
   emit('go', i)
+  clickAt = { x: e.clientX, y: e.clientY }
   suppressed.value = true
   focused.value = false
   ;(e.currentTarget as HTMLElement).blur()
@@ -58,6 +70,7 @@ function pick(i: number, e: MouseEvent) {
     aria-label="Sheets"
     @mouseenter="hovered = true"
     @mouseleave="leave"
+    @mousemove="onMove"
     @focusin="onFocusIn"
     @focusout="focused = false"
   >
