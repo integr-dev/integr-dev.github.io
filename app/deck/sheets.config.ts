@@ -4,6 +4,7 @@ export const sheets: SheetDef[] = [
   { id: 'intro', title: 'Intro', mode: 'single', component: 'IntroSheet' },
   {
     id: 'osmium',
+    path: '/projects/osmium',
     title: 'Osmium',
     mode: 'stack',
     slides: [
@@ -13,6 +14,7 @@ export const sheets: SheetDef[] = [
   },
   {
     id: 'clay',
+    path: '/projects/clay',
     title: 'Clay',
     mode: 'stack',
     slides: [
@@ -22,6 +24,7 @@ export const sheets: SheetDef[] = [
   },
   {
     id: 'forkcast',
+    path: '/projects/forkcast',
     title: 'Forkcast',
     mode: 'stack',
     slides: [
@@ -31,6 +34,7 @@ export const sheets: SheetDef[] = [
   },
   {
     id: 'backbone',
+    path: '/projects/backbone',
     title: 'Backbone',
     mode: 'stack',
     slides: [
@@ -40,6 +44,7 @@ export const sheets: SheetDef[] = [
   },
   {
     id: 'helix',
+    path: '/projects/helix',
     title: 'Helix',
     mode: 'stack',
     slides: [

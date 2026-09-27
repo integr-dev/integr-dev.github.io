@@ -1,4 +1,5 @@
 import { sheets } from './sheets.config'
+import { parsePath, pathFor } from './paths'
 import type { Direction, SheetDef, SlideDef } from './types'
 
 const slideKey = (sheetId: string, slideId: string) => `${sheetId}/${slideId}`
@@ -38,17 +39,19 @@ export function useDeckNav() {
 
   const yTotal = computed(() => Math.max(1, slidesOf(sheet.value).length))
 
-  function hashFor(sheetIndex: number, slide?: string | null) {
+  function pathOf(sheetIndex: number, slide?: string | null) {
     const s = sheets[sheetIndex]!
-    const first = allSlides(s)[0]?.id
-    return slide && slide !== first ? `#/${s.id}/${slide}` : `#/${s.id}`
+    return pathFor(s, slide, allSlides(s)[0]?.id ?? null)
   }
+
+  /** The URL of the current position. */
+  const path = computed(() => pathOf(x.value, slideId.value))
 
   function go(sheetIndex: number, slide?: string | null) {
     if (sheetIndex < 0 || sheetIndex >= sheets.length) return false
-    const hash = sheetIndex === 0 && !slide ? '' : hashFor(sheetIndex, slide)
-    if (hash === route.hash || (hash === '' && !route.hash)) return false
-    router.push({ path: '/', hash })
+    const target = pathOf(sheetIndex, slide)
+    if (target === route.path) return false
+    router.push(target)
     return true
   }
 
@@ -84,24 +87,28 @@ export function useDeckNav() {
     return visited.value.includes(sheetId)
   }
 
-  // The hash is the single source of truth for the position.
-  function applyHash(hash: string) {
-    const [, sheetId, slide] = hash.replace(/^#/, '').split('/')
-    let i = sheets.findIndex(s => s.id === sheetId)
-    if (i < 0) i = 0
-    const target = sheets[i]!
-    let nextSlideId: string | null = null
+  // The path is the single source of truth for the position. Returns false for a path that
+  // is no position in the deck (the page then shows the 404).
+  function applyPath(p: string) {
+    const parsed = parsePath(p)
+    if (!parsed) return false
+    const target = sheets[parsed.index]!
     const targetSlides = allSlides(target)
+    let nextSlideId: string | null = null
     if (target.mode === 'stack' && targetSlides.length) {
-      const match = targetSlides.find(s => s.id === slide)
-      if (match) unlock(target.id, match.id)
-      nextSlideId = match?.id ?? targetSlides[0]!.id
+      const match = parsed.slide ? targetSlides.find(s => s.id === parsed.slide) : targetSlides[0]
+      if (!match) return false
+      unlock(target.id, match.id)
+      nextSlideId = match.id
     }
+    else if (parsed.slide) return false
+    const i = parsed.index
     if (i !== x.value) direction.value = i > x.value ? 'right' : 'left'
     else if (nextSlideId !== slideId.value) direction.value = y.value < targetSlides.findIndex(s => s.id === nextSlideId) ? 'down' : 'up'
     x.value = i
     slideId.value = nextSlideId
     if (!visited.value.includes(target.id)) visited.value = [...visited.value, target.id]
+    return true
   }
 
   return {
@@ -111,6 +118,7 @@ export function useDeckNav() {
     yTotal,
     sheet,
     slideId,
+    path,
     direction,
     unlocked,
     visited,
@@ -124,6 +132,6 @@ export function useDeckNav() {
     nextSlide,
     prevSlide,
     unlock,
-    applyHash,
+    applyPath,
   }
 }

@@ -6,18 +6,13 @@ import { sheetComponents } from '~/sheets'
 import SearchBar from './SearchBar.vue'
 import { useDeckNav } from './useDeckNav'
 import { useBuild } from './useBuild'
-import type { SheetDef, SlideDef } from './types'
+import { pathFromHash } from './paths'
+import type { SheetDef } from './types'
 
 const nav = useDeckNav()
 const route = useRoute()
-const { profile, posts } = await useSiteContent()
-
-// one page below the post list per post (sheets.config: slidesFrom 'posts')
-useState<SlideDef[]>('deck-post-slides').value = posts.value.map(p => ({
-  id: p.path.split('/').pop()!,
-  component: 'PostSlide',
-  props: { path: p.path },
-}))
+const router = useRouter()
+const { profile } = await useSiteContent()
 const searchOpen = useState('search-open', () => false)
 const lightbox = useLightbox()
 const highlight = useState<{ anchor: string, nonce: number } | null>('deck-highlight', () => null)
@@ -26,10 +21,9 @@ const narrow = ref(false)
 const instant = ref(true)
 const feeds = ref<Record<string, HTMLElement>>({})
 
-// The server never sees the hash, so it renders the first sheet. The client hydrates that
-// same state and only then jumps to the hash, which keeps hydration consistent.
-if (import.meta.server) nav.applyHash('')
-watch(() => route.hash, h => nav.applyHash(h))
+// The page (pages/[...slug].vue) applies the path it was opened on before the deck renders, so
+// the server already renders the right sheet. Moving around changes the path.
+watch(() => route.path, p => nav.applyPath(p))
 
 const build = useBuild(nav, narrow)
 watch(nav.unlocked, () => build.refresh())
@@ -59,6 +53,8 @@ function feedEl(): HTMLElement | undefined {
 
 /** Is there a page below the current one? Drives the down arrow. */
 const hasBelow = computed(() => nav.sheet.value.mode === 'stack' && nav.y.value < nav.yTotal.value - 1)
+// any page below another one (readme, More, a post) has a way back up as well
+const hasAbove = computed(() => nav.sheet.value.mode === 'stack' && nav.y.value > 0)
 
 function canScroll(el: HTMLElement | undefined, dy: number) {
   if (!el) return false
@@ -210,10 +206,18 @@ const onMq = () => (narrow.value = !!mq?.matches)
 onMounted(() => {
   mq = window.matchMedia('(max-width: 767px)')
   onMq()
-  nav.applyHash(route.hash)
+  // links from before the deck had paths (/#/helix/readme) still land in the right place
+  const legacy = route.hash.startsWith('#/') ? pathFromHash(route.hash) : null
+  if (legacy) router.replace(legacy)
+  // on phones the deck is one long scroll: start at the position the link points to
+  else if (narrow.value && route.path !== '/') {
+    const sheet = nav.sheet.value
+    const id = sheet.mode === 'stack' && nav.y.value > 0 ? `slide-${sheet.id}-${nav.slideId.value}` : `sheet-${sheet.id}`
+    document.getElementById(id)?.scrollIntoView()
+  }
   requestAnimationFrame(() => requestAnimationFrame(() => (instant.value = false)))
   // the first sheet is drawn once the viewport frame has been traced
-  nextTick(() => build.start(route.hash ? 400 : 900))
+  nextTick(() => build.start(route.path !== '/' || legacy ? 400 : 900))
   mq.addEventListener('change', onMq)
   window.addEventListener('keydown', onKey)
   window.addEventListener('wheel', onWheel, { passive: false })
@@ -302,6 +306,10 @@ function setFeed(id: string, el: unknown) {
 
     <button v-if="nav.x.value === 0 && !narrow" type="button" class="deck-next" aria-label="Next sheet: projects" @click="nav.nextSheet()">
       <FontAwesomeIcon icon="arrow-right" />
+    </button>
+
+    <button v-if="hasAbove && !narrow" type="button" class="deck-up" aria-label="Page above" @click="up()">
+      <FontAwesomeIcon icon="arrow-up" />
     </button>
 
     <button v-if="hasBelow && !narrow" type="button" class="deck-down" aria-label="Next page below" @click="down()">

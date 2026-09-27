@@ -21,7 +21,10 @@ function open(path: string) {
 <template>
   <div class="sheet feed">
     <header class="p-head">
-      <h2 data-build="type">Posts</h2>
+      <div class="p-title">
+        <h2 data-build="type">Posts</h2>
+        <a class="p-rss mono" href="/feed.xml" data-build="fade" data-nopen><FontAwesomeIcon icon="rss" /> RSS</a>
+      </div>
       <span class="rule" data-build="line" />
     </header>
 
@@ -31,13 +34,13 @@ function open(path: string) {
         <time class="mono muted" :datetime="p.date" data-build="type">{{ formatDate(p.date) }}</time>
         <div class="p-main">
           <h3 data-build="type">
-            <a :href="`/#/posts/${slug(p.path)}`" @click.prevent="open(p.path)">{{ p.title }}</a>
+            <a :href="`/posts/${slug(p.path)}`" @click.prevent="open(p.path)">{{ p.title }}</a>
           </h3>
           <p class="p-summary" data-build="print">{{ p.summary }}</p>
           <p v-if="p.tags?.length" class="p-tags mono muted" data-build="fade">{{ p.tags.join(', ') }}</p>
         </div>
         <p class="p-read mono" data-build="fade" data-nopen>
-          <a :href="`/#/posts/${slug(p.path)}`" @click.prevent="open(p.path)">
+          <a :href="`/posts/${slug(p.path)}`" @click.prevent="open(p.path)">
             read <FontAwesomeIcon icon="arrow-down" />
           </a>
         </p>
@@ -51,6 +54,18 @@ function open(path: string) {
 .feed {
   display: flex;
   flex-direction: column;
+}
+
+.p-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.p-rss {
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 .p-head h2 {

@@ -65,8 +65,9 @@ The site is a 2D grid of sheets:
 ### URL / deep links
 - Opening the site on a deep link jumps straight to that sheet with no slide from the intro; only later moves animate.
 
-- `/#/<sheetId>` or `/#/<sheetId>/<slideId>`, e.g. `/#/projects/more`, `/#/posts`
-- One post has its own route: `/posts/<slug>` (vertical reading view with a back link to `/#/posts`)
+- Every position is a real path (`app/deck/paths.ts`): `/` (intro), `/projects/<flagship>` and `/projects/<flagship>/readme`, `/projects` and `/projects/more`, `/posts` and `/posts/<slug>`, `/timeline`, `/skills`, `/contact`. A sheet's path defaults to `/<id>`; flagships set `path` in `sheets.config.ts`.
+- One page, `app/pages/[...slug].vue`, serves them all with a fixed page key, so moving changes the path without reloading or remounting; the server renders the right position directly. Unknown paths throw the 404.
+- Old hash links (`/#/helix/readme`) are redirected to their path on load.
 - Browser back/forward walks the history of visited sheets.
 
 ### Small screens (< 768px)
@@ -142,7 +143,7 @@ Draft "why" lines (to edit):
 - **Helix:** "Shipped to real users: 1,400+ downloads on Modrinth."
 
 ### Flagship README pages
-Every flagship sheet is a `stack`: the flagship page, and below it a README page (`ReadmeSlide`) with long form text from `content/readmes/<slug>.md`. The text scrolls inside the page; the wheel and ↑/↓ scroll it first and move to the next page once the end is reached. Any element marked `data-scroll` inside a stack slide behaves this way.
+Every flagship sheet is a `stack`: the flagship page, and below it a README page (`ReadmeSlide`) with long form text from `content/readmes/<slug>.md`, headed by the project's `built` note (the problem and how it's solved). The text scrolls inside the page; the wheel and ↑/↓ scroll it first and move to the next page once the end is reached. Any element marked `data-scroll` inside a stack slide behaves this way.
 
 Whenever there is a page below the current one, an animated down arrow sits at the bottom centre (`.deck-down`, styled by the theme).
 
@@ -153,7 +154,7 @@ Whenever there is a page below the current one, an animated down arrow sits at t
 
 ### 07 · Posts (`stack`)
 - Top page: the list, newest first, full width (date · title and summary · read). It scrolls inside the page when long.
-- Below it one page per post (`PostSlide`), generated from the content (`slidesFrom: 'posts'` in `sheets.config.ts`, filled in by `Deck.vue`). Clicking a post, the down arrow or `/#/posts/<slug>` opens it; the text scrolls inside the page.
+- Below it one page per post (`PostSlide`), generated from the content (`slidesFrom: 'posts'` in `sheets.config.ts`, filled in by `Deck.vue`). Clicking a post, the down arrow or `/posts/<slug>` opens it; the text scrolls inside the page.
 - Each post also keeps its own URL `/posts/<slug>` (for search engines and sharing; the page links back to its deck page).
 - Empty state: "Nothing here yet."
 
@@ -217,6 +218,9 @@ tagline: A quality of life mod for Fabric.
 tier: flagship            # flagship | featured | more
 order: 5                  # order inside its tier
 why: Shipped to real players and still downloaded.       # flagships only
+built:                                                    # optional: one problem and how it's solved
+  problem: "…"
+  solution: "…"
 badge: { value: "1,400+", label: downloads on Modrinth, href: https://modrinth.com/mod/helix }
 stats:                    # static numbers, always with a date and a source
   asOf: "2026-09-27"
@@ -426,8 +430,9 @@ A technical-drawing look in moss green. Colors come from the Osmium theme and th
 nuxt.config.ts              # modules, fonts, code highlighting, head
 content.config.ts           # content schemas (§6)
 app/
-  app.vue                   # loads the active theme, sets html.js
-  router.options.ts         # hash changes never scroll
+  app.vue                   # loads the active theme
+  error.vue                 # 404 page, drawn with usePageBuild
+  router.options.ts         # path changes never scroll
   assets/base.css           # structure-only CSS (reset, .sheet box)
   plugins/fontawesome.ts    # Font Awesome 6 icons used on the site
   composables/useSiteContent.ts   # all content queries, ageFrom, formatDate
@@ -435,7 +440,8 @@ app/
     sheets.config.ts        # §4
     types.ts
     Deck.vue                # track, input (keys, wheel, touch), narrow layout
-    useDeckNav.ts           # position state, hash sync, unlock
+    useDeckNav.ts           # position state, path sync, unlock
+    paths.ts                # deck position <-> URL path
     useBuild.ts             # when sheets are drawn and reset
     useSearch.ts            # index + matching
     SearchBar.vue           # search logic, renders the theme SearchSkin
@@ -445,8 +451,7 @@ app/
     TimelineSheet.vue  SkillsSheet.vue  ContactSheet.vue
     diagrams/               # OsmiumDiagram.vue, ClayDiagram.vue
   pages/
-    index.vue               # mounts <Deck>
-    posts/[slug].vue        # post reading view
+    [...slug].vue           # every path: applies the position, per path SEO, mounts <Deck>
   themes/
     types.ts  active.ts
     drafting/               # §8
@@ -461,9 +466,12 @@ Commands: `npm run dev`, `npm run generate` (static output in `.output/public`).
 ## 9a. Search engines and sharing
 
 - `app/composables/useSiteSeo.ts`: per page title, description (under ~155 characters), canonical URL, Open Graph and Twitter cards, and schema.org data. Home: `ProfilePage` + `Person` (full name, alternate names, role, country, `sameAs` both GitHub accounts and Modrinth, `knowsAbout` from skills.yml) + `WebSite`. Posts: `BlogPosting` with the same `Person` as author.
-- Everything is prerendered, so all sheets are in the HTML of `/`. Hash positions (`#/helix`) are not separate URLs for search engines; posts are.
-- `server/routes/sitemap.xml.ts` (prerendered): home plus every published post. `public/robots.txt` points to it.
-- `public/og.png`: 1200×630 preview image for links shared on Google, LinkedIn and chats.
+- Every deck position is prerendered as its own page (`/posts.html`, `/projects/osmium/readme.html`, no subfolder index, so no trailing slash redirects) with its own title, description, canonical URL, preview image and schema.org node (`useDeckSeo` in `useSiteSeo.ts`): `ProfilePage` on `/`, `SoftwareSourceCode` on flagships, `BlogPosting` on posts.
+- `server/routes/sitemap.xml.ts` (prerendered): every deck position and every published post. `public/robots.txt` points to it.
+- `server/routes/feed.xml.ts` (prerendered): RSS 2.0 feed of the posts, linked in `<head>` and from the Posts sheet.
+- `public/og.png`: 1200×630 preview image for the home page. Posts and flagships have their own in `public/og/posts/` and `public/og/projects/`, generated by `python3 scripts/og.py` (Pillow, PyYAML; fonts in `scripts/fonts/`). Rerun it after adding or editing a post or project and commit the images.
+- The 404 page is drawn like the deck: `usePageBuild()` draws each `[data-build-root]` section once as it scrolls into view, one at a time with the same pen; a click or Space/Enter/Esc finishes it.
+- `app/error.vue`: the 404 page in the same style; GitHub Pages serves the generated `404.html` for unknown URLs.
 - `profile.yml`: `fullName`, `role` and `lookingFor` feed the intro and the metadata.
 
 ## 10. Open items

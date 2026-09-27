@@ -38,9 +38,6 @@ const slug = props.path.split('/').pop()!
       <div class="ps-body" data-build="print">
         <ContentRenderer :value="post" />
       </div>
-      <p class="ps-permalink mono" data-build="fade" data-nopen>
-        <NuxtLink :to="path">Permalink <FontAwesomeIcon icon="arrow-up-right-from-square" /></NuxtLink>
-      </p>
     </div>
   </article>
 </template>
@@ -101,6 +98,7 @@ const slug = props.path.split('/').pop()!
 
 .ps-body {
   max-width: 76ch;
+  padding-bottom: 48px;
   font-size: 1.05rem;
   line-height: 1.7;
 }
@@ -132,10 +130,6 @@ const slug = props.path.split('/').pop()!
   font-size: 0.88rem;
 }
 
-.ps-permalink {
-  font-size: 0.8rem;
-  padding-bottom: 48px;
-}
 
 @media (max-width: 767px) {
   .ps-scroll {

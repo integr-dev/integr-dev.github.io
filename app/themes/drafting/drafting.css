@@ -203,9 +203,10 @@ pre code .line {
   }
 }
 
-/* ---------- down arrow: there is a page below ---------- */
+/* ---------- down / up arrows: there is a page below / above ---------- */
 
-.deck-down {
+.deck-down,
+.deck-up {
   position: fixed;
   left: 50%;
   bottom: calc(var(--frame-gap) + 14px);
@@ -222,8 +223,20 @@ pre code .line {
   animation: nudge 1.6s var(--transition-ease) infinite;
 }
 
-.deck-down:hover {
+.deck-up {
+  bottom: auto;
+  top: calc(var(--frame-gap) + 14px);
+  animation-name: nudge-up;
+}
+
+.deck-down:hover,
+.deck-up:hover {
   border-color: var(--accent);
+}
+
+@keyframes nudge-up {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
 @keyframes nudge {
@@ -232,7 +245,8 @@ pre code .line {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .deck-down {
+  .deck-down,
+  .deck-up {
     animation: none;
   }
 }

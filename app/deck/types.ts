@@ -11,6 +11,8 @@ export interface SlideDef {
 export interface SheetDef {
   id: string
   title: string
+  /** URL of the sheet; defaults to `/<id>` (the first sheet is `/`). Stack slides add `/<slide id>`. */
+  path?: string
   mode: SheetMode
   /** For 'single' and 'feed'. */
   component?: string
