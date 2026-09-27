@@ -49,17 +49,17 @@ onBeforeUnmount(() => {
         <figcaption class="mono muted" data-build="type">184 × 184 px, 1:1</figcaption>
       </figure>
 
-      <h1 class="intro-name">
-        <span class="sr-only">{{ profile.fullName }}, also known as {{ profile.handle }}</span>
-        <span class="flip" :class="{ 'is-flipped': flipped }" aria-hidden="true">
+      <!-- decorative handle; the page heading (h1) is the full name line below, visible text for search engines -->
+      <div class="intro-name" aria-hidden="true">
+        <span class="flip" :class="{ 'is-flipped': flipped }">
           <span class="flip-a" data-build="type">{{ profile.handle }}</span>
           <span class="flip-b">{{ profile.name.toLowerCase() }}</span>
         </span>
-      </h1>
+      </div>
       <span class="rule" data-build="line" />
-      <p class="intro-facts" data-build="type">
+      <h1 class="intro-facts" data-build="type">
         {{ profile.fullName }}, {{ age }}, {{ profile.role.toLowerCase() }} from {{ profile.location }}.
-      </p>
+      </h1>
       <p class="intro-pitch" data-build="print">
         {{ profile.pitch }}
       </p>
@@ -104,6 +104,9 @@ figcaption {
 }
 
 .intro-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
   font-size: clamp(3.5rem, 10vw, 8.5rem);
   line-height: 1;
   height: 1.2em;
@@ -134,6 +137,11 @@ figcaption {
 }
 
 .intro-facts {
+  /* an h1 for search engines, styled like body text */
+  font-family: var(--font-body);
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.55;
   font-size: 1.35rem;
   color: var(--fg);
 }

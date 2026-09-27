@@ -9,10 +9,14 @@ export function personSchema(profile: Profile, skills: string[] = []) {
     '@type': 'Person',
     '@id': `${SITE_URL}/#person`,
     'name': profile.fullName,
-    'alternateName': [profile.handle, profile.name],
+    'givenName': profile.name,
+    'familyName': profile.fullName.replace(profile.name, '').trim(),
+    // every name people might search for: the handle and both GitHub usernames
+    'alternateName': [...new Set([profile.handle, ...profile.links.filter(l => l.icon === 'github').map(l => l.label)])],
     'url': SITE_URL,
     'image': `${SITE_URL}/logo.png`,
     'jobTitle': profile.role,
+    'description': profile.pitch,
     'email': `mailto:${profile.email}`,
     'address': { '@type': 'PostalAddress', 'addressCountry': 'AT' },
     'sameAs': profile.links.map(l => l.href),
@@ -34,12 +38,13 @@ type SiteContent = Awaited<ReturnType<typeof useSiteContent>>
  * Synchronous on purpose: the page awaits the content in its own setup and passes it in, because
  * Nuxt composables called after an await inside another async function lose their context.
  */
-export function useHomeSeo({ profile, skills, byTier }: SiteContent) {
+export function useHomeSeo({ profile, skills, projects }: SiteContent) {
   const p = profile.value
   if (!p) return
 
-  const flagships = byTier('flagship').map(x => x.title)
-  const title = `${p.fullName} (${p.handle}) · ${p.role} from ${p.location}`
+  const flagships = projects.value.filter(x => x.tier === 'flagship').map(x => x.title)
+  // name first and nothing before it: the page should answer a search for the name
+  const title = `${p.fullName} · ${p.role} from ${p.location}`
   // kept under ~155 characters, the length Google shows in results
   const description = `${p.fullName} (${p.handle}), ${p.role.toLowerCase()} from ${p.location}, mostly Kotlin. Projects: ${flagships.join(', ')}.`
 
@@ -55,7 +60,7 @@ export function useHomeSeo({ profile, skills, byTier }: SiteContent) {
     ogImageWidth: 1200,
     ogImageHeight: 630,
     ogImageAlt: `${p.fullName}, ${p.role} from ${p.location}`,
-    ogSiteName: `${p.fullName} · ${p.handle}`,
+    ogSiteName: p.fullName,
     ogLocale: 'en_US',
     profileFirstName: p.name,
     profileLastName: p.fullName.replace(p.name, '').trim(),
@@ -66,8 +71,27 @@ export function useHomeSeo({ profile, skills, byTier }: SiteContent) {
     twitterImage: OG_IMAGE,
   })
 
+  // the projects on the page, as code their author wrote
+  const code = projects.value
+    .filter(x => x.tier !== 'more')
+    .map((x) => {
+      const repo = x.links.find(l => l.href.startsWith('https://github.com/'))?.href
+      return {
+        '@type': 'SoftwareSourceCode',
+        'name': x.title,
+        'description': x.tagline,
+        ...(repo ? { codeRepository: repo } : {}),
+        'programmingLanguage': x.stack.filter(t => ['Kotlin', 'Java', 'TypeScript', 'Python', 'Go', 'Swift'].includes(t)),
+        'author': { '@id': `${SITE_URL}/#person` },
+      }
+    })
+
   useHead({
-    link: [{ rel: 'canonical', href: `${SITE_URL}/` }],
+    link: [
+      { rel: 'canonical', href: `${SITE_URL}/` },
+      // rel=me ties the profiles elsewhere to this page as the same person
+      ...p.links.map(l => ({ rel: 'me' as const, href: l.href })),
+    ],
     script: [
       jsonLd({
         '@graph': [
@@ -78,6 +102,8 @@ export function useHomeSeo({ profile, skills, byTier }: SiteContent) {
             'name': title,
             'description': description,
             'inLanguage': 'en',
+            'dateModified': new Date().toISOString().slice(0, 10),
+            'isPartOf': { '@id': `${SITE_URL}/#website` },
             'mainEntity': { '@id': `${SITE_URL}/#person` },
           },
           personSchema(p, skills.value.flatMap(c => c.items)),
@@ -85,9 +111,11 @@ export function useHomeSeo({ profile, skills, byTier }: SiteContent) {
             '@type': 'WebSite',
             '@id': `${SITE_URL}/#website`,
             'url': SITE_URL,
-            'name': `${p.fullName} · ${p.handle}`,
-            'author': { '@id': `${SITE_URL}/#person` },
+            'name': p.fullName,
+            'alternateName': p.handle,
+            'publisher': { '@id': `${SITE_URL}/#person` },
           },
+          ...code,
         ],
       }),
     ],
