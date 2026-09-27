@@ -2,7 +2,7 @@
 
 Run after adding or editing a post or project, then commit the results:
     python3 scripts/og.py
-Writes public/og/posts/<slug>.png and public/og/projects/<slug>.png in the look of public/og.png.
+Writes public/og.png (home), public/og/posts/<slug>.png and public/og/projects/<slug>.png.
 Needs Pillow and PyYAML. Fonts: Schibsted Grotesk and JetBrains Mono (both SIL OFL) in scripts/fonts.
 """
 import glob
@@ -82,6 +82,33 @@ def avatar(im, d, size, x, y):
         d.line([(cx, cy), (cx, cy + 12 * dy)], fill=LINE, width=1)
 
 
+def footer_line(d, x0, text, mono, y=H - G - 44):
+    """The yellow square and the text beside it, the square centred on the capital height."""
+    top, bottom = d.textbbox((0, y), 'E', font=mono)[1::2]
+    mid = (top + bottom) / 2
+    d.rectangle([x0 - 2, mid - 6, x0 + 10, mid + 6], fill=ACC)
+    d.text((x0 + 22, y), text, font=mono, fill=MUTED)
+
+
+def home(profile, flagships, out):
+    """public/og.png: the card for the home page."""
+    im, d = base()
+    size = 276
+    ax, ay = W - G - 72 - size, (H - size) // 2
+    avatar(im, d, size, ax, ay)
+    x0 = 96
+    d.text((x0, 150), profile['fullName'], font=font('SchibstedGrotesk.ttf', 92, 700), fill=FG)
+    d.line([(x0, 275), (x0 + 500, 275)], fill=LINE, width=2)
+    body = font('SchibstedGrotesk.ttf', 34, 400)
+    d.text((x0, 300), f"{profile['handle']} · {profile['role']} from {profile['location']}", font=body, fill=FG)
+    d.text((x0, 352), 'Kotlin, open source, tools and servers.', font=body, fill=MUTED)
+    mono = font('JetBrainsMono.ttf', 22, 400)
+    d.text((x0, H - G - 70), 'integr.is-a.dev', font=mono, fill=LINE)
+    footer_line(d, x0, '  '.join(flagships), mono)
+    im.save(out, optimize=True)
+    print('wrote', os.path.relpath(out, ROOT))
+
+
 def card(kicker, title, text, footer, out):
     im, d = base()
     x0 = 96
@@ -110,14 +137,18 @@ def card(kicker, title, text, footer, out):
         d.text((x0, y), line, font=body, fill=MUTED)
         y += 44
 
-    d.rectangle([x0 - 2, H - G - 40, x0 + 10, H - G - 28], fill=ACC)
-    d.text((x0 + 22, H - G - 44), footer, font=mono, fill=MUTED)
+    footer_line(d, x0, footer, mono)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     im.save(out, optimize=True)
     print('wrote', os.path.relpath(out, ROOT))
 
 
 def main():
+    profile = yaml.safe_load(open(os.path.join(ROOT, 'content', 'profile.yml'), encoding='utf-8'))
+    projects = [frontmatter(p) for p in glob.glob(os.path.join(ROOT, 'content', 'projects', '*.md'))]
+    flagships = [p['title'] for p in sorted(projects, key=lambda p: p['order']) if p['tier'] == 'flagship']
+    home(profile, flagships, os.path.join(ROOT, 'public', 'og.png'))
+
     for path in sorted(glob.glob(os.path.join(ROOT, 'content', 'posts', '*.md'))):
         fm = frontmatter(path)
         if fm.get('draft'):
