@@ -349,7 +349,7 @@ Sheets mark elements, and the order in the DOM is the drawing order. The pen vis
 | `fade` | fades in |
 | `custom` | the element animates itself: it receives `build-run` (`detail: { resolve, signal }`), `build-reset` and `build-finish` |
 
-While drawing, the drafting theme moves the pen (a butterfly with an `x / y` readout) to the bottom-right corner of each element. The element the pen is on gets construction marks: extension lines through its corners, a dashed box with corner ticks, its width and height, and a baseline under headings. Only the current element is marked; the marks vanish the moment the pen moves on. For text the box fits the text itself, not its container. The marks sit behind the sheets, so they never cross text. The custom element on this site is the intro avatar (drawn block by block). The Osmium architecture diagram shows traffic flowing along its wires once the sheet is drawn (`.is-built`).
+While drawing, the drafting theme moves the pen (a butterfly with an `x / y` readout) to the bottom-right corner of each element. The element the pen is on gets construction marks: extension lines through its corners, a dashed box with corner ticks, its width and height, and a baseline under headings. Only the current element is marked; the marks vanish the moment the pen moves on. For text the box fits the text itself, not its container. The marks sit behind the sheets, so they never cross text. The custom element on this site is the intro avatar (drawn block by block). The architecture diagrams (Osmium, Clay, Forkcast) share one style (`app/sheets/diagrams/diagram.css`: boxes with a label and note, module cells, wires with arrow heads) and show traffic flowing along their wires once the sheet is drawn (`.is-built`).
 
 Search hits get the class `.is-search-hit` for a few seconds, and the theme styles it.
 
@@ -451,7 +451,7 @@ app/
     index.ts                # component registry for sheets.config.ts
     IntroSheet.vue  PixelAvatar.vue  FlagshipSheet.vue  ProjectListSlide.vue  PostFeedSheet.vue
     TimelineSheet.vue  SkillsSheet.vue  ContactSheet.vue
-    diagrams/               # OsmiumDiagram.vue, ClayDiagram.vue
+    diagrams/               # OsmiumDiagram.vue, ClayDiagram.vue, ForkcastDiagram.vue, diagram.css (shared look)
   pages/
     [...slug].vue           # every path: applies the position, per path SEO, mounts <Deck>
   themes/

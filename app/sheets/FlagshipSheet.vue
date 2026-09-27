@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import OsmiumDiagram from './diagrams/OsmiumDiagram.vue'
 import ClayDiagram from './diagrams/ClayDiagram.vue'
+import ForkcastDiagram from './diagrams/ForkcastDiagram.vue'
 import BarChart from './diagrams/BarChart.vue'
 import type { Component } from 'vue'
 import { theme } from '~/themes/active'
@@ -12,14 +13,15 @@ const props = withDefaults(defineProps<{ project: string, visual?: 'left' | 'rig
 const { project: find } = await useSiteContent()
 const p = computed(() => find(props.project))
 
-const diagrams: Record<string, Component> = { osmium: OsmiumDiagram, clay: ClayDiagram }
+const diagrams: Record<string, Component> = { osmium: OsmiumDiagram, clay: ClayDiagram, forkcast: ForkcastDiagram }
+const visuals = computed(() => p.value?.visuals ?? [])
 
 // Several visuals form a carousel. Pages share one spot: the current one fades out, and after a
 // short pause the next one is drawn in its place.
 const active = ref(0)
 const leaving = ref<number | null>(null)
 const panes = ref<HTMLElement[]>([])
-const count = computed(() => p.value?.visuals?.length ?? 0)
+const count = computed(() => visuals.value.length)
 let ctrl: AbortController | undefined
 let fadeTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -69,7 +71,7 @@ const asOf = computed(() => {
       <p v-if="p.why" class="f-why" data-build="print">
         <strong>Why it's here.</strong> {{ p.why }}
       </p>
-      <div v-if="!p.visuals?.some(v => v.kind === 'code')" class="f-body" data-build="print">
+      <div v-if="!visuals.some(v => v.kind === 'code')" class="f-body" data-build="print">
         <ContentRenderer :value="p" />
       </div>
       <p v-if="p.stats" class="f-stats mono" data-build="chips">
@@ -90,7 +92,7 @@ const asOf = computed(() => {
     </div>
 
     <div class="f-visual">
-      <a v-if="p.badge && !p.visuals?.some(v => v.kind === 'chart')" class="f-badge" :href="p.badge.href" target="_blank" rel="noopener">
+      <a v-if="p.badge && !visuals.some(v => v.kind === 'chart')" class="f-badge" :href="p.badge.href" target="_blank" rel="noopener">
         <span class="badge-value" data-build="count">{{ p.badge.value }}</span>
         <span class="badge-dim" data-build="line" />
         <span class="badge-label mono" data-build="type">{{ p.badge.label }}, {{ asOf }}</span>
@@ -99,7 +101,7 @@ const asOf = computed(() => {
       <div class="f-carousel" :aria-roledescription="count > 1 ? 'carousel' : undefined">
         <div class="f-track">
           <div
-            v-for="(v, i) in p.visuals"
+            v-for="(v, i) in visuals"
             :key="i"
             :ref="el => { if (el) panes[i] = el as HTMLElement }"
             class="f-pane"
@@ -146,7 +148,7 @@ const asOf = computed(() => {
           <FontAwesomeIcon icon="arrow-left" />
         </button>
         <button
-          v-for="(v, i) in p.visuals"
+          v-for="(v, i) in visuals"
           :key="i"
           type="button"
           class="f-dot"

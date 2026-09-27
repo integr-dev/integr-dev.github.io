@@ -44,7 +44,7 @@ const hosts = [{ x: 8 }, { x: 216 }]
             <text class="cell-text" :x="66 + i * 94" :y="225 + r * 36" text-anchor="middle">{{ m }}</text>
           </g>
         </template>
-        <rect class="cell socket" x="304" y="244" width="88" height="26" />
+        <rect class="cell accent" x="304" y="244" width="88" height="26" />
         <text class="cell-text" x="348" y="261" text-anchor="middle">WebSocket</text>
       </g>
 
@@ -109,78 +109,9 @@ const hosts = [{ x: 8 }, { x: 216 }]
   </figure>
 </template>
 
+<style scoped src="./diagram.css"></style>
+
 <style scoped>
-.diagram svg {
-  width: 100%;
-  height: auto;
-  max-height: calc(100dvh - 260px);
-  font-family: var(--font-mono);
-}
-
-.box {
-  fill: none;
-  stroke: var(--line-strong);
-  stroke-width: 1.2;
-}
-
-.box.strong {
-  stroke: var(--line);
-}
-
-.cell {
-  fill: color-mix(in srgb, var(--line) 10%, transparent);
-  stroke: var(--bg-grid-strong);
-}
-
-.cell.socket {
-  stroke: var(--accent);
-}
-
-.cell-text {
-  font-size: 10px;
-  fill: var(--fg);
-}
-
-.wire,
-.head {
-  fill: none;
-  stroke: var(--line);
-  stroke-width: 1;
-}
-
-.wire.dashed {
-  stroke-dasharray: 3 3;
-}
-
-/* traffic moving along the wires once the sheet is drawn */
-.flow {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 2;
-  stroke-dasharray: 3 12;
-  opacity: 0;
-}
-
-.is-built .flow {
-  opacity: 0.9;
-  animation: flow 1.2s linear infinite;
-}
-
-.is-built .flow.up {
-  animation-direction: reverse;
-}
-
-@keyframes flow {
-  to { stroke-dashoffset: -30; }
-}
-
-.db path,
-.db ellipse {
-  fill: none;
-  stroke: var(--line);
-  stroke-width: 1.2;
-}
-
 .agent {
   fill: color-mix(in srgb, var(--secondary) 40%, transparent);
   stroke: var(--secondary);
@@ -194,25 +125,5 @@ const hosts = [{ x: 8 }, { x: 216 }]
 
 .lock-body {
   fill: var(--accent);
-}
-
-.key {
-  fill: var(--accent);
-}
-
-.label {
-  font-size: 13px;
-  fill: var(--fg);
-}
-
-.note {
-  font-size: 10px;
-  fill: var(--fg-muted);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .is-built .flow {
-    animation: none;
-  }
 }
 </style>

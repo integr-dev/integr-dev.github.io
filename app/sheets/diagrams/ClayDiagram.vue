@@ -1,87 +1,105 @@
 <script setup lang="ts">
-const files = [
-  { name: 'my-doc.md', depth: 0 },
-  { name: 'setup.md', depth: 0 },
-  { name: 'api/', depth: 0 },
-  { name: 'nested.md', depth: 1 },
+// Clay's toolchain: Markdown in docs/ and a hand written clay.yaml go into Clay Oven, a Go CLI
+// that writes the navigation structure and bundles it with the prebuilt Clay frontend into a
+// static site. Facts from the repository README.
+
+const docs = [
+  { t: 'my-doc.md', x: 22, w: 112 },
+  { t: 'setup.md', x: 140, w: 112 },
+  { t: 'api/nested.md', x: 22, w: 230, row: 1 },
 ]
-const out = ['clay-structure.yaml', 'Clay frontend (Nuxt)', 'docs, logo, config']
+const config = [
+  { t: 'title', x: 306, w: 112 },
+  { t: 'navbar', x: 424, w: 112 },
+  { t: 'languages', x: 306, w: 112, row: 1 },
+  { t: 'landing page', x: 424, w: 112, row: 1 },
+]
+const oven = [
+  { t: 'scan docs/', x: 22, w: 112 },
+  { t: 'clay-structure.yaml', x: 140, w: 136, accent: true },
+  { t: 'bundle', x: 282, w: 112 },
+]
+const site = [
+  { t: 'Clay frontend', x: 22, w: 124 },
+  { t: 'clay.yaml', x: 152, w: 112 },
+  { t: 'clay-structure.yaml', x: 270, w: 136, accent: true },
+  { t: 'docs/', x: 412, w: 124 },
+]
 </script>
 
 <template>
   <figure class="diagram">
-    <svg viewBox="0 0 400 560" role="img" aria-label="Clay: Markdown in docs and clay.yaml go into Clay Oven, which writes the structure file and bundles it with the Clay frontend into a deployable site.">
-
+    <svg viewBox="0 0 560 460" role="img" aria-label="Clay: Markdown in docs/ and clay.yaml go into Clay Oven, a Go CLI that writes clay-structure.yaml and bundles it with the prebuilt Clay frontend into a static docs site.">
       <!-- inputs -->
-      <rect class="box" x="8" y="8" width="200" height="132" pathLength="1" data-build="path" data-pen />
-      <text class="label" x="22" y="34" data-build="fade">docs/</text>
-      <text v-for="(f, i) in files" :key="f.name" class="note" :x="22 + f.depth * 16" :y="60 + i * 20" data-build="fade">{{ f.name }}</text>
+      <rect class="box" x="8" y="8" width="260" height="112" pathLength="1" data-build="path" data-pen />
+      <text class="label" x="22" y="32" data-build="fade">docs/</text>
+      <text class="note" x="254" y="32" text-anchor="end" data-build="fade">Markdown</text>
+      <g data-build="fade">
+        <g v-for="c in docs" :key="c.t">
+          <rect class="cell" :x="c.x" :y="46 + (c.row ?? 0) * 34" :width="c.w" height="26" />
+          <text class="cell-text" :x="c.x + c.w / 2" :y="63 + (c.row ?? 0) * 34" text-anchor="middle">{{ c.t }}</text>
+        </g>
+      </g>
 
-      <rect class="box" x="236" y="8" width="156" height="44" pathLength="1" data-build="path" data-pen />
-      <text class="label" x="250" y="35" data-build="fade">clay.yaml</text>
+      <rect class="box" x="292" y="8" width="260" height="112" pathLength="1" data-build="path" data-pen />
+      <text class="label" x="306" y="32" data-build="fade">clay.yaml</text>
+      <text class="note" x="538" y="32" text-anchor="end" data-build="fade">written by hand</text>
+      <g data-build="fade">
+        <g v-for="c in config" :key="c.t">
+          <rect class="cell" :x="c.x" :y="46 + (c.row ?? 0) * 34" :width="c.w" height="26" />
+          <text class="cell-text" :x="c.x + c.w / 2" :y="63 + (c.row ?? 0) * 34" text-anchor="middle">{{ c.t }}</text>
+        </g>
+      </g>
 
-      <path class="wire" d="M108,140 V200" pathLength="1" data-build="path" />
-      <path class="head" d="M103,194 L108,200 L113,194" pathLength="1" data-build="path" />
-      <path class="wire" d="M314,52 V200" pathLength="1" data-build="path" />
-      <path class="head" d="M309,194 L314,200 L319,194" pathLength="1" data-build="path" />
+      <!-- inputs → oven -->
+      <path class="wire" d="M138,120 V180" pathLength="1" data-build="path" />
+      <path class="head" d="M133,174 L138,180 L143,174" pathLength="1" data-build="path" />
+      <path class="flow down" d="M138,120 V180" data-build="fade" />
+      <path class="wire" d="M346,120 V180" pathLength="1" data-build="path" />
+      <path class="head" d="M341,174 L346,180 L351,174" pathLength="1" data-build="path" />
+      <path class="flow down" d="M346,120 V180" data-build="fade" />
 
       <!-- oven -->
-      <rect class="box strong" x="8" y="200" width="384" height="84" pathLength="1" data-build="path" data-pen />
-      <text class="label" x="22" y="228" data-build="fade">Clay Oven</text>
-      <text class="note" x="22" y="250" data-build="fade">Go CLI</text>
-      <text class="note" x="22" y="268" data-build="fade">scans docs, writes the structure, bundles</text>
+      <rect class="box strong" x="8" y="180" width="400" height="100" pathLength="1" data-build="path" data-pen />
+      <text class="label" x="22" y="204" data-build="fade">Clay Oven</text>
+      <text class="note" x="394" y="204" text-anchor="end" data-build="fade">Go CLI</text>
+      <text class="note" x="22" y="224" data-build="fade">scans docs/, writes the structure, bundles the site</text>
+      <g data-build="fade">
+        <g v-for="c in oven" :key="c.t">
+          <rect class="cell" :class="{ accent: c.accent }" :x="c.x" y="238" :width="c.w" height="26" />
+          <text class="cell-text" :x="c.x + c.w / 2" y="255" text-anchor="middle">{{ c.t }}</text>
+        </g>
+      </g>
 
-      <path class="wire" d="M200,284 V332" pathLength="1" data-build="path" />
-      <path class="head" d="M195,326 L200,332 L205,326" pathLength="1" data-build="path" />
+      <!-- prebuilt frontend, bundled by the oven -->
+      <path class="wire dashed" d="M428,230 H408" pathLength="1" data-build="path" />
+      <rect class="box" x="428" y="180" width="124" height="100" pathLength="1" data-build="path" data-pen />
+      <g data-build="fade">
+        <text class="label" x="440" y="204">Clay</text>
+        <text class="note" x="440" y="224">prebuilt frontend</text>
+        <text class="note" x="440" y="242">Nuxt · Vue</text>
+        <text class="note" x="440" y="260">marked · Shiki</text>
+      </g>
 
-      <!-- output -->
-      <rect class="box" x="8" y="332" width="384" height="112" pathLength="1" data-build="path" data-pen />
-      <text class="label" x="22" y="358" data-build="fade">dist/</text>
-      <text v-for="(f, i) in out" :key="f" class="note" x="22" :y="384 + i * 20" data-build="fade">{{ f }}</text>
-
-      <path class="wire" d="M200,444 V484" pathLength="1" data-build="path" />
-      <path class="head" d="M195,478 L200,484 L205,478" pathLength="1" data-build="path" />
+      <!-- oven → site -->
+      <path class="wire" d="M208,280 V340" pathLength="1" data-build="path" />
+      <path class="head" d="M203,334 L208,340 L213,334" pathLength="1" data-build="path" />
+      <path class="flow down" d="M208,280 V340" data-build="fade" />
+      <text class="note" x="218" y="314" data-build="fade">one folder, ready to deploy</text>
 
       <!-- site -->
-      <rect class="box strong" x="8" y="484" width="384" height="68" pathLength="1" data-build="path" data-pen />
-      <text class="label" x="22" y="512" data-build="fade">docs site</text>
-      <text class="note" x="22" y="534" data-build="fade">static, any host</text>
+      <rect class="box strong" x="8" y="340" width="544" height="112" pathLength="1" data-build="path" data-pen />
+      <text class="label" x="22" y="364" data-build="fade">docs site</text>
+      <text class="note" x="538" y="364" text-anchor="end" data-build="fade">static, any host</text>
+      <text class="note" x="22" y="384" data-build="fade">the frontend loads everything it needs from the two yaml files</text>
+      <g data-build="fade">
+        <g v-for="c in site" :key="c.t">
+          <rect class="cell" :class="{ accent: c.accent }" :x="c.x" y="400" :width="c.w" height="26" />
+          <text class="cell-text" :x="c.x + c.w / 2" y="417" text-anchor="middle">{{ c.t }}</text>
+        </g>
+      </g>
     </svg>
   </figure>
 </template>
 
-<style scoped>
-.diagram svg {
-  width: 100%;
-  height: auto;
-  max-height: calc(100dvh - 260px);
-  font-family: var(--font-mono);
-}
-
-.box {
-  fill: none;
-  stroke: var(--line-strong);
-  stroke-width: 1.2;
-}
-
-.box.strong {
-  stroke: var(--line);
-}
-
-.wire,
-.head {
-  fill: none;
-  stroke: var(--line);
-  stroke-width: 1;
-}
-
-.label {
-  font-size: 15px;
-  fill: var(--fg);
-}
-
-.note {
-  font-size: 12px;
-  fill: var(--fg-muted);
-}
-</style>
+<style scoped src="./diagram.css"></style>

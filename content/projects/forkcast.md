@@ -20,6 +20,7 @@ links:
   - { label: Live demo, href: https://e-reitbauer.github.io/forkcast/ }
   - { label: Source, href: https://github.com/e-reitbauer/forkcast }
 visuals:
+  - { kind: diagram, label: Architecture, diagram: forkcast }
   - kind: images
     label: Screenshots
     images:
