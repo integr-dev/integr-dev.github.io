@@ -16,7 +16,7 @@ const slug = (stem: string) => stem.split('/').pop()!
     <span class="rule rule-strong" data-build="line" />
 
     <div class="r-cols" :style="{ '--n': items.length }" role="list">
-      <section v-for="(p, i) in items" :key="p.stem" class="r-col" role="listitem">
+      <div v-for="(p, i) in items" :key="p.stem" class="r-col" role="listitem">
         <span v-if="i" class="r-sep" data-build="vline" aria-hidden="true" />
         <h3 :id="`project-${slug(p.stem)}`" data-build="type">{{ p.title }}</h3>
         <p class="r-tagline" data-build="print">{{ p.tagline }}</p>
@@ -33,7 +33,7 @@ const slug = (stem: string) => stem.split('/').pop()!
             </a>
           </p>
         </div>
-      </section>
+      </div>
     </div>
 
   </div>

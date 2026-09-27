@@ -64,7 +64,7 @@ function pick(i: number, e: MouseEvent) {
     <span id="butterfly-perch" class="perch" aria-hidden="true" />
 
     <div class="tb-head">
-      <img class="tb-logo" src="/logo.png" alt="" width="36" height="36">
+      <img class="tb-logo" src="/img/logo-72.png" alt="" width="36" height="36">
       <div class="tb-names">
         <span class="tb-handle">{{ handle }}</span>
         <span class="tb-current" aria-live="polite">{{ current }}</span>
@@ -152,9 +152,14 @@ html.js .title-block {
 .tick {
   position: relative;
   overflow: hidden;
+  transition: height 260ms var(--transition-ease);
+}
+
+.tick::before {
   transition:
-    width 260ms var(--transition-ease),
-    height 260ms var(--transition-ease);
+    inset 260ms var(--transition-ease),
+    background-color 160ms ease,
+    border-color 160ms ease;
 }
 
 .tick-label {
@@ -173,12 +178,15 @@ html.js .title-block {
 }
 
 .title-block.is-expanded .tb-ticks {
-  gap: 6px;
+  gap: 4px;
 }
 
 .title-block.is-expanded .tick {
-  width: 22px;
   height: 92px;
+}
+
+.title-block.is-expanded .tick::before {
+  inset: 0 1px;
 }
 
 .title-block.is-expanded .tick-label {
@@ -281,34 +289,41 @@ html.js .title-block {
 
 .tb-ticks {
   display: flex;
-  gap: 5px;
   list-style: none;
   margin: 0;
-  padding: 9px 10px;
+  padding: 2px 4px;
   border-bottom: 1px solid var(--line-strong);
 }
 
+/* the button is a 24px hit area; the visible marker is the small box drawn inside it */
 .tick {
   display: block;
-  width: 14px;
-  height: 10px;
+  width: 24px;
+  height: 24px;
   padding: 0;
-  border: 1px solid var(--line);
+  border: 0;
   background: transparent;
   cursor: pointer;
   border-radius: 0;
 }
 
-.tick.is-visited {
+.tick::before {
+  content: '';
+  position: absolute;
+  inset: 7px 5px;
+  border: 1px solid var(--line);
+}
+
+.tick.is-visited::before {
   background: color-mix(in srgb, var(--line) 35%, transparent);
 }
 
-.tick.is-current {
+.tick.is-current::before {
   background: var(--accent);
   border-color: var(--accent);
 }
 
-.tick:hover {
+.tick:hover::before {
   border-color: var(--fg);
 }
 

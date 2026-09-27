@@ -70,10 +70,23 @@ const kindOf = (el: Element) => (el.getAttribute('data-build') ?? 'fade') as Kin
 function split(el: HTMLElement): HTMLElement[] {
   if (el.dataset.split) return [...el.querySelectorAll<HTMLElement>('.ch')]
   el.dataset.split = '1'
-  if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', el.textContent?.trim() ?? '')
+  // the letters are hidden from screen readers, so the whole text is named once: headings, links and
+  // buttons take an aria-label, anything else (p, figcaption) gets a visually hidden copy
+  const text = el.textContent?.trim() ?? ''
+  if (/^(H[1-6]|A|BUTTON)$/.test(el.tagName) || el.hasAttribute('role')) {
+    if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', text)
+  }
+  else {
+    const sr = document.createElement('span')
+    sr.className = 'sr-only'
+    sr.textContent = text
+    el.prepend(sr)
+  }
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
   const nodes: Text[] = []
-  while (walker.nextNode()) nodes.push(walker.currentNode as Text)
+  while (walker.nextNode()) {
+    if (!(walker.currentNode.parentElement?.classList.contains('sr-only'))) nodes.push(walker.currentNode as Text)
+  }
   for (const node of nodes) {
     const frag = document.createDocumentFragment()
     for (const c of node.data) {
