@@ -373,7 +373,14 @@ export const builder: Builder = {
           finished()
         }
         else {
-          running.push(runEffect(el, kind, signal, speed).then(finished, quiet))
+          const effect = runEffect(el, kind, signal, speed).then(finished, quiet)
+          running.push(effect)
+          // data-build-wait: the pen stays on this part until it is fully drawn (e.g. a code block)
+          if (el.hasAttribute('data-build-wait')) {
+            await effect
+            if (signal.aborted) throw new Aborted()
+            continue
+          }
         }
         await sleep(leads[i]! * scale, signal)
       }

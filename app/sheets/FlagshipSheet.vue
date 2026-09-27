@@ -110,7 +110,7 @@ const asOf = computed(() => {
           >
             <component :is="diagrams[v.diagram!]" v-if="v.kind === 'diagram'" />
 
-            <div v-else-if="v.kind === 'code'" class="f-code" data-build="print">
+            <div v-else-if="v.kind === 'code'" class="f-code" data-build="print" data-build-wait>
               <ContentRenderer :value="p" />
             </div>
 
