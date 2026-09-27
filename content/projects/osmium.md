@@ -4,6 +4,9 @@ tagline: Runs a fleet of headless Minecraft agents that build one large schemati
 tier: flagship
 order: 1
 why: My largest system so far. One operator uploads a schematic, Osmium splits it into segments, hands each agent its slice, and a web dashboard follows every agent live.
+built:
+  problem: "A dump of the database should never be enough to take over the Minecraft accounts the fleet plays with."
+  solution: "Osmium never holds the credentials and never performs the login. The backend only sends a host a setup command; the host signs the account in on a machine its owner controls and reports back the username and UUID. Hosts dial out to the backend instead of being connected to, and an unreachable host makes its agents' state unknown rather than offline."
 stats:
   asOf: "2026-09-27"
   source: https://github.com/integr-dev/osmium

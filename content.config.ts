@@ -12,6 +12,8 @@ export default defineContentConfig({
         tier: z.enum(['flagship', 'featured', 'more']),
         order: z.number(),
         why: z.string().optional(),
+        // one problem the project had to solve and how it was solved, for the project page and readme
+        built: z.object({ problem: z.string(), solution: z.string() }).optional(),
         badge: z.object({ value: z.string(), label: z.string(), href: z.string() }).optional(),
         stats: z
           .object({

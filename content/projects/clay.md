@@ -4,6 +4,9 @@ tagline: A documentation framework that drops into an existing repository.
 tier: flagship
 order: 2
 why: A complete toolchain I designed and maintain under its own organisation. A Vue and Nuxt frontend plus a Go CLI that turns a folder of Markdown into a deployable site.
+built:
+  problem: "Most documentation tools want a project to adopt a static site generator and its build."
+  solution: "The Clay frontend ships prebuilt and reads everything it needs at runtime from two files: clay.yaml, written by hand, and clay-structure.yaml, which Clay Oven, a Go CLI, generates by scanning docs/. A repository only adds Markdown and a config file."
 stats:
   asOf: "2026-09-27"
   source: https://github.com/clay-doc

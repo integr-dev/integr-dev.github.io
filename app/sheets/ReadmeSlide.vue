@@ -5,6 +5,8 @@ const props = defineProps<{ project: string, sheetId?: string }>()
 const { data: readme } = await useAsyncData(`readme-${props.project}`, () =>
   queryCollection('readmes').path(`/readmes/${props.project}`).first(),
 )
+const { project: findProject } = await useSiteContent()
+const built = computed(() => findProject(props.project)?.built)
 </script>
 
 <template>
@@ -16,6 +18,10 @@ const { data: readme } = await useAsyncData(`readme-${props.project}`, () =>
     <span class="rule rule-strong" data-build="line" />
     <!-- data-scroll: the deck lets wheel and arrow keys scroll this before moving on -->
     <div class="rd-scroll" data-scroll>
+      <section v-if="built" class="rd-built" aria-label="How it was built">
+        <p data-build="print"><strong>The problem.</strong> {{ built.problem }}</p>
+        <p data-build="print"><strong>How it's solved.</strong> {{ built.solution }}</p>
+      </section>
       <div v-if="readme" class="rd-body" data-build="print">
         <ContentRenderer :value="readme" />
       </div>
@@ -39,6 +45,21 @@ const { data: readme } = await useAsyncData(`readme-${props.project}`, () =>
 .rd-kicker {
   font-size: 0.8rem;
   color: var(--line);
+}
+
+.rd-built {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 28px;
+  padding: 16px 20px;
+  border-left: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--line) 6%, transparent);
+  line-height: 1.6;
+}
+
+.rd-built strong {
+  color: var(--accent);
+  font-weight: 500;
 }
 
 .rd-head h2 {

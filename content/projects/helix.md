@@ -4,6 +4,9 @@ tagline: A quality of life mod for Fabric.
 tier: flagship
 order: 5
 why: Shipped to real players and still downloaded.
+built:
+  problem: "Server owners need a way to switch off modules they don't allow, without players changing their install."
+  solution: "The server sends a plugin message on the helix:config channel with a JSON list of module ids; Helix disables those modules until the player rejoins. Invalid JSON and unknown ids are ignored."
 badge: { value: "1,400+", label: downloads on Modrinth, href: https://modrinth.com/mod/helix }
 stats:
   asOf: "2026-09-27"

@@ -4,6 +4,9 @@ tagline: Meal planning with a drag and drop week and a shopping list that writes
 tier: flagship
 order: 3
 why: A team product with real interface work. Drag and drop planning, ingredient lists merged across recipes, friends, and nine languages including right to left.
+built:
+  problem: "A week of recipes lists the same ingredient many times over, in amounts for different numbers of people."
+  solution: "The shopping list is generated from the weekly plan: amounts are scaled to the portions of each meal, identical ingredients are merged and summed across the week, and anything already at home can be ticked off or reduced."
 stats:
   asOf: "2026-09-27"
   source: https://github.com/e-reitbauer/forkcast/graphs/contributors

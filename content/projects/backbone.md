@@ -4,6 +4,9 @@ tagline: A framework for Spigot servers with Kotlin scripts you can reload while
 tier: flagship
 order: 4
 why: Change server logic without a restart. Scripts get their own event bus, commands, inventory GUIs and storage, and reload in place.
+built:
+  problem: "Every change to server logic meant restarting the Minecraft server."
+  solution: "Logic lives in Kotlin scripts that are compiled and reloaded in place with /bb scripting reload. Properties declared as sustained keep their value across reloads, so a script picks up where it left off."
 stats:
   asOf: "2026-09-27"
   source: https://modrinth.com/plugin/backbone-lib
