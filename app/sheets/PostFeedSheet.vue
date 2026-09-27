@@ -49,7 +49,6 @@ const { posts } = await useSiteContent()
   grid-template-columns: 120px minmax(0, 1fr);
   gap: 24px;
   padding: 24px 0;
-  border-bottom: 1px solid var(--bg-grid-strong);
 }
 
 .p-item time {
