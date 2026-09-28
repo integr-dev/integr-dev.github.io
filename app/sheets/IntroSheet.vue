@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import PixelAvatar from './PixelAvatar.vue'
-import PixelVine from '~/themes/drafting/PixelVine.vue'
 import { useDeckNav } from '~/deck/useDeckNav'
 
 const { profile } = await useSiteContent()
@@ -30,7 +29,20 @@ function open(sheet: string) {
 
 onMounted(() => {
   if (profile.value) age.value = ageFrom(profile.value.birth)
+  measureLinks()
+  window.addEventListener('resize', measureLinks)
 })
+onBeforeUnmount(() => window.removeEventListener('resize', measureLinks))
+
+// Where the shortcut buttons start (page pixels from the sheet's left edge): the vines on the
+// background layer hang left of them and the run of bushes along the top edge ends at them
+// (ThemeBackground reads it).
+const links = ref<HTMLElement>()
+const linksLeft = useState<number | null>('intro-links-left', () => null)
+function measureLinks() {
+  const el = links.value
+  if (el?.offsetWidth) linksLeft.value = el.offsetLeft
+}
 
 // The big name types itself (a data-build="custom" part: the builder starts it), then keeps
 // deleting and retyping between the handle and the first name.
@@ -101,27 +113,25 @@ function onBuildFinish() {
 
 onBeforeUnmount(() => run++)
 
-// the vines grow on their own; the drawing does not wait for them
-const vines = ref<HTMLElement>()
+// The vines are drawn on the background layer, under the bushes (ThemeBackground), but grow with
+// this sheet: a cue in the drawing starts them, and they come apart while the deck slides away
+// (the builder resets the sheet once it is out of view). The drawing does not wait for them.
+const vines = useState<'idle' | 'run' | 'done' | 'leaving'>('intro-vines', () => 'idle')
 function vinesRun(e: Event) {
   const { resolve } = (e as CustomEvent<{ resolve: () => void }>).detail
-  vines.value?.classList.remove('is-leaving')
+  vines.value = 'run'
   resolve()
 }
-// when the deck moves off this sheet the vines come apart while it slides away (the builder
-// resets the sheet once it is out of view, which calls vinesReset); a class set by hand, since the
-// element has data-build
 watch(() => nav.x.value, (x, was) => {
-  if (was === 0 && x !== 0) vines.value?.classList.add('is-leaving')
+  if (was === 0 && x !== 0 && vines.value !== 'idle') vines.value = 'leaving'
 })
-const vinesReset = () => vines.value?.classList.remove('is-leaving')
 </script>
 
 <template>
   <div v-if="profile" class="sheet intro">
     <div class="intro-text">
       <!-- first in the markup so they are drawn first; placed top right by CSS -->
-      <ul class="intro-links mono" data-build="chips" data-nopen>
+      <ul ref="links" class="intro-links mono" data-build="chips" data-nopen>
         <li v-for="s in shortcuts" :key="s.sheet">
           <button type="button" @click="open(s.sheet)">
             {{ t(`intro.shortcuts.${s.key}`) }} <FontAwesomeIcon icon="arrow-right" />
@@ -153,13 +163,16 @@ const vinesReset = () => vines.value?.classList.remove('is-leaving')
         <span><kbd>{{ t('intro.hints.skipKey') }}</kbd> {{ t('intro.hints.skip') }}</span>
       </p>
     </div>
-    <!-- vines hanging into the empty half of the sheet, grown last: two out of the small bushes on
-         the top edge (ThemeBackground.vue), one out of the top-right bush -->
-    <div ref="vines" class="intro-vines" aria-hidden="true" data-build="custom" data-nopen @build-run="vinesRun" @build-reset="vinesReset">
-      <PixelVine :seed="5" :length="44" :drift="-0.35" class="vine-a" />
-      <PixelVine :seed="17" :length="30" :drift="-0.15" :sway="2" :delay="500" class="vine-b" />
-      <PixelVine :seed="29" :length="60" :drift="-0.6" :sway="3" :delay="250" class="vine-c" />
-    </div>
+    <!-- starts the vines on the background layer once the text is drawn -->
+    <span
+      class="intro-vines-cue"
+      aria-hidden="true"
+      data-build="custom"
+      data-nopen
+      @build-run="vinesRun"
+      @build-finish="vines = 'done'"
+      @build-reset="vines = 'idle'"
+    />
   </div>
 </template>
 
@@ -171,44 +184,6 @@ const vinesReset = () => vines.value?.classList.remove('is-leaving')
 
 .intro-text {
   max-width: 760px;
-}
-
-/* behind the text (the shortcuts are placed against the sheet, so the text stays unpositioned) */
-.intro-vines {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.intro-vines > :deep(.pixel-vine) {
-  position: absolute;
-}
-
-/* where the stems start, measured from the right so they stay left of the shortcut buttons
-   (about 420px wide), just inside the bottom of the bushes they hang from */
-.intro-vines > .vine-a {
-  top: 32px;
-  left: calc(100% - var(--frame-gap) - var(--pad) - 440px);
-}
-
-.intro-vines > .vine-b {
-  top: 24px;
-  left: calc(100% - var(--frame-gap) - var(--pad) - 610px);
-}
-
-/* out of the top-right bush: placed by its left edge */
-.intro-vines > .vine-c {
-  top: var(--frame-gap);
-  left: 85%;
-  margin-left: 0;
-}
-
-/* only where the text leaves room for them */
-@media (max-width: 1099px) {
-  .intro-vines {
-    display: none;
-  }
 }
 
 .intro-figure {
