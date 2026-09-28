@@ -229,6 +229,16 @@ html.js .title-block {
   height: 92px;
 }
 
+/* a little air above and below the markers while they show their names */
+.tb-ticks {
+  transition: padding 260ms var(--transition-ease);
+}
+
+.title-block.is-expanded .tb-ticks {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
 .title-block.is-expanded .tick::before {
   inset: 0 2px;
 }
