@@ -63,24 +63,35 @@ function show(i: number) {
   }, 220)
 }
 
+type Shot = { width?: number, height?: number }
+const aspect = (img: Shot) => (img.width && img.height ? img.width / img.height : 16 / 9)
+// the shape the screenshots should fill together: about that of the space next to the text
+const TARGET = 1.3
+
 /**
- * Where screenshot i of n sits in the stack, in % of the stack box. Up to three zig-zag down
- * like Forkcast's; more go into two columns, row by row, so each one stays mostly visible.
- * The first is on top.
+ * Screenshots side by side in rows, none overlapping: every row is as tall as its screenshots
+ * let it be at full width, so they line up edge to edge. Of all the ways to cut the list into
+ * rows (in order), the one whose overall shape comes closest to TARGET wins.
+ * ar: width / height of the whole block, without the gaps.
  */
-function stackStyle(i: number, n: number) {
-  const side = i % 2 ? 'right' : 'left'
-  if (n <= 3) {
-    const h = 55
-    const top = n > 1 ? (i / (n - 1)) * (100 - h) : 0
-    return { top: `${top}%`, [side]: `${Math.floor(i / 2) * 10}%`, maxWidth: '74%', maxHeight: `${h}%`, zIndex: n - i }
+function shotLayout(images: Shot[]) {
+  const ars = images.map(aspect)
+  const n = ars.length
+  let best = { rows: [ars.map((_, i) => i)], ar: 0, cost: Infinity }
+  for (let cuts = 0; cuts < 2 ** Math.max(0, n - 1); cuts++) {
+    const rows: number[][] = [[0]]
+    for (let i = 1; i < n; i++) {
+      if (cuts & (1 << (i - 1))) rows.push([i])
+      else rows[rows.length - 1]!.push(i)
+    }
+    if (rows.some(r => r.length > 3)) continue
+    const ar = 1 / rows.reduce((sum, r) => sum + 1 / r.reduce((w, i) => w + ars[i]!, 0), 0)
+    const cost = Math.abs(Math.log(ar / TARGET))
+    if (cost < best.cost) best = { rows, ar, cost }
   }
-  const rows = Math.ceil(n / 2)
-  const row = Math.floor(i / 2)
-  const h = Math.min(55, 125 / rows)
-  const top = rows > 1 ? (row / (rows - 1)) * (100 - h) : 0
-  return { top: `${top}%`, [side]: `${row * 3}%`, maxWidth: '56%', maxHeight: `${h}%`, zIndex: n - i }
+  return best
 }
+const layouts = computed(() => visuals.value.map(v => (v.images?.length ? shotLayout(v.images) : null)))
 
 const asOf = computed(() => {
   const d = p.value?.stats?.asOf
@@ -152,19 +163,31 @@ const asOf = computed(() => {
               <BarChart :chart="v.chart" />
             </template>
 
-            <div v-else-if="v.kind === 'images'" class="f-images" :class="[`count-${v.images?.length ?? 0}`, { 'is-stack': (v.images?.length ?? 0) > 1 }]">
-              <img
-                v-for="(img, n) in v.images"
-                :key="img.src"
-                :src="img.src"
-                :alt="img.alt"
-                :width="img.width"
-                :height="img.height"
-                :style="{ ...((v.images?.length ?? 0) > 1 ? stackStyle(n, v.images!.length) : {}), ...(img.width && img.height ? { '--ar': img.width / img.height } : {}) }"
-                class="f-shot"
-                data-build="image"
-                @click="lightbox.open(v.images!, n)"
-              >
+            <div
+              v-else-if="v.kind === 'images' && v.images?.length && layouts[i]"
+              class="f-images"
+              :style="{ '--layout-ar': layouts[i].ar, '--rows': layouts[i].rows.length }"
+            >
+              <div v-for="(row, r) in layouts[i].rows" :key="r" class="f-row">
+                <!-- a drafting frame: the outline and corner ticks come with the image, the number is typed -->
+                <figure
+                  v-for="n in row"
+                  :key="v.images[n]!.src"
+                  class="f-shot"
+                  :style="{ '--ar': aspect(v.images[n]!) }"
+                  @click="lightbox.open(v.images!, n)"
+                >
+                  <img
+                    :src="v.images[n]!.src"
+                    :alt="v.images[n]!.alt"
+                    :width="v.images[n]!.width"
+                    :height="v.images[n]!.height"
+                    data-build="image"
+                  >
+                  <span class="f-frame" aria-hidden="true" />
+                  <figcaption class="f-fig mono" data-build="type" aria-hidden="true">fig.{{ String(n + 1).padStart(2, '0') }}</figcaption>
+                </figure>
+              </div>
             </div>
           </div>
         </div>
@@ -300,10 +323,93 @@ const asOf = computed(() => {
   margin-left: 2px;
 }
 
-.f-images img {
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius);
+/* screenshots in rows (see shotLayout), as large as the sheet's height allows */
+.f-images {
+  --gap: 14px;
+  --max-h: calc(calc(var(--dvh) * 100) - 300px - (var(--rows) - 1) * var(--gap));
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  width: min(100%, calc(var(--max-h) * var(--layout-ar)));
+  margin-inline: auto;
+}
+
+.f-row {
+  display: flex;
+  gap: var(--gap);
+}
+
+/* same shape as the image, so a row's screenshots are all as tall as each other */
+.f-shot {
+  position: relative;
+  flex: var(--ar) 1 0%;
+  min-width: 0;
+  aspect-ratio: var(--ar);
+  margin: 0;
+  cursor: zoom-in;
+}
+
+.f-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   background: var(--surface);
+}
+
+.f-frame {
+  position: absolute;
+  /* over the figure number, so the outline shows all the way round */
+  z-index: 1;
+  inset: 0;
+  border: 1px solid var(--line-strong);
+  pointer-events: none;
+  transition: border-color 150ms ease;
+}
+
+/* corner ticks just outside, like the construction marks while a sheet is drawn */
+.f-frame::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  opacity: 0.8;
+  --t: linear-gradient(var(--accent), var(--accent));
+
+  background:
+    var(--t) top left / 8px 1px no-repeat,
+    var(--t) top left / 1px 8px no-repeat,
+    var(--t) top right / 8px 1px no-repeat,
+    var(--t) top right / 1px 8px no-repeat,
+    var(--t) bottom left / 8px 1px no-repeat,
+    var(--t) bottom left / 1px 8px no-repeat,
+    var(--t) bottom right / 8px 1px no-repeat,
+    var(--t) bottom right / 1px 8px no-repeat;
+}
+
+.f-shot:hover .f-frame {
+  border-color: var(--accent);
+}
+
+/* the figure number sits on the frame's top-left corner */
+.f-fig {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 1px 6px;
+  font-size: 0.66rem;
+  color: var(--line);
+  background: var(--bg);
+  border-right: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+/* the frame only once its image is being drawn */
+@media (prefers-reduced-motion: no-preference) {
+  /* all inside :global, Vue turns a rule with :global(...) into just that part */
+  :global(html.js .f-shot:has(> img:not(.b-run, .b-done)) .f-frame) {
+    visibility: hidden;
+  }
 }
 
 /* carousel of visuals: all pages share one grid cell */
@@ -377,25 +483,6 @@ const asOf = computed(() => {
 }
 
 
-.f-pane img {
-  max-height: calc(calc(var(--dvh) * 100) - 300px);
-  object-fit: contain;
-}
-
-/* several screenshots overlap like a loose stack (placed by stackStyle). The stack lives in a
-   box of fixed proportions, so it never grows taller than the sheet: the carousel's hidden pages
-   still take up room. */
-.f-images.is-stack {
-  position: relative;
-  aspect-ratio: 1.25;
-}
-
-.f-images.is-stack img {
-  position: absolute;
-  width: auto;
-  height: auto;
-}
-
 /* Backbone: the code is the picture */
 .f-code :deep(pre) {
   border: 0;
@@ -449,10 +536,6 @@ const asOf = computed(() => {
 
 .project-helix .f-images img {
   image-rendering: pixelated;
-}
-
-.f-shot {
-  cursor: zoom-in;
 }
 
 @media (max-width: 1100px) and (min-width: 768px) {

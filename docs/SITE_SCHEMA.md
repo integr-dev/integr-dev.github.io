@@ -248,7 +248,7 @@ visuals:                  # optional, one or more; several form a carousel
 Longer description (Markdown). For `kind: code` the body is the code block shown as the visual.
 ```
 
-- `tier: flagship`: own sheet (listed in `sheets.config.ts`). `kind: diagram` picks a component from `app/sheets/diagrams/` by name. With more than one entry in `visuals` the sheet shows a carousel (arrows plus labelled dots). Pages share one spot: the current one fades out, then the next is drawn in its place. Adding screenshots later never replaces a diagram, it adds a page. A screenshot page with two or more images shows them as an overlapping stack (each a little lower, alternating left and right, first on top); a click opens the large preview.
+- `tier: flagship`: own sheet (listed in `sheets.config.ts`). `kind: diagram` picks a component from `app/sheets/diagrams/` by name. With more than one entry in `visuals` the sheet shows a carousel (arrows plus labelled dots). Pages share one spot: the current one fades out, then the next is drawn in its place. Adding screenshots later never replaces a diagram, it adds a page. A screenshot page lays its images out in rows, none overlapping, in their order: the images of a row are equally tall and fill its width, and the rows are chosen so the whole block is about 1.3:1 and as large as the sheet's height allows (`shotLayout`). Each sits in a drafting frame (outline, accent corner ticks, a typed `fig.01` label). A click opens the large preview, which is drawn in (edges ruled round the frame, the picture drawn block by block like on the page) and its frame drawn out backwards when closed.
 - `tier: featured`: a row on Projects/main.
 - `tier: more`: a row on Projects/more.
 

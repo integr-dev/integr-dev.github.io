@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { useLightbox } from '~/composables/useLightbox'
+import { theme } from '~/themes/active'
 
 // Large preview of a screenshot. ←/→ move through the screenshots of the same project,
-// Esc or a click outside the image closes it.
+// Esc or a click outside the image closes it. It is drawn in like a sheet: the frame is ruled,
+// then the picture is drawn block by block like the screenshots on the page; closing runs the
+// frame backwards.
 const lightbox = useLightbox()
 const closeBtn = ref<HTMLButtonElement>()
+const pic = ref<HTMLElement>()
+let ctrl: AbortController | undefined
 
 const current = computed(() => {
   const s = lightbox.state.value
@@ -26,21 +31,51 @@ watch(lightbox.isOpen, (open) => {
   if (open) nextTick(() => closeBtn.value?.focus())
 })
 
+/** Draw the picture with the page's builder; on opening once the first edges are ruled. */
+function draw(delay: number) {
+  ctrl?.abort()
+  const root = pic.value
+  if (!root) return
+  const c = (ctrl = new AbortController())
+  theme.builder.reset(root)
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    theme.builder.finish(root)
+    return
+  }
+  setTimeout(() => {
+    if (!c.signal.aborted) theme.builder.run(root, { signal: c.signal, onProgress: () => {} })
+  }, delay)
+}
+
+watch(() => current.value?.src, (src, old) => {
+  if (!src) ctrl?.abort()
+  else nextTick(() => draw(old ? 0 : 200))
+})
+
 onMounted(() => window.addEventListener('keydown', onKey, { capture: true }))
 onBeforeUnmount(() => window.removeEventListener('keydown', onKey, { capture: true }))
 </script>
 
 <template>
-  <Transition name="lb">
+  <Transition name="lb" :duration="{ enter: 760, leave: 560 }">
     <div v-if="current" class="lb" role="dialog" aria-modal="true" :aria-label="current.alt" @click.self="lightbox.close()">
       <figure class="lb-frame">
-        <img
-          :key="current.src"
-          :src="current.src"
-          :alt="current.alt"
-          :width="current.width"
-          :height="current.height"
-        >
+        <!-- its own build root, drawn without the pen (data-nopen) -->
+        <div ref="pic" class="lb-pic" data-build-root data-nopen>
+          <img
+            :key="current.src"
+            :src="current.src"
+            :alt="current.alt"
+            :width="current.width"
+            :height="current.height"
+            data-build="image"
+          >
+          <span class="lb-edge lb-top" aria-hidden="true" />
+          <span class="lb-edge lb-right" aria-hidden="true" />
+          <span class="lb-edge lb-bottom" aria-hidden="true" />
+          <span class="lb-edge lb-left" aria-hidden="true" />
+          <span class="lb-ticks" aria-hidden="true" />
+        </div>
         <figcaption class="lb-caption mono">
           <span>{{ current.alt }}</span>
           <span v-if="count > 1" class="lb-count">{{ (lightbox.state.value?.index ?? 0) + 1 }} / {{ count }}</span>
@@ -82,15 +117,65 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, { capture: tr
   cursor: default;
 }
 
+.lb-pic {
+  position: relative;
+  align-self: center;
+}
+
 .lb-frame img {
+  display: block;
   max-width: min(1600px, calc(calc(var(--vw) * 100) - 176px));
   max-height: calc(calc(var(--dvh) * 100) - 150px);
   width: auto;
   height: auto;
   object-fit: contain;
-  border: 1px solid var(--line-strong);
   background: var(--surface);
 }
+
+/* the frame: four ruled edges and accent corner ticks, like a screenshot on its sheet */
+.lb-edge {
+  position: absolute;
+  background: var(--line-strong);
+  pointer-events: none;
+}
+
+.lb-top,
+.lb-bottom {
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+.lb-left,
+.lb-right {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+
+.lb-top { top: 0; transform-origin: left; }
+.lb-right { right: 0; transform-origin: top; }
+.lb-bottom { bottom: 0; transform-origin: right; }
+.lb-left { left: 0; transform-origin: bottom; }
+
+.lb-ticks {
+  --t: linear-gradient(var(--accent), var(--accent));
+
+  position: absolute;
+  inset: -6px;
+  pointer-events: none;
+  opacity: 0.8;
+  background:
+    var(--t) top left / 10px 1px no-repeat,
+    var(--t) top left / 1px 10px no-repeat,
+    var(--t) top right / 10px 1px no-repeat,
+    var(--t) top right / 1px 10px no-repeat,
+    var(--t) bottom left / 10px 1px no-repeat,
+    var(--t) bottom left / 1px 10px no-repeat,
+    var(--t) bottom right / 10px 1px no-repeat,
+    var(--t) bottom right / 1px 10px no-repeat;
+}
+
 
 /* pixel art (Helix) stays crisp when enlarged */
 .lb-frame img[src*='helix'] {
@@ -146,14 +231,57 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, { capture: tr
   right: 24px;
 }
 
-.lb-enter-active,
+/* opening: the backdrop fades in, the edges are ruled one after another round the frame, the
+   picture is drawn block by block (draw), then ticks, caption and buttons. Closing: all of it backwards. */
+.lb-enter-active {
+  transition: opacity 160ms ease;
+}
+
 .lb-leave-active {
-  transition: opacity 180ms ease;
+  transition: opacity 160ms ease 400ms;
 }
 
 .lb-enter-from,
 .lb-leave-to {
   opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lb-enter-active .lb-top { animation: lb-rule-x 160ms ease-out 60ms both; }
+  .lb-enter-active .lb-right { animation: lb-rule-y 140ms ease-out 200ms both; }
+  .lb-enter-active .lb-bottom { animation: lb-rule-x 160ms ease-out 320ms both; }
+  .lb-enter-active .lb-left { animation: lb-rule-y 140ms ease-out 460ms both; }
+
+  .lb-enter-active :is(.lb-ticks, .lb-caption, .lb-btn) {
+    animation: lb-fade 180ms ease 580ms both;
+  }
+
+  .lb-leave-active :is(.lb-ticks, .lb-caption, .lb-btn) {
+    animation: lb-fade 120ms ease reverse both;
+  }
+
+  .lb-leave-active img { animation: lb-print 260ms steps(6, end) 60ms reverse both; }
+  .lb-leave-active .lb-left { animation: lb-rule-y 100ms ease-in 180ms reverse both; }
+  .lb-leave-active .lb-bottom { animation: lb-rule-x 110ms ease-in 260ms reverse both; }
+  .lb-leave-active .lb-right { animation: lb-rule-y 100ms ease-in 350ms reverse both; }
+  .lb-leave-active .lb-top { animation: lb-rule-x 110ms ease-in 430ms reverse both; }
+}
+
+@keyframes lb-rule-x {
+  from { transform: scaleX(0); }
+}
+
+@keyframes lb-rule-y {
+  from { transform: scaleY(0); }
+}
+
+@keyframes lb-print {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes lb-fade {
+  from { opacity: 0; }
 }
 
 @media (max-width: 767px) {
