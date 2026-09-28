@@ -53,15 +53,29 @@ function fly(to: { x: number, y: number }, then?: () => void) {
   const dist = Math.hypot(dx, dy)
   const lift = Math.min(160, dist * 0.35)
   const frames: Keyframe[] = []
-  const steps = 16
+  const steps = 24
+  const cx = from.x + dx / 2
+  const cy = Math.min(from.y, to.y) - lift
+  let prev = 0
   for (let i = 0; i <= steps; i++) {
     const t = i / steps
     // quadratic arc with a little flutter on top
-    const cx = from.x + dx / 2
-    const cy = Math.min(from.y, to.y) - lift
     const x = (1 - t) ** 2 * from.x + 2 * (1 - t) * t * cx + t ** 2 * to.x
     const y = (1 - t) ** 2 * from.y + 2 * (1 - t) * t * cy + t ** 2 * to.y + Math.sin(t * Math.PI * 6) * 6 * (1 - t) * t * 4
-    frames.push({ transform: `translate(${x}px, ${y}px)` })
+    // it faces where it flies: the direction of the arc at this point (the sprite faces up)
+    const vx = 2 * (1 - t) * (cx - from.x) + 2 * t * (to.x - cx)
+    const vy = 2 * (1 - t) * (cy - from.y) + 2 * t * (to.y - cy)
+      + 24 * (6 * Math.PI * Math.cos(6 * Math.PI * t) * t * (1 - t) + Math.sin(6 * Math.PI * t) * (1 - 2 * t))
+    let heading = (Math.atan2(vy, vx) * 180) / Math.PI + 90
+    // no spinning the long way round between two frames
+    while (heading - prev > 180) heading -= 360
+    while (heading - prev < -180) heading += 360
+    prev = heading
+    // takes off and lands upright
+    const upright = Math.round(heading / 360) * 360
+    const w = Math.min(1, t / 0.15, (1 - t) / 0.15)
+    const angle = upright + (heading - upright) * w
+    frames.push({ transform: `translate(${x}px, ${y}px) rotate(${angle.toFixed(1)}deg)` })
   }
   flying.value = true
   current = node.animate(frames, { duration: Math.max(700, Math.min(1500, dist * 1.4)), easing: 'ease-in-out', fill: 'forwards' })
