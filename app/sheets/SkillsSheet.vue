@@ -13,7 +13,9 @@ const icon = (name: string): SkillIcon => skillIcons[name] ?? fallbackIcon
     <span class="rule rule-strong" data-build="line" />
 
     <div class="s-cols" :style="{ '--n': skills.length }">
-      <section v-for="(c, i) in skills" :key="c.category" class="s-col">
+      <!-- keyed by position: the category names change with the language, and a new column would
+           not be drawn (it stays hidden) -->
+      <section v-for="(c, i) in skills" :key="i" class="s-col">
         <span v-if="i" class="s-sep" data-build="vline" aria-hidden="true" />
         <h3 class="mono" data-build="type">{{ c.category }}</h3>
         <ul data-build="chips">
