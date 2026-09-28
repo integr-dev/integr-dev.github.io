@@ -7,6 +7,7 @@ import SearchBar from './SearchBar.vue'
 import { useDeckNav } from './useDeckNav'
 import { useBuild } from './useBuild'
 import { pathFromHash } from './paths'
+import { unzoomRect } from '~/utils/zoom'
 import type { SheetDef } from './types'
 
 const nav = useDeckNav()
@@ -211,6 +212,24 @@ function onTouchEnd(e: TouchEvent) {
 let mq: MediaQueryList | undefined
 const onMq = () => (narrow.value = !!mq?.matches)
 
+/**
+ * A link to a heading in a post or readme (/posts/x#setup): scroll that slide's text so the heading
+ * sits at the top. Also when the page is opened with such a link.
+ */
+function scrollToHash(smooth: boolean) {
+  const id = decodeURIComponent(route.hash.slice(1))
+  const el = id && !id.startsWith('/') ? document.getElementById(id) : null
+  if (!el) return
+  const box = el.closest<HTMLElement>('[data-scroll]')
+  if (!box || box.scrollHeight <= box.clientHeight) {
+    el.scrollIntoView({ block: 'start', behavior: smooth ? 'smooth' : 'auto' })
+    return
+  }
+  const top = unzoomRect(el.getBoundingClientRect()).top - unzoomRect(box.getBoundingClientRect()).top + box.scrollTop - 16
+  box.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' })
+}
+watch(() => route.hash, () => nextTick(() => scrollToHash(true)))
+
 onMounted(() => {
   mq = window.matchMedia('(max-width: 767px)')
   onMq()
@@ -225,6 +244,8 @@ onMounted(() => {
     const target = slide?.getClientRects().length ? slide : document.getElementById(`sheet-${sheet.id}`)
     target?.scrollIntoView()
   }
+  // a link to a heading: once the slide is laid out
+  if (!legacy && route.hash) requestAnimationFrame(() => scrollToHash(false))
   requestAnimationFrame(() => requestAnimationFrame(() => (instant.value = false)))
   // the first sheet is drawn once the viewport frame has been traced
   nextTick(() => build.start(route.path !== '/' || legacy ? 400 : 900))
