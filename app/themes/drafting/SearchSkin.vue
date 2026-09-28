@@ -124,7 +124,7 @@ function onKey(e: KeyboardEvent) {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 15vh;
+  padding-top: calc(var(--vh) * 15);
   animation: scrim-in 200ms ease both;
 }
 
@@ -143,7 +143,7 @@ function onKey(e: KeyboardEvent) {
 /* the panel is plain paper, its outline is drawn by the four edges */
 .search {
   position: relative;
-  width: min(640px, calc(100vw - 32px));
+  width: min(640px, calc(calc(var(--vw) * 100) - 32px));
   background: var(--bg);
   padding: 14px 18px 10px;
 }
@@ -212,7 +212,7 @@ input::placeholder {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-height: 46vh;
+  max-height: calc(var(--vh) * 46);
   overflow-y: auto;
 }
 

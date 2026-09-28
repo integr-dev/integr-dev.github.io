@@ -340,7 +340,7 @@ function setFeed(id: string, el: unknown) {
 <style scoped>
 .deck {
   position: relative;
-  height: 100dvh;
+  height: calc(var(--dvh) * 100);
   overflow: clip;
 }
 
@@ -354,13 +354,13 @@ function setFeed(id: string, el: unknown) {
 .deck-track {
   display: flex;
   height: 100%;
-  transform: translateX(calc(var(--x) * -100vw));
+  transform: translateX(calc(var(--x) * calc(var(--vw) * -100)));
   transition: transform var(--transition-duration) var(--transition-ease);
 }
 
 .deck-sheet {
-  flex: 0 0 100vw;
-  width: 100vw;
+  flex: 0 0 calc(var(--vw) * 100);
+  width: calc(var(--vw) * 100);
   height: 100%;
   overflow: clip;
 }

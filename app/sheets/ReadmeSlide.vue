@@ -63,7 +63,7 @@ const built = computed(() => findProject(props.project)?.built)
 }
 
 .rd-head h2 {
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: clamp(2rem, calc(var(--vw) * 4), 3.2rem);
 }
 
 .rd-scroll {

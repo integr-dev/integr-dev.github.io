@@ -38,7 +38,7 @@ const icon = (name: string): SkillIcon => skillIcons[name] ?? fallbackIcon
 }
 
 .skills h2 {
-  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-size: clamp(2.2rem, calc(var(--vw) * 5), 4rem);
 }
 
 /* one ruled column per category */
@@ -51,7 +51,7 @@ const icon = (name: string): SkillIcon => skillIcons[name] ?? fallbackIcon
 
 .s-col {
   position: relative;
-  padding: 4px clamp(16px, 2.4vw, 36px) 0;
+  padding: 4px clamp(16px, calc(var(--vw) * 2.4), 36px) 0;
 }
 
 .s-col:first-child {

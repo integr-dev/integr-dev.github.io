@@ -40,7 +40,7 @@ const iconFor = (name: string) => (name === 'github' ? ['fab', 'github'] : ['fas
 }
 
 .c-main h2 {
-  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-size: clamp(2.2rem, calc(var(--vw) * 5), 4rem);
 }
 
 .c-lead {
@@ -58,7 +58,7 @@ const iconFor = (name: string) => (name === 'github' ? ['fab', 'github'] : ['fas
 .c-address {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(1.8rem, 4.6vw, 4rem);
+  font-size: clamp(1.8rem, calc(var(--vw) * 4.6), 4rem);
   letter-spacing: -0.03em;
   color: var(--fg);
   text-decoration: none;

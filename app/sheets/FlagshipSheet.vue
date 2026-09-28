@@ -198,7 +198,7 @@ const asOf = computed(() => {
 <style scoped>
 .flagship {
   display: grid;
-  gap: 24px clamp(40px, 5vw, 88px);
+  gap: 24px clamp(40px, calc(var(--vw) * 5), 88px);
   align-items: center;
 }
 
@@ -228,7 +228,7 @@ const asOf = computed(() => {
 }
 
 .f-main h2 {
-  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-size: clamp(2.6rem, calc(var(--vw) * 6), 5rem);
   width: fit-content;
 }
 
@@ -378,7 +378,7 @@ const asOf = computed(() => {
 
 
 .f-pane img {
-  max-height: calc(100dvh - 300px);
+  max-height: calc(calc(var(--dvh) * 100) - 300px);
   object-fit: contain;
 }
 
@@ -400,7 +400,7 @@ const asOf = computed(() => {
 .f-code :deep(pre) {
   border: 0;
   padding: 22px 24px;
-  font-size: clamp(0.72rem, 1.05vw, 0.92rem);
+  font-size: clamp(0.72rem, calc(var(--vw) * 1.05), 0.92rem);
   line-height: 1.6;
   overflow-x: auto;
 }
@@ -425,7 +425,7 @@ const asOf = computed(() => {
   font-family: var(--font-pixel);
   font-weight: var(--font-pixel-weight);
   font-synthesis: none;
-  font-size: clamp(5rem, 13vw, 11rem);
+  font-size: clamp(5rem, calc(var(--vw) * 13), 11rem);
   line-height: 0.9;
   letter-spacing: 0;
 }

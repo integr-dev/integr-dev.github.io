@@ -50,7 +50,7 @@ const slug = (stem: string) => stem.split('/').pop()!
 }
 
 .r-head h2 {
-  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-size: clamp(2.2rem, calc(var(--vw) * 5), 4rem);
 }
 
 .r-head p {
@@ -70,7 +70,7 @@ const slug = (stem: string) => stem.split('/').pop()!
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 8px clamp(20px, 3vw, 44px) 0;
+  padding: 8px clamp(20px, calc(var(--vw) * 3), 44px) 0;
 }
 
 .r-col:first-child {
@@ -88,7 +88,7 @@ const slug = (stem: string) => stem.split('/').pop()!
 }
 
 .r-col h3 {
-  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  font-size: clamp(1.6rem, calc(var(--vw) * 2.6), 2.4rem);
   width: fit-content;
 }
 

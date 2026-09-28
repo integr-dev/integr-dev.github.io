@@ -13,6 +13,17 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* The page is zoomed to look like the reference window (nuxt.config sets --zoom and zoom on <html>). Zoom scales
+   viewport units too, so every size taken from the viewport goes through these, which divide the
+   zoom back out: calc(var(--vw) * 100) is always exactly the width of the window. */
+:root {
+  --zoom: 1;
+  --vw: calc(1vw / var(--zoom));
+  --vh: calc(1vh / var(--zoom));
+  --dvh: calc(1dvh / var(--zoom));
+  --svh: calc(1svh / var(--zoom));
+}
+
 html {
   font-size: 17px;
   line-height: 1.55;
@@ -50,7 +61,7 @@ h3 {
 
 /* Content area of one sheet, inside the viewport frame. */
 .sheet {
-  --pad: clamp(24px, 5vw, 80px);
+  --pad: clamp(24px, calc(var(--vw) * 5), 80px);
   position: relative;
   height: 100%;
   padding: calc(var(--frame-gap) + var(--pad)) calc(var(--frame-gap) + var(--pad));

@@ -36,7 +36,7 @@ const { timeline } = await useSiteContent()
 }
 
 .timeline h2 {
-  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-size: clamp(2.2rem, calc(var(--vw) * 5), 4rem);
 }
 
 .t-track {

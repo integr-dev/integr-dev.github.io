@@ -84,7 +84,7 @@ const slug = props.path.split('/').pop()!
 
 .ps-head h2 {
   margin-top: 8px;
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: clamp(2rem, calc(var(--vw) * 4), 3.2rem);
 }
 
 .ps-scroll {

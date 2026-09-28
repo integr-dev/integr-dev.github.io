@@ -1,3 +1,5 @@
+import { pageZoom, unzoomRect } from '~/utils/zoom'
+
 type Mode = 'light' | 'dark'
 
 const KEY = 'theme'
@@ -53,15 +55,19 @@ export function useThemeMode() {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduced || !document.startViewTransition) return apply(next)
 
-    let x = window.innerWidth / 2
-    let y = window.innerHeight / 2
+    // in page pixels: the ripple is drawn inside the (possibly zoomed) page
+    const z = pageZoom()
+    const w = window.innerWidth / z
+    const h = window.innerHeight / z
+    let x = w / 2
+    let y = h / 2
     if (e) {
       const target = e.currentTarget as HTMLElement | null
-      const r = target?.getBoundingClientRect()
-      x = e.clientX || (r ? r.left + r.width / 2 : x)
-      y = e.clientY || (r ? r.top + r.height / 2 : y)
+      const r = target && unzoomRect(target.getBoundingClientRect())
+      x = e.clientX / z || (r ? r.left + r.width / 2 : x)
+      y = e.clientY / z || (r ? r.top + r.height / 2 : y)
     }
-    const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))
+    const radius = Math.hypot(Math.max(x, w - x), Math.max(y, h - y))
 
     const transition = document.startViewTransition(() => apply(next))
     transition.ready.then(() => {

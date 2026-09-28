@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButterflySprite from './ButterflySprite.vue'
 import { pen } from './builder'
+import { pageZoom, unzoomRect } from '~/utils/zoom'
 
 // The butterfly from the avatar. Rests on the title block and flies to search hits.
 // While a sheet is being drawn the pen (also a butterfly) takes over, so this one hides.
@@ -24,7 +25,8 @@ const W = 27
 const H = 24
 
 function perch() {
-  const p = document.getElementById('butterfly-perch')?.getBoundingClientRect()
+  const el = document.getElementById('butterfly-perch')
+  const p = el && unzoomRect(el.getBoundingClientRect())
   if (!p || (p.width === 0 && p.top === 0)) return null
   return { x: p.left - W / 2, y: p.top - H + 4 }
 }
@@ -159,9 +161,10 @@ function wander() {
     return
   }
   const m = 80
+  const z = pageZoom()
   const to = {
-    x: m + Math.random() * (window.innerWidth * 0.75 - m),
-    y: m + Math.random() * (window.innerHeight * 0.65 - m),
+    x: m + Math.random() * (window.innerWidth / z * 0.75 - m),
+    y: m + Math.random() * (window.innerHeight / z * 0.65 - m),
   }
   fly(to, () => {
     if (away) returnTimer = setTimeout(wander, 150 + Math.random() * 450)
@@ -188,7 +191,8 @@ watch(() => pen.building, (drawing) => {
 
 watch(() => props.target, (t) => {
   if (!enabled.value || !t) return
-  const target = document.getElementById(t.anchor)?.getBoundingClientRect()
+  const anchor = document.getElementById(t.anchor)
+  const target = anchor && unzoomRect(anchor.getBoundingClientRect())
   if (!target) return
   clearTimeout(returnTimer)
   const land = { x: Math.min(target.right - W, target.left + Math.min(target.width * 0.6, 220)), y: target.top - H + 2 }

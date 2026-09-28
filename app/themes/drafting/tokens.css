@@ -10,7 +10,7 @@
   --font-pixel-weight: 400;
 
   --radius: 2px;
-  --frame-gap: clamp(12px, 2vw, 24px);
+  --frame-gap: clamp(12px, calc(var(--vw) * 2), 24px);
   --transition-duration: 700ms;
   --transition-ease: cubic-bezier(0.65, 0, 0.35, 1);
 

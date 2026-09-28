@@ -227,7 +227,7 @@ figcaption {
   font-weight: var(--font-pixel-weight);
   font-synthesis: none;
   letter-spacing: 0;
-  font-size: clamp(3.5rem, 10vw, 8.5rem);
+  font-size: clamp(3.5rem, calc(var(--vw) * 10), 8.5rem);
   line-height: 1;
   height: 1.2em;
   overflow: clip;
@@ -352,7 +352,7 @@ kbd {
   }
 
   .intro {
-    min-height: 100svh;
+    min-height: calc(var(--svh) * 100);
   }
 
   .intro-looking {

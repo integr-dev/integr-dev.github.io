@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { unzoomRect } from '~/utils/zoom'
+
 // The fixed drawing frame around the viewport. On load a pen dot traces it once.
 const svg = ref<SVGSVGElement>()
 const motion = ref<SVGAnimateMotionElement>()
@@ -13,7 +15,7 @@ const path = computed(() => {
 function measure() {
   const el = svg.value
   if (!el) return
-  const r = el.getBoundingClientRect()
+  const r = unzoomRect(el.getBoundingClientRect())
   size.value = { w: Math.round(r.width), h: Math.round(r.height) }
 }
 
@@ -56,8 +58,8 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure))
 .frame {
   position: fixed;
   inset: var(--frame-gap);
-  width: calc(100vw - 2 * var(--frame-gap));
-  height: calc(100dvh - 2 * var(--frame-gap));
+  width: calc(calc(var(--vw) * 100) - 2 * var(--frame-gap));
+  height: calc(calc(var(--dvh) * 100) - 2 * var(--frame-gap));
   /* above the paper, below the bushes and the sheets */
   z-index: 0;
   pointer-events: none;

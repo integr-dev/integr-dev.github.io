@@ -47,7 +47,7 @@ const max = computed(() => Math.max(...props.chart.bars.map(b => b.value), 1))
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
   gap: 8px;
-  height: clamp(160px, 30vh, 280px);
+  height: clamp(160px, calc(var(--vh) * 30), 280px);
   margin-top: 16px;
 }
 

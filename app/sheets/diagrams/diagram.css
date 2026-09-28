@@ -4,7 +4,7 @@
 .diagram svg {
   width: 100%;
   height: auto;
-  max-height: calc(100dvh - 260px);
+  max-height: calc(calc(var(--dvh) * 100) - 260px);
   font-family: var(--font-mono);
 }
 

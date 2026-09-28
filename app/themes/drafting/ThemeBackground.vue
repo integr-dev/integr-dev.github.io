@@ -4,7 +4,7 @@ import PixelBush from './PixelBush.vue'
 const props = defineProps<{ x: number, total: number }>()
 
 // The grid scrolls with the deck so all sheets read as one long roll of paper.
-const offset = computed(() => `calc(${props.x} * -100vw)`)
+const offset = computed(() => `calc(${props.x} * calc(var(--vw) * -100))`)
 </script>
 
 <template>
@@ -25,11 +25,11 @@ const offset = computed(() => `calc(${props.x} * -100vw)`)
   <!-- a run along the top edge out of the top-right bush: the two larger ones are where the intro's
        vines hang from (IntroSheet.vue: stems 440px and 610px left of the sheet's right padding),
        small ones in between tie them together, and a sprig trails off at the end -->
-  <PixelBush corner="top" at="calc(100% - var(--frame-gap) - clamp(24px, 5vw, 80px) - 372px)" :seed="102" :delay="2400" :width="8" :height="3" />
-  <PixelBush corner="top" at="calc(100% - var(--frame-gap) - clamp(24px, 5vw, 80px) - 500px)" :seed="71" :delay="2600" :width="15" :height="5" />
-  <PixelBush corner="top" at="calc(100% - var(--frame-gap) - clamp(24px, 5vw, 80px) - 557px)" :seed="114" :delay="2750" :width="6" :height="3" />
-  <PixelBush corner="top" at="calc(100% - var(--frame-gap) - clamp(24px, 5vw, 80px) - 654px)" :seed="83" :delay="2850" :width="11" :height="4" />
-  <PixelBush corner="top" at="calc(100% - var(--frame-gap) - clamp(24px, 5vw, 80px) - 712px)" :seed="126" :delay="3000" :width="5" :height="3" />
+  <PixelBush corner="top" at="calc(100% - var(--frame-gap) - clamp(24px, calc(var(--vw) * 5), 80px) - 372px)" :seed="102" :delay="2400" :width="8" :height="3" />
+  <PixelBush corner="top" at="calc(100% - var(--frame-gap) - clamp(24px, calc(var(--vw) * 5), 80px) - 500px)" :seed="71" :delay="2600" :width="15" :height="5" />
+  <PixelBush corner="top" at="calc(100% - var(--frame-gap) - clamp(24px, calc(var(--vw) * 5), 80px) - 557px)" :seed="114" :delay="2750" :width="6" :height="3" />
+  <PixelBush corner="top" at="calc(100% - var(--frame-gap) - clamp(24px, calc(var(--vw) * 5), 80px) - 654px)" :seed="83" :delay="2850" :width="11" :height="4" />
+  <PixelBush corner="top" at="calc(100% - var(--frame-gap) - clamp(24px, calc(var(--vw) * 5), 80px) - 712px)" :seed="126" :delay="3000" :width="5" :height="3" />
   <PixelBush corner="left" at="20%" :seed="91" :delay="3100" :width="7" :height="3" />
   <PixelBush corner="left" at="54%" :seed="63" :delay="2400" :width="14" :height="6" />
   <PixelBush corner="left" at="calc(54% + 120px)" :seed="27" :delay="2700" :width="7" :height="4" />

@@ -83,8 +83,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, { capture: tr
 }
 
 .lb-frame img {
-  max-width: min(1600px, calc(100vw - 176px));
-  max-height: calc(100dvh - 150px);
+  max-width: min(1600px, calc(calc(var(--vw) * 100) - 176px));
+  max-height: calc(calc(var(--dvh) * 100) - 150px);
   width: auto;
   height: auto;
   object-fit: contain;
@@ -162,7 +162,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, { capture: tr
   }
 
   .lb-frame img {
-    max-width: calc(100vw - 24px);
+    max-width: calc(calc(var(--vw) * 100) - 24px);
   }
 
   .lb-prev,

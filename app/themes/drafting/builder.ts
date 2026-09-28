@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import type { Builder, BuildOptions } from '../types'
+import { unzoomRect } from '~/utils/zoom'
 
 /*
  * The drafting builder. Every time a sheet comes into view it is drawn again, element by element:
@@ -322,9 +323,9 @@ function markRect(el: Element, kind: Kind): DOMRect {
     const range = document.createRange()
     range.selectNodeContents(el)
     const r = range.getBoundingClientRect()
-    if (r.width > 0 && r.height > 0) return r
+    if (r.width > 0 && r.height > 0) return unzoomRect(r)
   }
-  return el.getBoundingClientRect()
+  return unzoomRect(el.getBoundingClientRect())
 }
 
 /**

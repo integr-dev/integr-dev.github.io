@@ -469,6 +469,10 @@ Commands: `npm run dev`, `npm run generate` (static output in `.output/public`).
 
 ---
 
+## 8a. Size on screen
+
+The page is laid out for a reference window of 1694 x 971 (a MacBook browser window) and zoomed to fit any other window wider than a phone: `zoom` on `<html>` = min(width / 1694, height / 971), not below 0.6, set before first paint and on resize by the head script in nuxt.config. So large screens and browser zoom show the same picture, just bigger or smaller; phones (< 768px) keep their own layout at zoom 1. Zoom scales viewport units and on-screen positions as well, so sizes taken from the window use `var(--vw)`, `var(--vh)`, `var(--dvh)`, `var(--svh)` (base.css; they divide the zoom out) instead of `vw`/`vh`, and positions read with getBoundingClientRect or from pointer events are converted with `unzoomRect()` / `pageZoom()` (`app/utils/zoom.ts`) before being used for placement.
+
 ## 8b. Languages (English, German)
 
 - `@nuxtjs/i18n`, `prefix_except_default`: English at the plain paths, German under `/de` (`/de/projects/osmium/readme`). No redirect by browser language. Switch: `EN`/`DE` in the title block, to the same position in the other language. Switching swaps the texts in place, nothing is drawn again: both languages are loaded together (`useSiteContent` picks one by locale), and just before the switch the builder's `release()` puts back the text it split into letters, so Vue can patch it.

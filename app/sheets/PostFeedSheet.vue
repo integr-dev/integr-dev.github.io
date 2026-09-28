@@ -79,7 +79,7 @@ function scrollToPost(id: string) {
 }
 
 .p-head h2 {
-  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-size: clamp(2.2rem, calc(var(--vw) * 5), 4rem);
 }
 
 .p-head .rule {
@@ -111,7 +111,7 @@ function scrollToPost(id: string) {
 }
 
 .p-item h3 {
-  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-size: clamp(1.4rem, calc(var(--vw) * 2.4), 2rem);
 }
 
 .p-item h3 a {

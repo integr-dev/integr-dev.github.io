@@ -43,7 +43,7 @@ useSeoMeta({
 <style scoped>
 .error-page {
   position: relative;
-  min-height: 100dvh;
+  min-height: calc(var(--dvh) * 100);
   display: grid;
   place-items: center;
 }
@@ -59,7 +59,7 @@ useSeoMeta({
   font-family: var(--font-pixel);
   font-weight: var(--font-pixel-weight);
   font-synthesis: none;
-  font-size: clamp(4rem, 14vw, 8rem);
+  font-size: clamp(4rem, calc(var(--vw) * 14), 8rem);
   line-height: 1;
   color: var(--line);
 }
@@ -70,7 +70,7 @@ h1 {
   font-synthesis: none;
   letter-spacing: 0;
   margin-top: 16px;
-  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-size: clamp(1.8rem, calc(var(--vw) * 5), 2.8rem);
 }
 
 .rule {
