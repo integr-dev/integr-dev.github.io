@@ -418,7 +418,8 @@ const asOf = computed(() => {
 
 .badge-value {
   font-family: var(--font-pixel);
-  font-weight: 700;
+  font-weight: var(--font-pixel-weight);
+  font-synthesis: none;
   font-size: clamp(5rem, 13vw, 11rem);
   line-height: 0.9;
   letter-spacing: 0;

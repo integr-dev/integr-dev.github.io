@@ -28,7 +28,7 @@ export default defineNuxtConfig({
       { name: 'Schibsted Grotesk', provider: 'google', weights: [400, 500, 700] },
       { name: 'JetBrains Mono', provider: 'google', weights: [400, 500, 700] },
       // pixel font for the big titles, like the avatar
-      { name: 'Pixelify Sans', provider: 'google', weights: [700] },
+      { name: 'Jersey 10', provider: 'google', weights: [400] },
     ],
   },
 

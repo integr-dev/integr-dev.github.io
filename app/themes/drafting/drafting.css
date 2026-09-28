@@ -213,6 +213,8 @@ pre code .line {
 
 .sheet h2 {
   font-family: var(--font-pixel);
+  font-weight: var(--font-pixel-weight);
+  font-synthesis: none;
   /* pixel glyphs sit on a grid; squeezing them together smears the pixels */
   letter-spacing: 0;
 }

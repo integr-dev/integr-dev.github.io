@@ -57,7 +57,8 @@ useSeoMeta({
 
 .error-code {
   font-family: var(--font-pixel);
-  font-weight: 700;
+  font-weight: var(--font-pixel-weight);
+  font-synthesis: none;
   font-size: clamp(4rem, 14vw, 8rem);
   line-height: 1;
   color: var(--line);
@@ -65,6 +66,8 @@ useSeoMeta({
 
 h1 {
   font-family: var(--font-pixel);
+  font-weight: var(--font-pixel-weight);
+  font-synthesis: none;
   letter-spacing: 0;
   margin-top: 16px;
   font-size: clamp(1.8rem, 5vw, 2.8rem);

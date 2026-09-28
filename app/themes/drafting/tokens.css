@@ -5,7 +5,9 @@
   --font-body: 'Schibsted Grotesk', ui-sans-serif, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   /* the big titles: sheet titles, the intro name, the Helix number */
-  --font-pixel: 'Pixelify Sans', var(--font-display);
+  --font-pixel: 'Jersey 10', var(--font-display);
+  /* the weight the pixel font is drawn in; it has one, and faked bold smears the pixels */
+  --font-pixel-weight: 400;
 
   --radius: 2px;
   --frame-gap: clamp(12px, 2vw, 24px);

@@ -163,7 +163,8 @@ figcaption {
 
 .intro-name {
   font-family: var(--font-pixel);
-  font-weight: 700;
+  font-weight: var(--font-pixel-weight);
+  font-synthesis: none;
   letter-spacing: 0;
   font-size: clamp(3.5rem, 10vw, 8.5rem);
   line-height: 1;
