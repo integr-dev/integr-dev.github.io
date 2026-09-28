@@ -27,6 +27,8 @@ export interface Guide {
 export const pen = reactive({
   x: 0,
   y: 0,
+  /** ms the pen takes to glide to its next spot: shorter when elements come quickly after each other */
+  glide: 220,
   visible: false,
   /** true from the first to the last effect of a build (longer than the pen is visible) */
   building: false,
@@ -342,10 +344,16 @@ function penTarget(el: Element, kind: Kind | 'item') {
   return true
 }
 
+let lastMove = 0
+
 function movePen(el: Element, kind: Kind | 'item') {
   if (!penTarget(el, kind)) return
   const r = markRect(el, kind === 'item' ? 'fade' : kind)
   if (r.width < 16 && r.height < 16) return
+  // it arrives before the next element starts, so it never trails behind on fast builds
+  const now = performance.now()
+  pen.glide = pen.visible ? Math.max(40, Math.min(220, (now - lastMove) * 0.8)) : 220
+  lastMove = now
   pen.visible = true
   pen.x = r.right
   pen.y = r.bottom

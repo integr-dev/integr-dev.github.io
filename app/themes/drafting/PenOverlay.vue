@@ -36,7 +36,7 @@ const pad = (n: number) => String(Math.max(0, Math.round(n - gap.value))).padSta
   </div>
 
   <div class="pen-layer" aria-hidden="true">
-    <div class="pen" :class="{ 'is-visible': pen.visible }" :style="{ transform: `translate(${pen.x}px, ${pen.y}px)` }">
+    <div class="pen" :class="{ 'is-visible': pen.visible }" :style="{ transform: `translate(${pen.x}px, ${pen.y}px)`, '--glide': `${pen.glide}ms` }">
       <span class="pen-sprite"><ButterflySprite flap="fast" :scale="1.5" /></span>
       <span class="pen-label mono">x {{ pad(pen.x) }} y {{ pad(pen.y) }}</span>
     </div>
@@ -145,7 +145,7 @@ const pad = (n: number) => String(Math.max(0, Math.round(n - gap.value))).padSta
   top: 0;
   opacity: 0;
   transition:
-    transform 220ms cubic-bezier(0.3, 0, 0.2, 1),
+    transform var(--glide, 220ms) cubic-bezier(0.3, 0, 0.2, 1),
     opacity 250ms ease;
 }
 
