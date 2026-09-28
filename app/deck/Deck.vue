@@ -138,6 +138,8 @@ function onKey(e: KeyboardEvent) {
 // Wheel and trackpad: one gesture moves one step. Momentum after a step is swallowed
 // until the wheel goes quiet, so a single swipe never skips sheets.
 let locked = false
+// set by a page change: the rest of that gesture must not scroll the page it lands on either
+let turned = false
 let lastMove = 0
 let lastWheel = 0
 let acc = 0
@@ -152,7 +154,14 @@ function onWheel(e: WheelEvent) {
 
   e.preventDefault()
 
+  if (turned) {
+    if (now - lastMove > 650 && gap > 140) turned = locked = false
+    else return
+  }
+
   const scroller = feedEl()
+  // text not drawn yet (waiting to be, or being drawn, also right after a reload) stays at its top
+  if (!horizontal && scroller && !scroller.closest('[data-build-root]')?.classList.contains('is-built')) return
   if (!horizontal && canScroll(scroller, d)) {
     // Scroll the feed or readme ourselves, wherever the pointer is. The browser would only scroll
     // it with the pointer on top of it and let the event through to page navigation otherwise.
@@ -179,7 +188,7 @@ function onWheel(e: WheelEvent) {
     ? (forward ? nav.nextSheet() : nav.prevSheet())
     : (forward ? down() : up())
   if (moved) {
-    locked = true
+    locked = turned = true
     lastMove = now
   }
 }
