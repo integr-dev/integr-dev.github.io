@@ -1,0 +1,23 @@
+# German version of timeline.yml, same entries in the same order. DRAFT: check the wording.
+entries:
+  - when: "2021"
+    title: Einstieg mit Java
+    detail: Grundlagen der Objektorientierung, kleine Projekte, erste Bibliotheken.
+  - when: "2023"
+    title: Wechsel zu Kotlin
+    detail: Seitdem meine Hauptsprache.
+  - when: "2024"
+    title: Spring und Vue
+    detail: Backends mit Spring, Frontends mit Vue. Erster veröffentlichter Mod, Helix.
+  - when: "07/2025 – 08/2025"
+    title: Praktikum, Cloudflight Austria GmbH
+    detail: Mobile App für Mitarbeitende, gebaut mit Kotlin Multiplatform.
+  - when: "2026"
+    title: Backbone, Clay, Granum, Osmium
+    detail: Server-Framework, Doku-Toolchain, Gedächtnis für Claude Code, Agenten-Orchestrierung.
+  - when: "07/2026 – 08/2026"
+    title: Praktikum, Cloudflight Austria GmbH
+    detail: Android-App für Last-Mile-Management, Kotlin und Jetpack Compose.
+  - when: als Nächstes
+    title: Was kommt
+    detail: Was auch immer sich als spannend herausstellt.

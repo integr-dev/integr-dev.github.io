@@ -467,6 +467,14 @@ Commands: `npm run dev`, `npm run generate` (static output in `.output/public`).
 
 ---
 
+## 8b. Languages (English, German)
+
+- `@nuxtjs/i18n`, `prefix_except_default`: English at the plain paths, German under `/de` (`/de/projects/osmium/readme`). No redirect by browser language. Switch: `EN`/`DE` in the title block, to the same position in the other language. Switching swaps the texts in place, nothing is drawn again: both languages are loaded together (`useSiteContent` picks one by locale), and just before the switch the builder's `release()` puts back the text it split into letters, so Vue can patch it.
+- UI text: `i18n/locales/en.json` and `de.json`. Labels that come from the content (stat names, visual names) are translated when a message exists under `stats.*` / `visual.*`, else shown as written.
+- Content: English is the source. `content/de/` holds only the translated text and is merged over the English entry with the same name (`useSiteContent`): `de/profile.yml` (role, location, lookingFor, pitch, cvNote), `de/timeline.yml` and `de/skills.yml` (whole files), `de/projects/<name>.md` (tagline, why, built, badgeLabel, chart title and note, image alts in order, and the body when it is text). Readmes, posts and the RSS feed stay English. Diagrams stay English.
+- Dates: `formatDate(iso, withDay, lang)` (German months, `27. Sep. 2026`).
+- SEO: `<html lang>`, `og:locale`, titles and descriptions per language; every page links both versions (`hreflang` en, de-AT, x-default = English); the sitemap lists both. Preview images are the English ones.
+
 ## 9a. Search engines and sharing
 
 - `app/composables/useSiteSeo.ts`: per page title, description (under ~155 characters), canonical URL, Open Graph and Twitter cards, and schema.org data. Home: `ProfilePage` + `Person` (full name, alternate names, role, country, `sameAs` both GitHub accounts and Modrinth, `knowsAbout` from skills.yml) + `WebSite`. Posts: `BlogPosting` with the same `Person` as author.

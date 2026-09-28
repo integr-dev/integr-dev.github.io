@@ -4,6 +4,7 @@ import { sheets } from './sheets.config'
 export const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
 export async function useSearchIndex() {
+  const { t, te } = useI18n()
   const { projects, posts, timeline, skills } = await useSiteContent()
 
   return computed<SearchEntry[]>(() => {
@@ -33,7 +34,7 @@ export async function useSearchIndex() {
 
     for (const s of sheets) {
       if (!entries.some(e => e.kind === 'project' && e.sheetId === s.id)) {
-        entries.push({ label: s.title, kind: 'sheet', text: '', sheetId: s.id })
+        entries.push({ label: te(`sheets.${s.id}`) ? t(`sheets.${s.id}`) : s.title, kind: 'sheet', text: '', sheetId: s.id })
       }
     }
 

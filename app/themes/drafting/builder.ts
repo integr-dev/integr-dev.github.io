@@ -67,20 +67,30 @@ const kindOf = (el: Element) => (el.getAttribute('data-build') ?? 'fade') as Kin
 
 // ---------- typing ----------
 
+// what split() changed on an element, so release() can put the framework's own text nodes back
+interface Split { texts: { node: Text, spans: HTMLElement[] }[], sr?: HTMLElement, label?: boolean }
+const splits = new WeakMap<HTMLElement, Split>()
+
 function split(el: HTMLElement): HTMLElement[] {
   if (el.dataset.split) return [...el.querySelectorAll<HTMLElement>('.ch')]
   el.dataset.split = '1'
+  const record: Split = { texts: [] }
+  splits.set(el, record)
   // the letters are hidden from screen readers, so the whole text is named once: headings, links and
   // buttons take an aria-label, anything else (p, figcaption) gets a visually hidden copy
   const text = el.textContent?.trim() ?? ''
   if (/^(H[1-6]|A|BUTTON)$/.test(el.tagName) || el.hasAttribute('role')) {
-    if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', text)
+    if (!el.getAttribute('aria-label')) {
+      el.setAttribute('aria-label', text)
+      record.label = true
+    }
   }
   else {
     const sr = document.createElement('span')
     sr.className = 'sr-only'
     sr.textContent = text
     el.prepend(sr)
+    record.sr = sr
   }
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
   const nodes: Text[] = []
@@ -89,13 +99,17 @@ function split(el: HTMLElement): HTMLElement[] {
   }
   for (const node of nodes) {
     const frag = document.createDocumentFragment()
+    const spans: HTMLElement[] = []
     for (const c of node.data) {
       const s = document.createElement('span')
       s.className = 'ch'
       s.setAttribute('aria-hidden', 'true')
       s.textContent = c
       frag.appendChild(s)
+      spans.push(s)
     }
+    // the original node stays referenced: release() puts it back where the letters are
+    record.texts.push({ node, spans })
     node.replaceWith(frag)
   }
   return [...el.querySelectorAll<HTMLElement>('.ch')]
@@ -446,6 +460,24 @@ export const builder: Builder = {
     }
     catch (e) {
       if (!(e instanceof Aborted)) throw e
+    }
+  },
+
+  release(root: HTMLElement) {
+    for (const el of root.querySelectorAll<HTMLElement>('[data-split]')) {
+      const record = splits.get(el)
+      if (record) {
+        for (const { node, spans } of record.texts) {
+          const first = spans.find(s => s.isConnected)
+          if (first) first.before(node)
+          spans.forEach(s => s.remove())
+        }
+        record.sr?.remove()
+        if (record.label) el.removeAttribute('aria-label')
+        splits.delete(el)
+      }
+      el.querySelectorAll('.caret').forEach(c => c.remove())
+      delete el.dataset.split
     }
   },
 

@@ -47,3 +47,17 @@ export function pathFromHash(hash: string) {
 export function staticPaths() {
   return sheets.flatMap(s => [basePath(s), ...(s.slides ?? []).slice(1).map(sl => pathFor(s, sl.id))])
 }
+
+// German lives under /de (nuxt.config i18n, prefix_except_default); positions are the same.
+
+/** The path without its language prefix. */
+export function stripLocale(path: string) {
+  if (path === '/de') return '/'
+  return path.startsWith('/de/') ? path.slice(3) : path
+}
+
+/** A position path in the given language. */
+export function withLocale(path: string, locale: string) {
+  if (locale !== 'de') return path
+  return path === '/' ? '/de' : `/de${path}`
+}

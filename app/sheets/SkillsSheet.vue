@@ -9,7 +9,7 @@ const icon = (name: string): SkillIcon => skillIcons[name] ?? fallbackIcon
 
 <template>
   <div class="sheet skills">
-    <h2 data-build="type">Skills</h2>
+    <h2 data-build="type">{{ $t('sheets.skills') }}</h2>
     <span class="rule rule-strong" data-build="line" />
 
     <div class="s-cols" :style="{ '--n': skills.length }">

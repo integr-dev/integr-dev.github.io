@@ -1,0 +1,10 @@
+# German version of skills.yml: the category names are translated, the skills stay as they are.
+categories:
+  - category: Sprachen
+    items: [Kotlin, Java, JavaScript, TypeScript, Go, C, C#, Python]
+  - category: Datenbanken
+    items: [Oracle, MySQL, SQLite, MongoDB, Postgres]
+  - category: Frameworks
+    items: [Kotlin Multiplatform, JavaFX, Vue, Nuxt, Spring, Quarkus, React]
+  - category: Tools & DevOps
+    items: [Git, GitHub, Docker, Podman, Kubernetes, Linux, Windows, Vite, Gradle, Maven]

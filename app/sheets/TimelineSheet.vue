@@ -4,7 +4,7 @@ const { timeline } = await useSiteContent()
 
 <template>
   <div class="sheet timeline">
-    <h2 data-build="type">Timeline</h2>
+    <h2 data-build="type">{{ $t('sheets.timeline') }}</h2>
 
     <div class="t-track">
       <span class="t-axis rule" data-build="line" />

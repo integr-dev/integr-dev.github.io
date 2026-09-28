@@ -8,6 +8,9 @@ import { theme } from '~/themes/active'
 import { useLightbox } from '~/composables/useLightbox'
 
 const lightbox = useLightbox()
+const { t, te, locale } = useI18n()
+// labels that come from the content (stat names, visual names), translated where a message exists
+const label = (group: string, key: string) => (te(`${group}.${key}`) ? t(`${group}.${key}`) : key)
 
 const props = withDefaults(defineProps<{ project: string, visual?: 'left' | 'right', sheetId?: string }>(), { visual: 'left' })
 const { project: find } = await useSiteContent()
@@ -76,7 +79,7 @@ function stackStyle(i: number, n: number) {
 
 const asOf = computed(() => {
   const d = p.value?.stats?.asOf
-  return d ? formatDate(d, false) : ''
+  return d ? formatDate(d, false, locale.value) : ''
 })
 </script>
 
@@ -88,7 +91,7 @@ const asOf = computed(() => {
       <p class="f-tagline" data-build="print">{{ p.tagline }}</p>
       <span class="rule" data-build="line" />
       <p v-if="p.why" class="f-why" data-build="print">
-        <strong>Why it's here.</strong> {{ p.why }}
+        <strong>{{ t('flagship.why') }}</strong> {{ p.why }}
       </p>
       <div v-if="!visuals.some(v => v.kind === 'code')" class="f-body" data-build="print">
         <ContentRenderer :value="p" />
@@ -96,16 +99,16 @@ const asOf = computed(() => {
       <p v-if="p.stats" class="f-stats mono" data-build="chips">
         <template v-for="(s, i) in p.stats.items" :key="s.label">
           <span v-if="i" class="sep" aria-hidden="true">/</span>
-          <span><b data-build="count">{{ s.value }}</b> {{ s.label }}</span>
+          <span><b data-build="count">{{ s.value }}</b> {{ label('stats', s.label) }}</span>
         </template>
-        <a class="f-source" :href="p.stats.source" target="_blank" rel="noopener">as of {{ asOf }}</a>
+        <a class="f-source" :href="p.stats.source" target="_blank" rel="noopener">{{ t('flagship.asOf', { date: asOf }) }}</a>
       </p>
       <ul class="f-stack" data-build="chips">
         <li v-for="s in p.stack" :key="s" class="chip">{{ s }}</li>
       </ul>
       <p class="f-links" data-build="chips">
         <a v-for="l in p.links" :key="l.href" :href="l.href" target="_blank" rel="noopener">
-          {{ l.label }} <FontAwesomeIcon icon="arrow-up-right-from-square" class="ext" />
+          {{ label('link', l.label) }} <FontAwesomeIcon icon="arrow-up-right-from-square" class="ext" />
         </a>
       </p>
     </div>
@@ -127,7 +130,7 @@ const asOf = computed(() => {
             :class="[`pane-${v.kind}`, { 'is-active': i === active, 'is-leaving': i === leaving }]"
             :data-build-skip="i !== active ? '' : undefined"
             :inert="i !== active ? true : undefined"
-            :aria-label="v.label"
+            :aria-label="v.label ? label('visual', v.label) : undefined"
           >
             <component :is="diagrams[v.diagram!]" v-if="v.kind === 'diagram'" />
 
@@ -163,7 +166,7 @@ const asOf = computed(() => {
       </div>
 
       <div v-if="count > 1" class="f-nav mono" data-build="fade" data-nopen>
-        <button type="button" class="f-arrow" aria-label="Previous view" @click="show(active - 1)">
+        <button type="button" class="f-arrow" :aria-label="t('flagship.prevView')" @click="show(active - 1)">
           <FontAwesomeIcon icon="arrow-left" />
         </button>
         <button
@@ -172,14 +175,14 @@ const asOf = computed(() => {
           type="button"
           class="f-dot"
           :class="{ 'is-active': i === active }"
-          :aria-label="v.label ?? v.kind"
+          :aria-label="label('visual', v.label ?? v.kind)"
           :aria-current="i === active ? 'true' : undefined"
           @click="show(i)"
         >
           <span class="f-dot-mark" />
-          <span class="f-dot-label">{{ v.label ?? v.kind }}</span>
+          <span class="f-dot-label">{{ label('visual', v.label ?? v.kind) }}</span>
         </button>
-        <button type="button" class="f-arrow" aria-label="Next view" @click="show(active + 1)">
+        <button type="button" class="f-arrow" :aria-label="t('flagship.nextView')" @click="show(active + 1)">
           <FontAwesomeIcon icon="arrow-right" />
         </button>
       </div>

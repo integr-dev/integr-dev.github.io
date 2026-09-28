@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { useDeckNav } from '~/deck/useDeckNav'
+import { withLocale } from '~/deck/paths'
 
 // The post list. Each post opens as its own page below this one.
 defineProps<{ sheetId?: string }>()
 const { posts } = await useSiteContent()
 const nav = useDeckNav()
+const { locale } = useI18n()
+// the post page in the current language (the post text itself stays English)
+const href = (path: string) => withLocale(`/posts/${slug(path)}`, locale.value)
 
 const slug = (path: string) => path.split('/').pop()!
 
@@ -28,8 +32,8 @@ function scrollToPost(id: string) {
   <div class="sheet feed">
     <header class="p-head">
       <div class="p-title">
-        <h2 data-build="type">Posts</h2>
-        <a class="p-rss mono" href="/feed.xml" data-build="fade" data-nopen><FontAwesomeIcon icon="rss" /> RSS</a>
+        <h2 data-build="type">{{ $t('sheets.posts') }}</h2>
+        <a class="p-rss mono" href="/feed.xml" data-build="fade" data-nopen><FontAwesomeIcon icon="rss" /> {{ $t('posts.rss') }}</a>
       </div>
       <span class="rule" data-build="line" />
     </header>
@@ -37,22 +41,22 @@ function scrollToPost(id: string) {
     <!-- data-scroll: a long list scrolls inside the page before the deck moves on -->
     <ol v-if="posts.length" class="p-list" data-scroll>
       <li v-for="p in posts" :key="p.path" class="p-item">
-        <time class="mono muted" :datetime="p.date" data-build="type">{{ formatDate(p.date) }}</time>
+        <time class="mono muted" :datetime="p.date" data-build="type">{{ formatDate(p.date, true, locale) }}</time>
         <div class="p-main">
           <h3 data-build="type">
-            <a :href="`/posts/${slug(p.path)}`" @click.prevent="open(p.path)">{{ p.title }}</a>
+            <a :href="href(p.path)" @click.prevent="open(p.path)">{{ p.title }}</a>
           </h3>
           <p class="p-summary" data-build="print">{{ p.summary }}</p>
           <p v-if="p.tags?.length" class="p-tags mono muted" data-build="fade">{{ p.tags.join(', ') }}</p>
         </div>
         <p class="p-read mono" data-build="fade" data-nopen>
-          <a :href="`/posts/${slug(p.path)}`" @click.prevent="open(p.path)">
-            read <FontAwesomeIcon icon="arrow-down" />
+          <a :href="href(p.path)" @click.prevent="open(p.path)">
+            {{ $t('posts.read') }} <FontAwesomeIcon icon="arrow-down" />
           </a>
         </p>
       </li>
     </ol>
-    <p v-else class="muted" data-build="type">Nothing here yet.</p>
+    <p v-else class="muted" data-build="type">{{ $t('posts.empty') }}</p>
   </div>
 </template>
 

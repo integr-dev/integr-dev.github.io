@@ -7,8 +7,8 @@ const iconFor = (name: string) => (name === 'github' ? ['fab', 'github'] : ['fas
 <template>
   <div v-if="profile" class="sheet contact">
     <div class="c-main">
-      <h2 data-build="type">Contact</h2>
-      <p class="c-lead" data-build="print">Email is the fastest way to reach me.</p>
+      <h2 data-build="type">{{ $t('sheets.contact') }}</h2>
+      <p class="c-lead" data-build="print">{{ $t('contact.lead') }}</p>
       <div class="c-mail">
         <a class="c-address" :href="`mailto:${profile.email}`" data-build="type">{{ profile.email }}</a>
       </div>
@@ -22,7 +22,7 @@ const iconFor = (name: string) => (name === 'github' ? ['fab', 'github'] : ['fas
         </li>
       </ul>
       <p class="c-cv muted" data-build="print">{{ profile.cvNote }}</p>
-      <p class="c-done mono" data-build="type">Done.</p>
+      <p class="c-done mono" data-build="type">{{ $t('contact.done') }}</p>
     </div>
   </div>
 </template>

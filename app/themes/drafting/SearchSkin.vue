@@ -56,7 +56,7 @@ function onKey(e: KeyboardEvent) {
 
 <template>
   <div v-if="shown" class="search-scrim" :class="{ 'is-closing': !open }" @mousedown.self="emit('close')">
-    <div id="search-panel" ref="panel" class="search" role="dialog" aria-label="Search" data-build-root data-nopen>
+    <div id="search-panel" ref="panel" class="search" role="dialog" :aria-label="$t('search.label')" data-build-root data-nopen>
       <!-- outline first -->
       <span class="edge edge-t" data-build="line" />
       <span class="edge edge-r" data-build="vline" />
@@ -64,7 +64,7 @@ function onKey(e: KeyboardEvent) {
       <span class="edge edge-l" data-build="vline" />
 
       <header class="s-head mono">
-        <span data-build="type">search</span>
+        <span data-build="type">{{ $t('search.title') }}</span>
         <span class="muted" data-build="type">/ ⌘K ⌥Space</span>
       </header>
 
@@ -74,7 +74,7 @@ function onKey(e: KeyboardEvent) {
           ref="input"
           :value="query"
           type="text"
-          placeholder="Projects, posts, skills"
+          :placeholder="$t('search.placeholder')"
           autocomplete="off"
           spellcheck="false"
           role="combobox"
@@ -99,16 +99,16 @@ function onKey(e: KeyboardEvent) {
         >
           <span class="r-mark" aria-hidden="true">›</span>
           <span class="r-label">{{ r.label }}</span>
-          <span class="r-kind mono">{{ r.kind }}</span>
+          <span class="r-kind mono">{{ $t(`search.kind.${r.kind}`) }}</span>
           <span class="r-text">{{ r.text }}</span>
         </li>
       </ul>
-      <p v-else-if="query" class="s-empty muted">Nothing matches "{{ query }}".</p>
+      <p v-else-if="query" class="s-empty muted">{{ $t('search.empty', { query }) }}</p>
 
       <p class="s-hints mono" data-build="fade" data-nopen>
-        <span><kbd>↑</kbd><kbd>↓</kbd> choose</span>
-        <span><kbd>⏎</kbd> open</span>
-        <span><kbd>esc</kbd> close</span>
+        <span><kbd>↑</kbd><kbd>↓</kbd> {{ $t('search.choose') }}</span>
+        <span><kbd>⏎</kbd> {{ $t('search.open') }}</span>
+        <span><kbd>esc</kbd> {{ $t('search.close') }}</span>
       </p>
 
     </div>

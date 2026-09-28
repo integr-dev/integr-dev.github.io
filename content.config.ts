@@ -42,6 +42,22 @@ export default defineContentConfig({
       }),
     }),
 
+    // German overrides (content/de/): only the translated text; everything else comes from the
+    // English entry with the same file name, merged in useSiteContent
+    projects_de: defineCollection({
+      type: 'page',
+      source: 'de/projects/*.md',
+      schema: z.object({
+        tagline: z.string().optional(),
+        why: z.string().optional(),
+        built: z.object({ problem: z.string(), solution: z.string() }).optional(),
+        badgeLabel: z.string().optional(),
+        chart: z.object({ title: z.string(), note: z.string().optional() }).optional(),
+        // image alt texts, in the order the images appear across all visuals
+        alts: z.array(z.string()).optional(),
+      }),
+    }),
+
     // long form text shown on the page below each flagship
     readmes: defineCollection({
       type: 'page',
@@ -67,11 +83,39 @@ export default defineContentConfig({
       }),
     }),
 
+    timeline_de: defineCollection({
+      type: 'data',
+      source: 'de/timeline.yml',
+      schema: z.object({
+        entries: z.array(z.object({ when: z.string(), title: z.string(), detail: z.string().optional() })),
+      }),
+    }),
+
     skills: defineCollection({
       type: 'data',
       source: 'skills.yml',
       schema: z.object({
         categories: z.array(z.object({ category: z.string(), items: z.array(z.string()) })),
+      }),
+    }),
+
+    skills_de: defineCollection({
+      type: 'data',
+      source: 'de/skills.yml',
+      schema: z.object({
+        categories: z.array(z.object({ category: z.string(), items: z.array(z.string()) })),
+      }),
+    }),
+
+    profile_de: defineCollection({
+      type: 'data',
+      source: 'de/profile.yml',
+      schema: z.object({
+        role: z.string().optional(),
+        location: z.string().optional(),
+        lookingFor: z.string().optional(),
+        pitch: z.string().optional(),
+        cvNote: z.string().optional(),
       }),
     }),
 

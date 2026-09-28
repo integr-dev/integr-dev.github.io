@@ -23,6 +23,9 @@ const emit = defineEmits<{
 
 const current = computed(() => props.titles[props.x] ?? '')
 const theme = useThemeMode()
+const { locale } = useI18n()
+const switchLocalePath = useSwitchLocalePath()
+const otherLocale = computed(() => (locale.value === 'de' ? 'en' : 'de'))
 
 // Expanded while hovered or keyboard-focused. A click on a marker collapses it until the pointer
 // leaves or moves on. Changes are announced on window so the butterfly can react.
@@ -81,7 +84,7 @@ function pick(i: number, e: MouseEvent) {
     ref="block"
     class="title-block mono"
     :class="{ 'is-expanded': expanded }"
-    aria-label="Sheets"
+    :aria-label="$t('titleBlock.label')"
     @mouseenter="hovered = true"
     @mouseleave="leave"
     @mousemove="onMove"
@@ -96,12 +99,12 @@ function pick(i: number, e: MouseEvent) {
         <span class="tb-handle">{{ handle }}</span>
         <span class="tb-current" aria-live="polite">{{ current }}</span>
       </div>
-      <span class="tb-status" :class="{ 'is-done': progress >= 1 }">{{ progress >= 1 ? 'Done' : `${Math.round(progress * 100)}%` }}</span>
+      <span class="tb-status" :class="{ 'is-done': progress >= 1 }">{{ progress >= 1 ? $t('titleBlock.done') : `${Math.round(progress * 100)}%` }}</span>
       <div class="tb-y" :class="{ 'is-empty': yTotal < 2 }">
-        <button type="button" :disabled="y === 0" aria-label="Up" @click="emit('up')">
+        <button type="button" :disabled="y === 0" :aria-label="$t('titleBlock.up')" @click="emit('up')">
           <FontAwesomeIcon icon="arrow-up" />
         </button>
-        <button type="button" :disabled="y >= yTotal - 1" aria-label="Down" @click="emit('down')">
+        <button type="button" :disabled="y >= yTotal - 1" :aria-label="$t('titleBlock.down')" @click="emit('down')">
           <FontAwesomeIcon icon="arrow-down" />
         </button>
       </div>
@@ -123,21 +126,24 @@ function pick(i: number, e: MouseEvent) {
     </ol>
     <div class="tb-foot">
       <button type="button" class="tb-search" @click="emit('search')">
-        <kbd>/</kbd> search
+        <kbd>/</kbd> {{ $t('titleBlock.search') }}
       </button>
+      <NuxtLink class="tb-lang" :to="switchLocalePath(otherLocale)" :hreflang="otherLocale" :aria-label="$t('titleBlock.language')">
+        {{ otherLocale.toUpperCase() }}
+      </NuxtLink>
       <button
         type="button"
         class="tb-theme"
-        :aria-label="theme.mode.value === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+        :aria-label="theme.mode.value === 'dark' ? $t('titleBlock.toLight') : $t('titleBlock.toDark')"
         @click="switchTheme"
       >
         <FontAwesomeIcon :icon="theme.mode.value === 'dark' ? 'sun' : theme.mode.value === 'light' ? 'moon' : 'circle-half-stroke'" />
       </button>
       <span class="tb-arrows">
-        <button type="button" :disabled="x === 0" aria-label="Previous sheet" @click="emit('prev')">
+        <button type="button" :disabled="x === 0" :aria-label="$t('titleBlock.prev')" @click="emit('prev')">
           <FontAwesomeIcon icon="arrow-left" />
         </button>
-        <button type="button" :disabled="x >= total - 1" aria-label="Next sheet" @click="emit('next')">
+        <button type="button" :disabled="x >= total - 1" :aria-label="$t('titleBlock.next')" @click="emit('next')">
           <FontAwesomeIcon icon="arrow-right" />
         </button>
       </span>
@@ -395,8 +401,18 @@ button:disabled {
 }
 
 .tb-theme {
-  margin-left: auto;
   margin-right: 6px;
+}
+
+.tb-lang {
+  margin-left: auto;
+  padding: 4px 6px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.tb-lang:hover {
+  color: var(--fg);
 }
 
 kbd {

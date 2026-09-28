@@ -1,0 +1,139 @@
+{
+  "sheets": {
+    "intro": "Intro",
+    "projects": "Projekte",
+    "posts": "Beiträge",
+    "timeline": "Werdegang",
+    "skills": "Skills",
+    "contact": "Kontakt"
+  },
+  "intro": {
+    "facts": "{name}, {age}, {role} aus {location}.",
+    "avatarAlt": "Pixelart einer Katze vor einer Holzwand mit Pflanzen und einem gelben Schmetterling",
+    "shortcuts": {
+      "projects": "Projekte",
+      "posts": "Beiträge",
+      "contact": "Kontakt"
+    },
+    "hints": {
+      "next": "Projekte",
+      "search": "Suche",
+      "skipKey": "Klick",
+      "skip": "Zeichnen überspringen"
+    }
+  },
+  "flagship": {
+    "why": "Warum es hier ist.",
+    "asOf": "Stand {date}",
+    "prevView": "Vorherige Ansicht",
+    "nextView": "Nächste Ansicht"
+  },
+  "visual": {
+    "Architecture": "Architektur",
+    "Diagram": "Diagramm",
+    "Screenshot": "Screenshot",
+    "Screenshots": "Screenshots",
+    "Script": "Skript",
+    "Downloads": "Downloads"
+  },
+  "stats": {
+    "commits": "Commits",
+    "of them mine": "davon meine",
+    "first commit": "erster Commit",
+    "repositories": "Repositories",
+    "stars": "Sterne",
+    "people": "Personen",
+    "languages": "Sprachen",
+    "downloads": "Downloads",
+    "followers": "Follower"
+  },
+  "readme": {
+    "kicker": "Readme",
+    "built": "Wie es gebaut ist",
+    "problem": "Das Problem.",
+    "solution": "Die Lösung."
+  },
+  "projects": {
+    "other": "Weitere Projekte",
+    "more": "Mehr",
+    "moreLead": "Bibliotheken und ältere Experimente."
+  },
+  "posts": {
+    "rss": "RSS",
+    "empty": "Noch nichts hier.",
+    "read": "lesen",
+    "all": "Alle Beiträge"
+  },
+  "contact": {
+    "lead": "Per E-Mail erreichst du mich am schnellsten.",
+    "done": "Fertig."
+  },
+  "deck": {
+    "nextSheet": "Nächstes Blatt: Projekte",
+    "above": "Seite darüber",
+    "below": "Nächste Seite darunter"
+  },
+  "titleBlock": {
+    "label": "Blätter",
+    "up": "Nach oben",
+    "down": "Nach unten",
+    "prev": "Vorheriges Blatt",
+    "next": "Nächstes Blatt",
+    "search": "Suche",
+    "done": "Fertig",
+    "toLight": "Zum hellen Modus wechseln",
+    "toDark": "Zum dunklen Modus wechseln",
+    "language": "Read in English"
+  },
+  "search": {
+    "label": "Suche",
+    "title": "Suche",
+    "placeholder": "Projekte, Beiträge, Skills",
+    "empty": "Nichts passt zu „{query}“.",
+    "choose": "auswählen",
+    "open": "öffnen",
+    "close": "schließen",
+    "kind": {
+      "project": "Projekt",
+      "post": "Beitrag",
+      "timeline": "Werdegang",
+      "skill": "Skill",
+      "sheet": "Blatt"
+    }
+  },
+  "lightbox": {
+    "prev": "Vorheriger Screenshot",
+    "next": "Nächster Screenshot",
+    "close": "Vorschau schließen"
+  },
+  "chart": {
+    "source": "Quelle"
+  },
+  "error": {
+    "notFoundTitle": "Nicht gefunden",
+    "errorTitle": "Fehler",
+    "notFound": "Dieses Blatt wurde nie gezeichnet.",
+    "failed": "Etwas ist schiefgelaufen.",
+    "notFoundText": "Unter dieser Adresse gibt es nichts. Vielleicht ist es umgezogen, oder im Link steckt ein Tippfehler.",
+    "home": "Start"
+  },
+  "seo": {
+    "title": "{name} · {role} aus {location}",
+    "description": "{name} ({handle}), {role} aus {location}, meistens Kotlin. Projekte: {projects}.",
+    "readme": "{project} Readme",
+    "moreTitle": "Weitere Projekte",
+    "projects": "Weitere Projekte von {name}: {projects}.",
+    "more": "Bibliotheken und ältere Experimente von {name}.",
+    "posts": "Beiträge von {name} über die Projekte: wie sie funktionieren und warum sie so gebaut sind.",
+    "timeline": "Was {name} gebaut hat, Jahr für Jahr.",
+    "skills": "Sprachen, Frameworks und Tools, mit denen {name} arbeitet.",
+    "contact": "So erreichst du {name}, {role} aus {location}."
+  },
+  "link": {
+    "Source": "Quellcode",
+    "Live demo": "Live-Demo",
+    "Example": "Beispiel",
+    "Backend": "Backend",
+    "Frontend": "Frontend"
+  }
+}

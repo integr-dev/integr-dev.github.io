@@ -12,15 +12,15 @@ const built = computed(() => findProject(props.project)?.built)
 <template>
   <div class="sheet readme">
     <header class="rd-head">
-      <p class="rd-kicker mono" data-build="type">readme</p>
+      <p class="rd-kicker mono" data-build="type">{{ $t('readme.kicker') }}</p>
       <h2 data-build="type">{{ readme?.title }}</h2>
     </header>
     <span class="rule rule-strong" data-build="line" />
     <!-- data-scroll: the deck lets wheel and arrow keys scroll this before moving on -->
     <div class="rd-scroll" data-scroll>
-      <section v-if="built" class="rd-built" aria-label="How it was built">
-        <p data-build="print"><strong>The problem.</strong> {{ built.problem }}</p>
-        <p data-build="print"><strong>How it's solved.</strong> {{ built.solution }}</p>
+      <section v-if="built" class="rd-built" :aria-label="$t('readme.built')">
+        <p data-build="print"><strong>{{ $t('readme.problem') }}</strong> {{ built.problem }}</p>
+        <p data-build="print"><strong>{{ $t('readme.solution') }}</strong> {{ built.solution }}</p>
       </section>
       <div v-if="readme" class="rd-body" data-build="print">
         <ContentRenderer :value="readme" />

@@ -22,6 +22,11 @@ export interface Builder {
   unbuild: (root: HTMLElement, opts: { signal: AbortSignal }) => Promise<void>
   /** Show everything at once (reduced motion). */
   finish: (root: HTMLElement) => void
+  /**
+   * Hand the text back to the framework: undo any DOM rewriting (split letters) so the page can
+   * update its text in place, e.g. on a language switch. Drawn parts stay drawn.
+   */
+  release?: (root: HTMLElement) => void
 }
 
 /**

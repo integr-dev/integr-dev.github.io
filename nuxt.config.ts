@@ -2,7 +2,7 @@ import { staticPaths } from './app/deck/paths'
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-09-01',
-  modules: ['@nuxt/content', '@nuxt/fonts'],
+  modules: ['@nuxt/content', '@nuxt/fonts', '@nuxtjs/i18n'],
 
   ssr: true,
 
@@ -30,9 +30,21 @@ export default defineNuxtConfig({
     ],
   },
 
+  // English at the plain paths, German under /de (messages in i18n/locales, German content in
+  // content/de). No automatic redirect by browser language: the switch is in the title block.
+  i18n: {
+    baseUrl: 'https://integr.is-a.dev',
+    defaultLocale: 'en',
+    strategy: 'prefix_except_default',
+    locales: [
+      { code: 'en', language: 'en', name: 'English', file: 'en.json' },
+      { code: 'de', language: 'de-AT', name: 'Deutsch', file: 'de.json' },
+    ],
+    detectBrowserLanguage: false,
+  },
+
   app: {
     head: {
-      htmlAttrs: { lang: 'en' },
       // per page titles, descriptions and social cards: app/composables/useSiteSeo.ts
       titleTemplate: '%s',
       meta: [
@@ -63,7 +75,7 @@ export default defineNuxtConfig({
     prerender: {
       // every deck position is its own page; the post pages are found by crawling the post list
       crawlLinks: true,
-      routes: [...staticPaths(), '/sitemap.xml', '/feed.xml'],
+      routes: [...staticPaths(), ...staticPaths().map(p => `/de${p === '/' ? '' : p}`), '/sitemap.xml', '/feed.xml'],
       // /posts.html instead of /posts/index.html: GitHub Pages serves both without a trailing
       // slash redirect, so the URLs stay exactly the canonical ones
       autoSubfolderIndex: false,

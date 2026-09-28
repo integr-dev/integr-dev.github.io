@@ -47,13 +47,13 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, { capture: tr
         </figcaption>
       </figure>
 
-      <button v-if="count > 1" type="button" class="lb-btn lb-prev" aria-label="Previous screenshot" @click="lightbox.step(-1)">
+      <button v-if="count > 1" type="button" class="lb-btn lb-prev" :aria-label="$t('lightbox.prev')" @click="lightbox.step(-1)">
         <FontAwesomeIcon icon="arrow-left" />
       </button>
-      <button v-if="count > 1" type="button" class="lb-btn lb-next" aria-label="Next screenshot" @click="lightbox.step(1)">
+      <button v-if="count > 1" type="button" class="lb-btn lb-next" :aria-label="$t('lightbox.next')" @click="lightbox.step(1)">
         <FontAwesomeIcon icon="arrow-right" />
       </button>
-      <button ref="closeBtn" type="button" class="lb-btn lb-close mono" aria-label="Close preview" @click="lightbox.close()">
+      <button ref="closeBtn" type="button" class="lb-btn lb-close mono" :aria-label="$t('lightbox.close')" @click="lightbox.close()">
         esc
       </button>
     </div>

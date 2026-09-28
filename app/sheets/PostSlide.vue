@@ -25,10 +25,10 @@ const slug = props.path.split('/').pop()!
   <article v-if="post" class="sheet post-slide">
     <header class="ps-head">
       <button type="button" class="ps-back mono" data-build="fade" @click="backToList">
-        <FontAwesomeIcon icon="arrow-up" /> All posts
+        <FontAwesomeIcon icon="arrow-up" /> {{ $t('posts.all') }}
       </button>
       <p class="ps-meta mono" data-build="type">
-        <time :datetime="post.date">{{ formatDate(post.date) }}</time>
+        <time :datetime="post.date">{{ formatDate(post.date, true, $i18n.locale) }}</time>
         <template v-if="post.tags?.length"> / {{ post.tags.join(', ') }}</template>
       </p>
       <h2 :id="`post-${slug}`" data-build="type">{{ post.title }}</h2>

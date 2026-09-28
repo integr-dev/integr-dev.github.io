@@ -1,5 +1,8 @@
 <script setup lang="ts">
 const props = defineProps<{ tier: 'featured' | 'more', sheetId: string }>()
+const { t, te } = useI18n()
+// link names from the content, translated where a message exists (Source, Live demo, ...)
+const linkLabel = (key: string) => (te(`link.${key}`) ? t(`link.${key}`) : key)
 const { byTier } = await useSiteContent()
 const items = computed(() => byTier(props.tier))
 
@@ -9,8 +12,8 @@ const slug = (stem: string) => stem.split('/').pop()!
 <template>
   <div class="sheet register" :class="`tier-${tier}`">
     <header class="r-head">
-      <h2 data-build="type">{{ tier === 'featured' ? 'Other projects' : 'More' }}</h2>
-      <p v-if="tier === 'more'" class="muted" data-build="print">Libraries and older experiments.</p>
+      <h2 data-build="type">{{ tier === 'featured' ? $t('projects.other') : $t('projects.more') }}</h2>
+      <p v-if="tier === 'more'" class="muted" data-build="print">{{ $t('projects.moreLead') }}</p>
     </header>
 
     <span class="rule rule-strong" data-build="line" />
@@ -29,7 +32,7 @@ const slug = (stem: string) => stem.split('/').pop()!
           </ul>
           <p class="r-links" data-build="chips">
             <a v-for="l in p.links" :key="l.href" :href="l.href" target="_blank" rel="noopener">
-              {{ l.label }} <FontAwesomeIcon icon="arrow-up-right-from-square" class="ext" />
+              {{ linkLabel(l.label) }} <FontAwesomeIcon icon="arrow-up-right-from-square" class="ext" />
             </a>
           </p>
         </div>

@@ -25,7 +25,7 @@ const max = computed(() => Math.max(...props.chart.bars.map(b => b.value), 1))
 
     <p v-if="chart.note" class="c-note muted" data-build="print">
       {{ chart.note }}
-      <a v-if="chart.source" :href="chart.source" target="_blank" rel="noopener">Source</a>
+      <a v-if="chart.source" :href="chart.source" target="_blank" rel="noopener">{{ $t('chart.source') }}</a>
     </p>
   </figure>
 </template>

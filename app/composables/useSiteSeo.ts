@@ -55,15 +55,23 @@ interface PageMeta {
  * another async function lose their context.
  */
 export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, nav: DeckNav) {
-  const p = profile.value
-  if (!p) return
+  // name, handle and links are the same in every language; the rest follows the language
+  const base = profile.value
+  if (!base) return
 
-  const person = personSchema(p, skills.value.flatMap(c => c.items))
+  const { t, locale } = useI18n()
+  const isDe = computed(() => locale.value === 'de')
+  const person = computed(() => personSchema(profile.value ?? base, skills.value.flatMap(c => c.items)))
   const personRef = { '@id': `${SITE_URL}/#person` }
-  const url = computed(() => `${SITE_URL}${nav.path.value === '/' ? '/' : nav.path.value}`)
-  const flagships = projects.value.filter(x => x.tier === 'flagship')
+  const urlFor = (path: string) => `${SITE_URL}${path === '/' ? '/' : path}`
+  const url = computed(() => urlFor(nav.localPath.value))
 
   const meta = computed<PageMeta>(() => {
+    const p = profile.value ?? base
+    const de = isDe.value
+    // English roles read as common nouns in running text ("software developer"); German keeps its capital
+    const role = de ? p.role : p.role.toLowerCase()
+    const flagships = projects.value.filter(x => x.tier === 'flagship')
     const sheet = nav.sheet.value
     const slide = nav.slideId.value
     const project = projects.value.find(x => x.stem.endsWith(`/${sheet.id}`))
@@ -73,7 +81,7 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
       const repo = project.links.find(l => l.href.startsWith('https://github.com/'))?.href
       const image = `${SITE_URL}/og/projects/${sheet.id}.png`
       return {
-        title: `${project.title}${readme ? ' readme' : ''} · ${p.fullName}`,
+        title: `${readme ? t('seo.readme', { project: project.title }) : project.title} · ${p.fullName}`,
         description: project.tagline,
         image,
         type: 'website',
@@ -119,9 +127,9 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
 
     if (nav.x.value === 0) {
       // name first and nothing before it: the page should answer a search for the name
-      const title = `${p.fullName} · ${p.role} from ${p.location}`
+      const title = t('seo.title', { name: p.fullName, role: p.role, location: p.location })
       // kept under ~155 characters, the length Google shows in results
-      const description = `${p.fullName} (${p.handle}), ${p.role.toLowerCase()} from ${p.location}, mostly Kotlin. Projects: ${flagships.map(x => x.title).join(', ')}.`
+      const description = t('seo.description', { name: p.fullName, handle: p.handle, role, location: p.location, projects: flagships.map(x => x.title).join(', ') })
       return {
         title,
         description,
@@ -134,7 +142,7 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
             'url': `${SITE_URL}/`,
             'name': title,
             'description': description,
-            'inLanguage': 'en',
+            'inLanguage': de ? 'de-AT' : 'en',
             'dateModified': new Date().toISOString(),
             'isPartOf': { '@id': `${SITE_URL}/#website` },
             'mainEntity': personRef,
@@ -156,16 +164,16 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
     }
 
     const descriptions: Record<string, string> = {
-      projects: `More projects by ${p.fullName}: ${projects.value.filter(x => x.tier === 'featured').map(x => x.title).join(', ')}.`,
-      posts: `Notes by ${p.fullName} on the projects: how they work and why they are built that way.`,
-      timeline: `What ${p.fullName} has built, year by year.`,
-      skills: `Languages, frameworks and tools ${p.fullName} works with.`,
-      contact: `How to reach ${p.fullName}, ${p.role.toLowerCase()} from ${p.location}.`,
+      projects: t('seo.projects', { name: p.fullName, projects: projects.value.filter(x => x.tier === 'featured').map(x => x.title).join(', ') }),
+      posts: t('seo.posts', { name: p.fullName }),
+      timeline: t('seo.timeline', { name: p.fullName }),
+      skills: t('seo.skills', { name: p.fullName }),
+      contact: t('seo.contact', { name: p.fullName, role, location: p.location }),
     }
     const more = sheet.id === 'projects' && slide === 'more'
     return {
-      title: `${more ? 'More projects' : sheet.title} · ${p.fullName}`,
-      description: more ? `Libraries and older experiments by ${p.fullName}.` : (descriptions[sheet.id] ?? p.pitch),
+      title: `${more ? t('seo.moreTitle') : t(`sheets.${sheet.id}`)} · ${p.fullName}`,
+      description: more ? t('seo.more', { name: p.fullName }) : (descriptions[sheet.id] ?? p.pitch),
       image: OG_IMAGE,
       type: 'website',
       nodes: [],
@@ -175,7 +183,7 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
   useSeoMeta({
     title: () => meta.value.title,
     description: () => meta.value.description,
-    author: p.fullName,
+    author: base.fullName,
     ogType: () => meta.value.type,
     ogTitle: () => meta.value.title,
     ogDescription: () => meta.value.description,
@@ -184,11 +192,12 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
     ogImageWidth: 1200,
     ogImageHeight: 630,
     ogImageAlt: () => meta.value.title,
-    ogSiteName: p.fullName,
-    ogLocale: 'en_US',
-    profileFirstName: p.name,
-    profileLastName: p.fullName.replace(p.name, '').trim(),
-    profileUsername: p.handle,
+    ogSiteName: base.fullName,
+    ogLocale: () => (isDe.value ? 'de_AT' : 'en_US'),
+    ogLocaleAlternate: () => (isDe.value ? ['en_US'] : ['de_AT']),
+    profileFirstName: base.name,
+    profileLastName: base.fullName.replace(base.name, '').trim(),
+    profileUsername: base.handle,
     articlePublishedTime: () => meta.value.published,
     articleTag: () => meta.value.tags,
     twitterCard: 'summary_large_image',
@@ -200,20 +209,24 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
   useHead({
     link: () => [
       { rel: 'canonical', href: url.value },
+      // the same position in the other language
+      { rel: 'alternate', hreflang: 'en', href: urlFor(nav.path.value) },
+      { rel: 'alternate', hreflang: 'de-AT', href: urlFor(nav.path.value === '/' ? '/de' : `/de${nav.path.value}`) },
+      { rel: 'alternate', hreflang: 'x-default', href: urlFor(nav.path.value) },
       // rel=me ties the profiles elsewhere to this page as the same person
-      ...p.links.map(l => ({ rel: 'me' as const, href: l.href })),
+      ...base.links.map(l => ({ rel: 'me' as const, href: l.href })),
     ],
     script: () => [
       jsonLd({
         '@graph': [
           ...meta.value.nodes,
-          person,
+          person.value,
           {
             '@type': 'WebSite',
             '@id': `${SITE_URL}/#website`,
             'url': SITE_URL,
-            'name': p.fullName,
-            'alternateName': p.handle,
+            'name': base.fullName,
+            'alternateName': base.handle,
             'publisher': personRef,
           },
         ],

@@ -28,7 +28,15 @@ watch(() => route.path, p => nav.applyPath(p))
 const build = useBuild(nav, narrow)
 watch(nav.unlocked, () => build.refresh())
 
-const titles = nav.sheets.map(s => s.title)
+const { t, te, locale } = useI18n()
+// Language switch: the texts change in place. Just before Vue patches them, the builder hands
+// back the text it split into letters; drawn parts stay drawn, nothing is drawn again.
+watch(locale, () => {
+  document.querySelectorAll<HTMLElement>('[data-build-root]').forEach(root => theme.builder.release?.(root))
+}, { flush: 'pre' })
+// flagships are named after their project; the other sheets have translated names
+const sheetTitle = (s: SheetDef) => (te(`sheets.${s.id}`) ? t(`sheets.${s.id}`) : s.title)
+const titles = computed(() => nav.sheets.map(sheetTitle))
 const ids = nav.sheets.map(s => s.id)
 
 function componentFor(name?: string) {
@@ -261,7 +269,7 @@ function setFeed(id: string, el: unknown) {
           :key="sheet.id"
           class="deck-sheet"
           :class="[`mode-${sheet.mode}`, { 'is-active': i === nav.x.value }]"
-          :aria-label="sheet.title"
+          :aria-label="sheetTitle(sheet)"
           :inert="!narrow && i !== nav.x.value ? true : undefined"
         >
           <div v-if="sheet.mode === 'single'" class="deck-slide" data-build-root>
@@ -308,15 +316,15 @@ function setFeed(id: string, el: unknown) {
       @search="searchOpen = true"
     />
 
-    <button v-if="nav.x.value === 0 && !narrow" type="button" class="deck-next" aria-label="Next sheet: projects" @click="nav.nextSheet()">
+    <button v-if="nav.x.value === 0 && !narrow" type="button" class="deck-next" :aria-label="t('deck.nextSheet')" @click="nav.nextSheet()">
       <FontAwesomeIcon icon="arrow-right" />
     </button>
 
-    <button v-if="hasAbove && !narrow" type="button" class="deck-up" aria-label="Page above" @click="up()">
+    <button v-if="hasAbove && !narrow" type="button" class="deck-up" :aria-label="t('deck.above')" @click="up()">
       <FontAwesomeIcon icon="arrow-up" />
     </button>
 
-    <button v-if="hasBelow && !narrow" type="button" class="deck-down" aria-label="Next page below" @click="down()">
+    <button v-if="hasBelow && !narrow" type="button" class="deck-down" :aria-label="t('deck.below')" @click="down()">
       <FontAwesomeIcon icon="arrow-down" />
     </button>
 

@@ -8,12 +8,15 @@ const { profile } = await useSiteContent()
 const age = useState('intro-age', () => (profile.value ? ageFrom(profile.value.birth) : null))
 
 const nav = useDeckNav()
+const { t, locale } = useI18n()
+// English roles read as common nouns in running text; German nouns keep their capital
+const role = computed(() => (profile.value ? (locale.value === 'de' ? profile.value.role : profile.value.role.toLowerCase()) : ''))
 
 // shortcuts from the first screen to the places people look for most
 const shortcuts = [
-  { label: 'Projects', sheet: 'osmium' },
-  { label: 'Posts', sheet: 'posts' },
-  { label: 'Contact', sheet: 'contact' },
+  { key: 'projects', sheet: 'osmium' },
+  { key: 'posts', sheet: 'posts' },
+  { key: 'contact', sheet: 'contact' },
 ]
 
 // on phones the deck is one vertical scroll, so scroll there instead of switching sheets
@@ -105,7 +108,7 @@ onBeforeUnmount(() => run++)
       <ul class="intro-links mono" data-build="chips" data-nopen>
         <li v-for="s in shortcuts" :key="s.sheet">
           <button type="button" @click="open(s.sheet)">
-            {{ s.label }} <FontAwesomeIcon icon="arrow-right" />
+            {{ t(`intro.shortcuts.${s.key}`) }} <FontAwesomeIcon icon="arrow-right" />
           </button>
         </li>
       </ul>
@@ -120,7 +123,7 @@ onBeforeUnmount(() => run++)
       </div>
       <span class="rule" data-build="line" />
       <h1 class="intro-facts" data-build="type">
-        {{ profile.fullName }}, {{ age }}, {{ profile.role.toLowerCase() }} from {{ profile.location }}.
+        {{ t('intro.facts', { name: profile.fullName, age, role, location: profile.location }) }}
       </h1>
       <p class="intro-pitch" data-build="print">
         {{ profile.pitch }}
@@ -129,9 +132,9 @@ onBeforeUnmount(() => run++)
         {{ profile.lookingFor }}
       </p>
       <p class="intro-hint mono muted" data-build="fade" data-nopen>
-        <span><kbd>→</kbd> projects</span>
-        <span><kbd>/</kbd> search</span>
-        <span><kbd>click</kbd> skip the drawing</span>
+        <span><kbd>→</kbd> {{ t('intro.hints.next') }}</span>
+        <span><kbd>/</kbd> {{ t('intro.hints.search') }}</span>
+        <span><kbd>{{ t('intro.hints.skipKey') }}</kbd> {{ t('intro.hints.skip') }}</span>
       </p>
     </div>
   </div>

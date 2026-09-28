@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app'
 import { theme } from '~/themes/active'
+import { withLocale } from '~/deck/paths'
 
 // Shown for unknown URLs (GitHub Pages serves the generated 404.html) and for errors while rendering.
 const props = defineProps<{ error: NuxtError }>()
 const notFound = computed(() => props.error.statusCode === 404)
+const { t, locale } = useI18n()
+const links = computed(() => [
+  { to: withLocale('/', locale.value), label: t('error.home') },
+  { to: withLocale('/projects', locale.value), label: t('sheets.projects') },
+  { to: withLocale('/posts', locale.value), label: t('sheets.posts') },
+  { to: withLocale('/contact', locale.value), label: t('sheets.contact') },
+])
 
 usePageBuild(500)
 
 useSeoMeta({
-  title: notFound.value ? 'Not found · Erik Reitbauer' : 'Error · Erik Reitbauer',
+  title: `${notFound.value ? t('error.notFoundTitle') : t('error.errorTitle')} · Erik Reitbauer`,
   robots: 'noindex',
 })
 </script>
@@ -20,16 +28,13 @@ useSeoMeta({
     <component :is="theme.BuildOverlay" v-if="theme.BuildOverlay" />
     <main class="error" data-build-root>
       <p class="error-code mono" data-build="type">{{ error.statusCode }}</p>
-      <h1 data-build="type">{{ notFound ? 'This sheet was never drawn.' : 'Something went wrong.' }}</h1>
+      <h1 data-build="type">{{ notFound ? t('error.notFound') : t('error.failed') }}</h1>
       <span class="rule" data-build="line" />
       <p class="error-text" data-build="print">
-        {{ notFound ? 'There is nothing at this address. It may have moved, or the link has a typo.' : error.statusMessage }}
+        {{ notFound ? t('error.notFoundText') : error.statusMessage }}
       </p>
       <p class="error-links mono" data-build="chips">
-        <a href="/">Home</a>
-        <a href="/projects">Projects</a>
-        <a href="/posts">Posts</a>
-        <a href="/contact">Contact</a>
+        <a v-for="l in links" :key="l.to" :href="l.to">{{ l.label }}</a>
       </p>
     </main>
   </div>

@@ -1,0 +1,7 @@
+# German overrides for profile.yml: only the text that is translated; everything else comes from
+# the English file. DRAFT: check the wording.
+role: Softwareentwickler
+location: Österreich
+lookingFor: Offen für Praktika und Jobs als Entwickler neben der Schule.
+pitch: Ich schreibe Software, meistens in Kotlin, und veröffentliche das meiste davon als Open Source. Server, Tools, Bibliotheken und das eine oder andere Experiment.
+cvNote: Lebenslauf auf Anfrage.

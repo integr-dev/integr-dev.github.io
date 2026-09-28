@@ -1,0 +1,139 @@
+{
+  "sheets": {
+    "intro": "Intro",
+    "projects": "Projects",
+    "posts": "Posts",
+    "timeline": "Timeline",
+    "skills": "Skills",
+    "contact": "Contact"
+  },
+  "intro": {
+    "facts": "{name}, {age}, {role} from {location}.",
+    "avatarAlt": "Pixel art of a cat sitting in front of a wooden wall with plants and a yellow butterfly",
+    "shortcuts": {
+      "projects": "Projects",
+      "posts": "Posts",
+      "contact": "Contact"
+    },
+    "hints": {
+      "next": "projects",
+      "search": "search",
+      "skipKey": "click",
+      "skip": "skip the drawing"
+    }
+  },
+  "flagship": {
+    "why": "Why it's here.",
+    "asOf": "as of {date}",
+    "prevView": "Previous view",
+    "nextView": "Next view"
+  },
+  "visual": {
+    "Architecture": "Architecture",
+    "Diagram": "Diagram",
+    "Screenshot": "Screenshot",
+    "Screenshots": "Screenshots",
+    "Script": "Script",
+    "Downloads": "Downloads"
+  },
+  "stats": {
+    "commits": "commits",
+    "of them mine": "of them mine",
+    "first commit": "first commit",
+    "repositories": "repositories",
+    "stars": "stars",
+    "people": "people",
+    "languages": "languages",
+    "downloads": "downloads",
+    "followers": "followers"
+  },
+  "readme": {
+    "kicker": "readme",
+    "built": "How it was built",
+    "problem": "The problem.",
+    "solution": "How it's solved."
+  },
+  "projects": {
+    "other": "Other projects",
+    "more": "More",
+    "moreLead": "Libraries and older experiments."
+  },
+  "posts": {
+    "rss": "RSS",
+    "empty": "Nothing here yet.",
+    "read": "read",
+    "all": "All posts"
+  },
+  "contact": {
+    "lead": "Email is the fastest way to reach me.",
+    "done": "Done."
+  },
+  "deck": {
+    "nextSheet": "Next sheet: projects",
+    "above": "Page above",
+    "below": "Next page below"
+  },
+  "titleBlock": {
+    "label": "Sheets",
+    "up": "Up",
+    "down": "Down",
+    "prev": "Previous sheet",
+    "next": "Next sheet",
+    "search": "search",
+    "done": "Done",
+    "toLight": "Switch to light mode",
+    "toDark": "Switch to dark mode",
+    "language": "Auf Deutsch lesen"
+  },
+  "search": {
+    "label": "Search",
+    "title": "search",
+    "placeholder": "Projects, posts, skills",
+    "empty": "Nothing matches \"{query}\".",
+    "choose": "choose",
+    "open": "open",
+    "close": "close",
+    "kind": {
+      "project": "project",
+      "post": "post",
+      "timeline": "timeline",
+      "skill": "skill",
+      "sheet": "sheet"
+    }
+  },
+  "lightbox": {
+    "prev": "Previous screenshot",
+    "next": "Next screenshot",
+    "close": "Close preview"
+  },
+  "chart": {
+    "source": "Source"
+  },
+  "error": {
+    "notFoundTitle": "Not found",
+    "errorTitle": "Error",
+    "notFound": "This sheet was never drawn.",
+    "failed": "Something went wrong.",
+    "notFoundText": "There is nothing at this address. It may have moved, or the link has a typo.",
+    "home": "Home"
+  },
+  "seo": {
+    "title": "{name} · {role} from {location}",
+    "description": "{name} ({handle}), {role} from {location}, mostly Kotlin. Projects: {projects}.",
+    "readme": "{project} readme",
+    "moreTitle": "More projects",
+    "projects": "More projects by {name}: {projects}.",
+    "more": "Libraries and older experiments by {name}.",
+    "posts": "Notes by {name} on the projects: how they work and why they are built that way.",
+    "timeline": "What {name} has built, year by year.",
+    "skills": "Languages, frameworks and tools {name} works with.",
+    "contact": "How to reach {name}, {role} from {location}."
+  },
+  "link": {
+    "Source": "Source",
+    "Live demo": "Live demo",
+    "Example": "Example",
+    "Backend": "Backend",
+    "Frontend": "Frontend"
+  }
+}

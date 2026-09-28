@@ -1,5 +1,5 @@
 import { sheets } from './sheets.config'
-import { parsePath, pathFor } from './paths'
+import { parsePath, pathFor, stripLocale, withLocale } from './paths'
 import type { Direction, SheetDef, SlideDef } from './types'
 
 const slideKey = (sheetId: string, slideId: string) => `${sheetId}/${slideId}`
@@ -7,6 +7,7 @@ const slideKey = (sheetId: string, slideId: string) => `${sheetId}/${slideId}`
 export function useDeckNav() {
   const router = useRouter()
   const route = useRoute()
+  const { locale } = useI18n()
 
   const x = useState('deck-x', () => 0)
   const slideId = useState<string | null>('deck-slide', () => null)
@@ -44,12 +45,14 @@ export function useDeckNav() {
     return pathFor(s, slide, allSlides(s)[0]?.id ?? null)
   }
 
-  /** The URL of the current position. */
+  /** The URL of the current position, without the language prefix. */
   const path = computed(() => pathOf(x.value, slideId.value))
+  /** The same, in the current language (what the address bar shows). */
+  const localPath = computed(() => withLocale(path.value, locale.value))
 
   function go(sheetIndex: number, slide?: string | null) {
     if (sheetIndex < 0 || sheetIndex >= sheets.length) return false
-    const target = pathOf(sheetIndex, slide)
+    const target = withLocale(pathOf(sheetIndex, slide), locale.value)
     if (target === route.path) return false
     router.push(target)
     return true
@@ -90,7 +93,7 @@ export function useDeckNav() {
   // The path is the single source of truth for the position. Returns false for a path that
   // is no position in the deck (the page then shows the 404).
   function applyPath(p: string) {
-    const parsed = parsePath(p)
+    const parsed = parsePath(stripLocale(p))
     if (!parsed) return false
     const target = sheets[parsed.index]!
     const targetSlides = allSlides(target)
@@ -119,6 +122,7 @@ export function useDeckNav() {
     sheet,
     slideId,
     path,
+    localPath,
     direction,
     unlocked,
     visited,
