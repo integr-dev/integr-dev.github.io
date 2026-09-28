@@ -76,6 +76,15 @@ const vine = computed(() => {
     flowers: flowers.map(f => ({ ...f, x: f.x - minX })),
   }
 })
+
+// It swings a little: the vine is cut into three bands from the top down; the top band hangs still,
+// the lower ones step a pixel or two to the side (see .vine-band), so the tip moves the most and
+// every pixel stays on the grid. Each vine starts its swing at its own point.
+const bands = computed(() => [0, 1, 2].map((b) => {
+  const inBand = (y: number) => Math.min(2, Math.floor((y / vine.value.H) * 3)) === b
+  return { cells: vine.value.cells.filter(c => inBand(c.y)), flowers: vine.value.flowers.filter(f => inBand(f.y)) }
+}))
+const swingDelay = `${-((props.seed * 977) % 6000)}ms`
 </script>
 
 <template>
@@ -88,28 +97,35 @@ const vine = computed(() => {
     aria-hidden="true"
     shape-rendering="crispEdges"
   >
-    <rect
-      v-for="(c, i) in vine.cells"
-      :key="i"
-      class="vine-leaf"
-      :x="c.x"
-      :y="c.y"
-      width="1"
-      height="1"
-      :fill="c.color"
-      :style="{ '--t': c.delay / GROW }"
-    />
     <g
-      v-for="(f, i) in vine.flowers"
-      :key="`f${i}`"
-      class="vine-flower"
-      :style="{ '--t': f.delay / GROW, transformOrigin: `${f.x + 0.5}px ${f.y + 0.5}px` }"
+      v-for="(band, b) in bands"
+      :key="b"
+      :class="`vine-band vine-band-${b}`"
+      :style="{ animationDelay: swingDelay }"
     >
-      <rect :x="f.x - 1" :y="f.y" width="1" height="1" class="vine-petal" />
-      <rect :x="f.x + 1" :y="f.y" width="1" height="1" class="vine-petal" />
-      <rect :x="f.x" :y="f.y - 1" width="1" height="1" class="vine-petal" />
-      <rect :x="f.x" :y="f.y + 1" width="1" height="1" class="vine-petal" />
-      <rect :x="f.x" :y="f.y" width="1" height="1" class="vine-heart" />
+      <rect
+        v-for="(c, i) in band.cells"
+        :key="i"
+        class="vine-leaf"
+        :x="c.x"
+        :y="c.y"
+        width="1"
+        height="1"
+        :fill="c.color"
+        :style="{ '--t': c.delay / GROW }"
+      />
+      <g
+        v-for="(f, i) in band.flowers"
+        :key="`f${i}`"
+        class="vine-flower"
+        :style="{ '--t': f.delay / GROW, transformOrigin: `${f.x + 0.5}px ${f.y + 0.5}px` }"
+      >
+        <rect :x="f.x - 1" :y="f.y" width="1" height="1" class="vine-petal" />
+        <rect :x="f.x + 1" :y="f.y" width="1" height="1" class="vine-petal" />
+        <rect :x="f.x" :y="f.y - 1" width="1" height="1" class="vine-petal" />
+        <rect :x="f.x" :y="f.y + 1" width="1" height="1" class="vine-petal" />
+        <rect :x="f.x" :y="f.y" width="1" height="1" class="vine-heart" />
+      </g>
     </g>
   </svg>
 </template>
@@ -176,7 +192,31 @@ const vine = computed(() => {
   to { transform: scale(0); }
 }
 
+/* the swing: one and two vine pixels to either side, in steps */
+.pixel-vine .vine-band-1 {
+  animation: vine-swing-1 7s steps(1, end) infinite;
+}
+
+.pixel-vine .vine-band-2 {
+  animation: vine-swing-2 7s steps(1, end) infinite;
+}
+
+@keyframes vine-swing-1 {
+  0%, 50%, 100% { transform: translateX(0); }
+  12.5%, 25%, 37.5% { transform: translateX(1px); }
+  62.5%, 75%, 87.5% { transform: translateX(-1px); }
+}
+
+@keyframes vine-swing-2 {
+  0%, 50%, 100% { transform: translateX(0); }
+  12.5%, 37.5% { transform: translateX(1px); }
+  25% { transform: translateX(2px); }
+  62.5%, 87.5% { transform: translateX(-1px); }
+  75% { transform: translateX(-2px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .pixel-vine .vine-band,
   .pixel-vine .vine-leaf,
   .pixel-vine .vine-flower {
     animation: none !important;
