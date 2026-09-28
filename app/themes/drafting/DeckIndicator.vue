@@ -212,8 +212,11 @@ html.js .title-block {
   transition: opacity 160ms ease;
 }
 
-.title-block.is-expanded .tb-ticks {
-  gap: 4px;
+/* the markers share the row: as the block widens they all widen with it, continuously, so
+   nothing snaps and the row is always filled */
+.tb-ticks > li {
+  flex: 1 1 0;
+  min-width: 24px;
 }
 
 .title-block.is-expanded .tick {
@@ -221,7 +224,7 @@ html.js .title-block {
 }
 
 .title-block.is-expanded .tick::before {
-  inset: 0 1px;
+  inset: 0 2px;
 }
 
 .title-block.is-expanded .tick-label {
@@ -333,7 +336,7 @@ html.js .title-block {
 /* the button is a 24px hit area; the visible marker is the small box drawn inside it */
 .tick {
   display: block;
-  width: 24px;
+  width: 100%;
   height: 24px;
   padding: 0;
   border: 0;
