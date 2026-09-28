@@ -236,18 +236,10 @@ html.js .flower {
   from { transform: scale(0); }
 }
 
+/* none on phones: the screen is for the content */
 @media (max-width: 767px) {
-  .bush-top-left,
-  .bush-bottom,
-  .bush-top,
-  .bush-left,
-  .bush-right {
-    display: none;
-  }
-
   .bush {
-    width: calc(v-bind(W) * 5px);
-    height: calc(v-bind(H) * 5px);
+    display: none;
   }
 }
 
