@@ -29,24 +29,23 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* dark: night garden */
-    --bg: #111812;
-    --surface: #1b241c;
-    --surface-raised: #212c22;
-    --bg-grid: rgb(128 181 95 / 0.07);
-    --bg-grid-strong: rgb(128 181 95 / 0.13);
-    --fg: #ece4c8;
-    --fg-muted: #b9b08c;
-    --line: #80b55f;
-    --secondary: #91964e;
-    --line-strong: #6b5638;
-    --accent: #e8d56a;
-    --accent-wash: rgb(232 213 106 / 0.28);
-    --accent-contrast: #111812;
-    --code-bg: #182019;
+/* dark: night garden. data-theme is set before first paint from the saved choice or the system
+   setting (head script in nuxt.config.ts), and switched by the toggle in the title block. */
+:root[data-theme='dark'] {
+  --bg: #111812;
+  --surface: #1b241c;
+  --surface-raised: #212c22;
+  --bg-grid: rgb(128 181 95 / 0.07);
+  --bg-grid-strong: rgb(128 181 95 / 0.13);
+  --fg: #ece4c8;
+  --fg-muted: #b9b08c;
+  --line: #80b55f;
+  --secondary: #91964e;
+  --line-strong: #6b5638;
+  --accent: #e8d56a;
+  --accent-wash: rgb(232 213 106 / 0.28);
+  --accent-contrast: #111812;
+  --code-bg: #182019;
 
-    color-scheme: dark;
-  }
+  color-scheme: dark;
 }

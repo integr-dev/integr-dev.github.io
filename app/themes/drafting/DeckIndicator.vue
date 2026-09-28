@@ -22,19 +22,32 @@ const emit = defineEmits<{
 }>()
 
 const current = computed(() => props.titles[props.x] ?? '')
+const theme = useThemeMode()
 
 // Expanded while hovered or keyboard-focused. A click on a marker collapses it until the pointer
 // leaves or moves on. Changes are announced on window so the butterfly can react.
 const hovered = ref(false)
 const focused = ref(false)
 const suppressed = ref(false)
-const expanded = computed(() => (hovered.value || focused.value) && !suppressed.value)
+// kept open while the theme switches: the ripple covers the page and the browser reports the
+// pointer as having left
+const pinned = ref(false)
+const block = ref<HTMLElement>()
+const expanded = computed(() => (hovered.value || focused.value || pinned.value) && !suppressed.value)
+
+async function switchTheme(e: MouseEvent) {
+  pinned.value = true
+  await theme.toggle(e)
+  hovered.value = !!block.value?.matches(':hover')
+  pinned.value = false
+}
 
 watch(expanded, (open) => {
   window.dispatchEvent(new CustomEvent(open ? 'titleblock:expand' : 'titleblock:collapse'))
 })
 
 function leave() {
+  if (pinned.value) return
   hovered.value = false
   suppressed.value = false
 }
@@ -65,6 +78,7 @@ function pick(i: number, e: MouseEvent) {
 
 <template>
   <nav
+    ref="block"
     class="title-block mono"
     :class="{ 'is-expanded': expanded }"
     aria-label="Sheets"
@@ -110,6 +124,14 @@ function pick(i: number, e: MouseEvent) {
     <div class="tb-foot">
       <button type="button" class="tb-search" @click="emit('search')">
         <kbd>/</kbd> search
+      </button>
+      <button
+        type="button"
+        class="tb-theme"
+        :aria-label="theme.mode.value === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+        @click="switchTheme"
+      >
+        <FontAwesomeIcon :icon="theme.mode.value === 'dark' ? 'sun' : theme.mode.value === 'light' ? 'moon' : 'circle-half-stroke'" />
       </button>
       <span class="tb-arrows">
         <button type="button" :disabled="x === 0" aria-label="Previous sheet" @click="emit('prev')">
@@ -367,6 +389,11 @@ button:disabled {
 
 .tb-search {
   padding-left: 0;
+}
+
+.tb-theme {
+  margin-left: auto;
+  margin-right: 6px;
 }
 
 kbd {

@@ -43,9 +43,13 @@ export default defineNuxtConfig({
         { name: 'google-site-verification', content: 'UqFlowAj-jpBkiNTFlVk9K2h6Udzl4luSeYDUNVqZuI' },
       ],
       script: [
-        // Marks JS as available before first paint, so draw-in styles only hide things when they can
-        // be revealed. Set here rather than in app.vue: the error page (404) replaces app.vue.
-        { innerHTML: 'document.documentElement.classList.add(\'js\')', tagPosition: 'head' },
+        // Before first paint: marks JS as available, so draw-in styles only hide things when they
+        // can be revealed, and picks light or dark (the saved choice, else the system setting).
+        // Set here rather than in app.vue: the error page (404) replaces app.vue.
+        {
+          innerHTML: `(function(){var d=document.documentElement;d.classList.add('js');var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t)})()`,
+          tagPosition: 'head',
+        },
       ],
       link: [
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png' },

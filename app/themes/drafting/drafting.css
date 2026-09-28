@@ -189,20 +189,24 @@ pre code .line {
   display: block;
 }
 
-@media (prefers-color-scheme: dark) {
-  .shiki,
-  .shiki span {
-    color: var(--shiki-dark) !important;
-    background-color: transparent !important;
-  }
+:root[data-theme='dark'] .shiki,
+:root[data-theme='dark'] .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: transparent !important;
 }
 
-@media (prefers-color-scheme: light) {
-  .shiki,
-  .shiki span {
-    color: var(--shiki-default) !important;
-    background-color: transparent !important;
-  }
+:root:not([data-theme='dark']) .shiki,
+:root:not([data-theme='dark']) .shiki span {
+  color: var(--shiki-default) !important;
+  background-color: transparent !important;
+}
+
+/* ---------- light / dark switch: the new colours spread as a circle from the toggle ---------- */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 /* ---------- down / up arrows: there is a page below / above ---------- */
