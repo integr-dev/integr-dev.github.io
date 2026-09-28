@@ -14,6 +14,8 @@ const tricking = ref(false)
 let away = false
 const enabled = ref(false)
 let pos = { x: 0, y: 0 }
+// the direction it faces, in degrees (0 = upright); kept between flights until it lands
+let rot = 0
 let returnTimer: ReturnType<typeof setTimeout> | undefined
 let current: Animation | undefined
 let dest: { x: number, y: number, then?: () => void } | null = null
@@ -27,26 +29,35 @@ function perch() {
   return { x: p.left - W / 2, y: p.top - H + 4 }
 }
 
-function place(x: number, y: number) {
+function place(x: number, y: number, angle = 0) {
   pos = { x, y }
-  if (el.value) el.value.style.transform = `translate(${x}px, ${y}px)`
+  rot = angle
+  if (el.value) el.value.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`
 }
 
-function fly(to: { x: number, y: number }, then?: () => void) {
+/**
+ * Fly along an arc to `to`, facing the way it flies. `land`: it settles there and turns upright;
+ * otherwise (a stop while wandering) it keeps its heading and the next flight carries on from it.
+ */
+function fly(to: { x: number, y: number }, then?: () => void, land = true) {
   const node = el.value
   if (!node) return
   // no flying while a sheet is being drawn: go there directly
   if (pen.building) {
     current?.cancel()
-    place(to.x, to.y)
+    place(to.x, to.y, land ? 0 : rot)
     flying.value = false
     then?.()
     return
   }
   dest = { ...to, then }
-  // start from where it is right now, even mid-flight
-  const r = node.getBoundingClientRect()
-  const from = current?.playState === 'running' ? { x: r.left, y: r.top } : { ...pos }
+  // start from where it is right now, even mid-flight (position and angle from the running animation)
+  let from = { ...pos }
+  if (current?.playState === 'running') {
+    const m = new DOMMatrix(getComputedStyle(node).transform)
+    from = { x: m.e, y: m.f }
+    rot = (Math.atan2(m.b, m.a) * 180) / Math.PI
+  }
   current?.cancel()
   const dx = to.x - from.x
   const dy = to.y - from.y
@@ -56,7 +67,9 @@ function fly(to: { x: number, y: number }, then?: () => void) {
   const steps = 24
   const cx = from.x + dx / 2
   const cy = Math.min(from.y, to.y) - lift
-  let prev = 0
+  const start = rot
+  let prev = start
+  let last = start
   for (let i = 0; i <= steps; i++) {
     const t = i / steps
     // quadratic arc with a little flutter on top
@@ -71,17 +84,19 @@ function fly(to: { x: number, y: number }, then?: () => void) {
     while (heading - prev > 180) heading -= 360
     while (heading - prev < -180) heading += 360
     prev = heading
-    // takes off and lands upright
+    // turns from the way it was facing into the arc; turns upright at the end only when it lands
     const upright = Math.round(heading / 360) * 360
-    const w = Math.min(1, t / 0.15, (1 - t) / 0.15)
-    const angle = upright + (heading - upright) * w
+    let angle = heading
+    if (t < 0.15) angle = start + (heading - start) * (t / 0.15)
+    if (land && t > 0.85) angle = upright + (heading - upright) * ((1 - t) / 0.15)
+    last = angle
     frames.push({ transform: `translate(${x}px, ${y}px) rotate(${angle.toFixed(1)}deg)` })
   }
   flying.value = true
   current = node.animate(frames, { duration: Math.max(700, Math.min(1500, dist * 1.4)), easing: 'ease-in-out', fill: 'forwards' })
   current.onfinish = () => {
     dest = null
-    place(to.x, to.y)
+    place(to.x, to.y, land ? 0 : last % 360)
     current?.cancel()
     flying.value = false
     then?.()
@@ -150,7 +165,7 @@ function wander() {
   }
   fly(to, () => {
     if (away) returnTimer = setTimeout(wander, 150 + Math.random() * 450)
-  })
+  }, false)
 }
 
 function comeBack() {
