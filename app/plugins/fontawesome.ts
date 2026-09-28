@@ -16,8 +16,9 @@ import {
   faEnvelope,
   faHashtag,
   faMagnifyingGlass,
+  faMasksTheater,
 } from '@fortawesome/free-solid-svg-icons'
-import { faGithub, faWindows } from '@fortawesome/free-brands-svg-icons'
+import { faGithub } from '@fortawesome/free-brands-svg-icons'
 
 // CSS is added through nuxt.config so it is there on the server render.
 config.autoAddCss = false
@@ -38,8 +39,8 @@ library.add(
   faEnvelope,
   faHashtag,
   faMagnifyingGlass,
+  faMasksTheater,
   faGithub,
-  faWindows,
 )
 
 export default defineNuxtPlugin((nuxtApp) => {

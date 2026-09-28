@@ -1,6 +1,9 @@
 import { defineCollection, defineContentConfig, z } from '@nuxt/content'
 
 const link = z.object({ label: z.string(), href: z.string() })
+// one skill: what it is, a rating from 0 to 5 and why, and whether it is a favourite; the German file gives
+// only the text, the rest comes from the English entry with the same name
+const skill = z.object({ name: z.string(), what: z.string(), rating: z.number().min(0).max(5).optional(), favorite: z.boolean().optional(), why: z.string().optional() })
 
 export default defineContentConfig({
   collections: {
@@ -94,17 +97,13 @@ export default defineContentConfig({
     skills: defineCollection({
       type: 'data',
       source: 'skills.yml',
-      schema: z.object({
-        categories: z.array(z.object({ category: z.string(), items: z.array(z.string()) })),
-      }),
+      schema: z.object({ categories: z.array(z.object({ category: z.string(), items: z.array(skill) })) }),
     }),
 
     skills_de: defineCollection({
       type: 'data',
       source: 'de/skills.yml',
-      schema: z.object({
-        categories: z.array(z.object({ category: z.string(), items: z.array(z.string()) })),
-      }),
+      schema: z.object({ categories: z.array(z.object({ category: z.string(), items: z.array(skill) })) }),
     }),
 
     profile_de: defineCollection({

@@ -207,5 +207,13 @@
       "siteNote": "das Frontend lädt alles, was es braucht, aus den zwei yaml-Dateien",
       "frontend": "Clay-Frontend"
     }
+  },
+  "skills": {
+    "hoverKey": "Maus",
+    "hoverHint": "über einen Skill halten, um mehr zu sehen",
+    "tapKey": "tippen",
+    "tapHint": "auf einen Skill, um mehr zu sehen",
+    "rating": "{n} von 5 Sternen",
+    "favorite": "einer meiner Favoriten"
   }
 }

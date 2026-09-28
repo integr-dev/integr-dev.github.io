@@ -28,7 +28,7 @@ export async function useSearchIndex() {
 
     for (const c of skills.value) {
       for (const item of c.items) {
-        entries.push({ label: item, kind: 'skill', text: c.category, sheetId: 'skills', anchor: `skill-${slugify(item)}` })
+        entries.push({ label: item.name, kind: 'skill', text: `${c.category} ${item.what}`, sheetId: 'skills', anchor: `skill-${slugify(item.name)}` })
       }
     }
 

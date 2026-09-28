@@ -174,14 +174,17 @@ Code and work milestones only, **no school entries**:
 | next | "Next up" |
 
 ### 09 · Skills
-A table with the four CV categories (no Swift):
+Five columns, one per category (the list lives in `content/skills.yml`):
 
 | Category | Items |
 |---|---|
-| Languages | Kotlin, Java, JavaScript, TypeScript, Go, C, C#, Python |
+| Languages | Kotlin, Java, JavaScript, TypeScript, Go, C, C#, Python, Shell |
 | Databases | Oracle, MySQL, SQLite, MongoDB, Postgres |
-| Frameworks | Kotlin Multiplatform, JavaFX, Vue, Nuxt, Spring, Quarkus, React |
-| Tools & DevOps | Git, GitHub, Docker, Podman, Kubernetes, Linux, Windows, Vite, Gradle, Maven |
+| Frameworks | Kotlin Multiplatform, JavaFX, Vue, Nuxt, Tailwind CSS, React, Spring Boot, Spring Security, JPA / Hibernate, Quarkus, Express, Fabric, Spigot |
+| Tools & DevOps | Git, GitHub, GitHub Actions, Docker, Kubernetes, Vite, Gradle, Maven, Flyway, Swagger |
+| Testing | Jest, JUnit, xUnit, Playwright, Selenium |
+
+Resting the pointer on a skill for half a second (or focusing it with the keyboard, or tapping it) unfolds that row downwards, pushing the skills below it down: what the skill is, how much I like it as 0 to 5 stars (yellow, the rest grey), and why. Its name and icon turn the accent colour; the text lines up with the icon. Each column is as tall as the space left on the sheet; skills pushed past its bottom fade out. An opened skill never does: its list moves up while it unfolds, so it fits (the skills above fading at the top, the fades set from the start), and back down when it closes. My favourites (`favorite: true`) have a small accent star left of the icon; every row keeps a slot for it, so the icons stay in line. A subheading under the title says how to open one ("hover" with a mouse, "tap" on touch screens).
 
 ### 10 · Contact
 - Heading, one line, the email large (mailto), links.
@@ -274,7 +277,8 @@ entries:
 # skills.yml
 categories:
   - category: Languages
-    items: [Kotlin, Java, JavaScript, TypeScript, Go, C, C#, Python]
+    items:
+      - { name: Kotlin, what: "What it is, one line.", rating: 5, why: "Why that rating.", favorite: true }   # rating, why and favorite optional
 ```
 ```yaml
 # profile.yml
@@ -477,7 +481,7 @@ The page is laid out for a reference window of 1694 x 971 (a MacBook browser win
 
 - `@nuxtjs/i18n`, `prefix_except_default`: English at the plain paths, German under `/de` (`/de/projects/osmium/readme`). No redirect by browser language. Switch: `EN`/`DE` in the title block, to the same position in the other language. Switching swaps the texts in place, nothing is drawn again: both languages are loaded together (`useSiteContent` picks one by locale), and just before the switch the builder's `release()` puts back the text it split into letters, so Vue can patch it.
 - UI text: `i18n/locales/en.json` and `de.json`. Labels that come from the content (stat names, visual names) are translated when a message exists under `stats.*` / `visual.*`, else shown as written.
-- Content: English is the source. `content/de/` holds only the translated text and is merged over the English entry with the same name (`useSiteContent`): `de/profile.yml` (role, location, lookingFor, pitch, cvNote), `de/timeline.yml` and `de/skills.yml` (whole files), `de/projects/<name>.md` (tagline, why, built, badgeLabel, chart title and note, image alts in order, and the body when it is text). Readmes, posts and the RSS feed stay English. Diagram texts are messages under `diagram.<name>.*` (file names and tech names stay as they are). Stat and badge values are shown in the reader's format: `1,400` becomes `1.400` in German, a month `2026-08` becomes `Aug 2026` / `Aug. 2026`.
+- Content: English is the source. `content/de/` holds only the translated text and is merged over the English entry with the same name (`useSiteContent`): `de/profile.yml` (role, location, lookingFor, pitch, cvNote), `de/timeline.yml` (whole file), `de/skills.yml` (category names and each skill's `what`/`why`, matched by name; names, order and ratings from the English file), `de/projects/<name>.md` (tagline, why, built, badgeLabel, chart title and note, image alts in order, and the body when it is text). Readmes, posts and the RSS feed stay English. Diagram texts are messages under `diagram.<name>.*` (file names and tech names stay as they are). Stat and badge values are shown in the reader's format: `1,400` becomes `1.400` in German, a month `2026-08` becomes `Aug 2026` / `Aug. 2026`.
 - Dates: `formatDate(iso, withDay, lang)` (German months, `27. Sep. 2026`).
 - SEO: `<html lang>`, `og:locale`, titles and descriptions per language; every page links both versions (`hreflang` en, de-AT, x-default = English); the sitemap lists both. Preview images per language: German pages use `public/og/de.png` and `public/og/de/...` (card words, date and taglines in German; post titles stay English).
 

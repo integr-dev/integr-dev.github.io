@@ -60,7 +60,7 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
 
   const { t, locale } = useI18n()
   const isDe = computed(() => locale.value === 'de')
-  const person = computed(() => personSchema(profile.value ?? base, skills.value.flatMap(c => c.items)))
+  const person = computed(() => personSchema(profile.value ?? base, skills.value.flatMap(c => c.items.map(i => i.name))))
   const personRef = { '@id': `${SITE_URL}/#person` }
   const urlFor = (path: string) => `${SITE_URL}${path === '/' ? '/' : path}`
   const url = computed(() => urlFor(nav.localPath.value))

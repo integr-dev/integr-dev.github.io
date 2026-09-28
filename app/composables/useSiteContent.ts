@@ -28,6 +28,19 @@ function localizeProject(p: Project, de?: ProjectDe): Project {
  * Both languages are loaded together (the content is small), so a language switch only picks the
  * other one: everything shown updates in place and the page is not rebuilt.
  */
+/** German skills: English names, order and ratings; category names and text from the German file. */
+function localizeSkills<T extends { categories: { category: string, items: { name: string, what: string, rating?: number, why?: string }[] }[] }>(en: T, de: T): T {
+  const text = new Map(de.categories.flatMap(c => c.items).map(i => [i.name, i]))
+  return {
+    ...en,
+    categories: en.categories.map((c, n) => ({
+      ...c,
+      category: de.categories[n]?.category ?? c.category,
+      items: c.items.map(i => ({ ...i, what: text.get(i.name)?.what ?? i.what, why: text.get(i.name)?.why ?? i.why })),
+    })),
+  }
+}
+
 export async function useSiteContent() {
   const { locale } = useI18n()
   const { data } = await useAsyncData('site-content', async () => {
@@ -52,7 +65,7 @@ export async function useSiteContent() {
         projects: projects.map(p => localizeProject(p, deBy.get(baseName(p.stem)))),
         posts,
         timeline: timelineDe ?? timeline,
-        skills: skillsDe ?? skills,
+        skills: skills && skillsDe ? localizeSkills(skills, skillsDe) : skills,
         profile: profile ? { ...profile, ...profileOverrides } : profile,
       },
     }

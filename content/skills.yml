@@ -1,9 +1,56 @@
+# Skills, shown by category on the Skills sheet. Hover a skill (or tap it) to see what it is, a rating
+# from 0 to 5 (how much I like it) and why. favorite: true marks my favourites with a star.
 categories:
   - category: Languages
-    items: [Kotlin, Java, JavaScript, TypeScript, Go, C, C#, Python]
+    items:
+      - { name: "Kotlin", favorite: true, what: "A modern language for the JVM and more, by JetBrains; concise and null-safe.", rating: 5, why: "I rate it 5/5 because: it is my personal favourite, with null safety, clean and compact code, a rich standard library, and the whole Java ecosystem behind it." }
+      - { name: "Java", what: "The classic JVM language behind much of enterprise software, and Minecraft.", rating: 5, why: "I rate it 5/5 because: it is where I started, and it is versatile, with a library for almost everything." }
+      - { name: "JavaScript", what: "The language of the web browser, and of servers through Node.js.", rating: 2, why: "I rate it 2/5 because: as the language of the web, there is no way around it, but its quirks are famous for a reason." }
+      - { name: "TypeScript", what: "JavaScript with static types, checked before the code runs.", rating: 3, why: "I rate it 3/5 because: the types make it a lot better than plain JavaScript, but underneath it is still JavaScript." }
+      - { name: "Go", what: "Google's small, fast compiled language for servers and command-line tools.", rating: 4, why: "I rate it 4/5 because: it compiles to native code while being easier than C or Rust and safer than C." }
+      - { name: "C", what: "The low-level systems language, close to the hardware.", rating: 3, why: "I rate it 3/5 because: it is unsafe, but knowing how things work this close to the hardware is a must." }
+      - { name: "C#", what: "Microsoft's language for .NET: apps, games and services.", rating: 3, why: "I rate it 3/5 because: while it is not my personal favourite, there is nothing wrong with it and its ecosystem is good." }
+      - { name: "Python", what: "A readable scripting language for automation, data work and AI.", rating: 3, why: "I rate it 3/5 because: it is great for prototyping and machine learning, but I don't like its syntax." }
+      - { name: "Shell", what: "Command-line scripts (Bash, zsh) that glue tools together.", rating: 4, why: "I rate it 4/5 because: it is a must-have; with Bash and Linux everywhere, it pretty much explains itself." }
   - category: Databases
-    items: [Oracle, MySQL, SQLite, MongoDB, Postgres]
+    items:
+      - { name: "Oracle", what: "Oracle Database, a large commercial SQL database common in companies.", rating: 4, why: "I rate it 4/5 because: it is solid, has been around for a long time, and is used a lot in business." }
+      - { name: "MySQL", what: "A widespread open-source SQL database.", rating: 3, why: "I rate it 3/5 because: it is fair, but I haven't used it much and it doesn't stand out." }
+      - { name: "SQLite", what: "A whole SQL database in a single file, built into the app.", rating: 4, why: "I rate it 4/5 because: it is great for storage on the device, even more so with tools like Room on Android." }
+      - { name: "MongoDB", what: "A document database: stores JSON-like records instead of tables.", rating: 3, why: "I rate it 3/5 because: it is good for unstructured data and has its use cases." }
+      - { name: "Postgres", favorite: true, what: "PostgreSQL, a powerful open-source SQL database.", rating: 5, why: "I rate it 5/5 because: it is my favourite right now, versatile and widely used." }
   - category: Frameworks
-    items: [Kotlin Multiplatform, JavaFX, Vue, Nuxt, Spring, Quarkus, React]
+    items:
+      - { name: "Kotlin Multiplatform", what: "Shares Kotlin code between Android, iOS, desktop and the web.", rating: 5, why: "I rate it 5/5 because: it is awesome tech, and I got to use it during my internship." }
+      - { name: "Android Jetpack", favorite: true, what: "Google's libraries for Android apps, including Jetpack Compose for the UI.", rating: 5, why: "I rate it 5/5 because: it is my favourite way to develop for mobile, it works great with Compose, and its APIs are easy to use." }
+      - { name: "JavaFX", what: "A toolkit for desktop user interfaces in Java.", rating: 3, why: "I rate it 3/5 because: it is fine for simpler UI apps, but I don't really enjoy working with it." }
+      - { name: "Vue", favorite: true, what: "A JavaScript framework for building web interfaces from components.", rating: 5, why: "I rate it 5/5 because: it is my personal favourite for web development, with a really nice syntax." }
+      - { name: "Nuxt", what: "Vue plus routing, server rendering and static sites. This site is built with it.", rating: 5, why: "I rate it 5/5 because: it makes Vue even better, with lots of utilities and far less boilerplate." }
+      - { name: "Tailwind CSS", what: "Styles web pages with small utility classes right in the markup.", rating: 4, why: "I rate it 4/5 because: it does a lot of the heavy lifting, but falls short on some of the more complex CSS." }
+      - { name: "React", what: "Meta's library for building user interfaces from components.", rating: 3, why: "I rate it 3/5 because: it was my first JavaScript framework and it is widely used with many libraries, but it doesn't stand out to me." }
+      - { name: "Spring Boot", favorite: true, what: "The standard framework for Java and Kotlin backends and web services.", rating: 5, why: "I rate it 5/5 because: it is my favourite backend framework, with a huge ecosystem and so, so many libraries and starters." }
+      - { name: "Spring Security", what: "Login, tokens and access rules for Spring applications.", rating: 5, why: "I rate it 5/5 because: it makes Spring even better, which pretty much says why I like it." }
+      - { name: "JPA / Hibernate", what: "Maps database tables to Java and Kotlin objects.", rating: 5, why: "I rate it 5/5 because: it is a great mapper that saves you a lot of SQL headaches, especially together with Spring." }
+      - { name: "Quarkus", what: "A fast-starting Java framework made for containers and the cloud.", rating: 4, why: "I rate it 4/5 because: it has nice native builds and works well with Docker, though I am more at home in the Spring ecosystem." }
+      - { name: "Express", what: "A minimal web server framework for Node.js.", rating: 2, why: "I rate it 2/5 because: a server in JavaScript has one use for me, prototyping; I would never pick it for a big app." }
+      - { name: "Fabric", favorite: true, what: "A toolchain for Minecraft mods, which change the game itself.", rating: 5, why: "I rate it 5/5 because: it is my favourite Minecraft mod loader, and I especially like Loom and its mappings." }
+      - { name: "Spigot", what: "A Minecraft server with a plugin API for adding features to servers.", rating: 4, why: "I rate it 4/5 because: the API is nice, but it does too much for you and lacks easy lower-level access." }
   - category: Tools & DevOps
-    items: [Git, GitHub, Docker, Podman, Kubernetes, Linux, Windows, Vite, Gradle, Maven]
+    items:
+      - { name: "Git", what: "Version control: keeps track of every change to the code.", rating: 5, why: "I rate it 5/5 because: it explains itself; if you don't know Git, what are you doing?" }
+      - { name: "GitHub", what: "Hosts Git repositories, with issues and pull requests for working together.", rating: 4, why: "I rate it 4/5 because: it is a good free Git host with lots of integrations, though I don't like the AI features pushed onto you." }
+      - { name: "GitHub Actions", what: "Runs builds, tests and deployments automatically on GitHub.", rating: 5, why: "I rate it 5/5 because: it gives you really nice pipelines that are easy to set up." }
+      - { name: "Docker", what: "Packs an app with everything it needs into a container that runs anywhere.", rating: 5, why: "I rate it 5/5 because: it makes deployment so easy." }
+      - { name: "Kubernetes", what: "Runs and scales many containers across servers.", rating: 3, why: "I rate it 3/5 because: it is nice for big apps, but more than most of my projects need." }
+      - { name: "Vite", what: "A fast build tool and dev server for web projects.", rating: 5, why: "I rate it 5/5 because: it does lots of things right, and I use it every time." }
+      - { name: "Gradle", favorite: true, what: "The build tool for Java and Kotlin projects, configured in code.", rating: 5, why: "I rate it 5/5 because: it is my favourite build system and very flexible." }
+      - { name: "Maven", what: "The long-standing build and dependency tool for Java.", rating: 4, why: "I rate it 4/5 because: it is a good build system, but not as flexible as Gradle, which I prefer." }
+      - { name: "Flyway", what: "Versioned database migrations that run with the app.", rating: 3, why: "I rate it 3/5 because: it makes versioning a database easy, but I haven't used it enough to rate it higher yet." }
+      - { name: "Swagger", what: "Describes and documents web APIs (OpenAPI) and lets you try them out.", rating: 5, why: "I rate it 5/5 because: it is a must-have for any medium to large API." }
+  - category: Testing
+    items:
+      - { name: "Jest", what: "A test runner for JavaScript and TypeScript.", rating: 5, why: "I rate it 5/5 because: I like its syntax for writing tests, and I have used it a lot for testing JavaScript and TypeScript code." }
+      - { name: "JUnit", what: "The standard testing framework for Java and Kotlin.", rating: 5, why: "I rate it 5/5 because: it is an awesome framework for Java and the industry standard, and it does lots of things right." }
+      - { name: "xUnit", what: "xUnit.net, the common testing framework for C# and .NET.", rating: 4, why: "I rate it 4/5 because: it is good and a lot like JUnit, but I don't like its split into facts and theories." }
+      - { name: "Playwright", what: "Drives real browsers to test web apps end to end.", rating: 5, why: "I rate it 5/5 because: it is great for UI tests, and it has some nice uses with AI now too." }
+      - { name: "Selenium", what: "Browser automation, long used for testing websites.", rating: 4, why: "I rate it 4/5 because: it does much the same job as Playwright, but I like Playwright more." }

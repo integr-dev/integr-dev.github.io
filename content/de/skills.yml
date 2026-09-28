@@ -1,10 +1,56 @@
-# German version of skills.yml: the category names are translated, the skills stay as they are.
+# German version of skills.yml: category names and the text of each skill; names, order and ratings
+# come from the English file (matched by name). DRAFT: check the wording.
 categories:
   - category: Sprachen
-    items: [Kotlin, Java, JavaScript, TypeScript, Go, C, C#, Python]
+    items:
+      - { name: "Kotlin", what: "Moderne Sprache von JetBrains für die JVM und mehr, knapp und null-sicher.", why: "Ich bewerte es mit 5/5, weil: Kotlin ist mein persönlicher Favorit, mit Null-Sicherheit, sauberer und kompakter Code, eine umfangreiche Standardbibliothek und das ganze Java-Ökosystem dahinter." }
+      - { name: "Java", what: "Die klassische JVM-Sprache hinter viel Unternehmenssoftware und Minecraft.", why: "Ich bewerte es mit 5/5, weil: Mit Java habe ich angefangen, und es ist vielseitig, mit einer Bibliothek für fast alles." }
+      - { name: "JavaScript", what: "Die Sprache des Webbrowsers, über Node.js auch auf Servern.", why: "Ich bewerte es mit 2/5, weil: Als Sprache des Webs kommt man nicht an JavaScript vorbei, aber seine Eigenheiten sind nicht umsonst berüchtigt." }
+      - { name: "TypeScript", what: "JavaScript mit statischen Typen, die vor dem Ausführen geprüft werden.", why: "Ich bewerte es mit 3/5, weil: Die Typen machen es deutlich besser als reines JavaScript, aber darunter steckt immer noch JavaScript." }
+      - { name: "Go", what: "Googles kleine, schnelle kompilierte Sprache für Server und Kommandozeilen-Tools.", why: "Ich bewerte es mit 4/5, weil: Go kompiliert zu nativem Code und ist dabei einfacher als C oder Rust und sicherer als C." }
+      - { name: "C", what: "Die hardwarenahe Systemsprache.", why: "Ich bewerte es mit 3/5, weil: C ist zwar unsicher, aber man muss wissen, wie es so nah an der Hardware zugeht." }
+      - { name: "C#", what: "Microsofts Sprache für .NET: Apps, Spiele und Dienste.", why: "Ich bewerte es mit 3/5, weil: C# ist zwar nicht mein Favorit, aber es spricht nichts dagegen, und das Ökosystem ist gut." }
+      - { name: "Python", what: "Gut lesbare Skriptsprache für Automatisierung, Daten und KI.", why: "Ich bewerte es mit 3/5, weil: Python ist super für Prototypen und Machine Learning, aber die Syntax mag ich nicht." }
+      - { name: "Shell", what: "Kommandozeilen-Skripte (Bash, zsh), die Werkzeuge verbinden.", why: "Ich bewerte es mit 4/5, weil: Sie ist ein Muss; mit Bash und Linux überall erklärt sich das fast von selbst." }
   - category: Datenbanken
-    items: [Oracle, MySQL, SQLite, MongoDB, Postgres]
+    items:
+      - { name: "Oracle", what: "Oracle Database, eine große kommerzielle SQL-Datenbank, verbreitet in Unternehmen.", why: "Ich bewerte es mit 4/5, weil: Oracle ist solide, gibt es schon lange und wird in Unternehmen oft eingesetzt." }
+      - { name: "MySQL", what: "Weit verbreitete Open-Source-SQL-Datenbank.", why: "Ich bewerte es mit 3/5, weil: MySQL ist in Ordnung, aber ich habe es wenig genutzt, und es sticht nicht heraus." }
+      - { name: "SQLite", what: "Eine komplette SQL-Datenbank in einer Datei, direkt in der Anwendung.", why: "Ich bewerte es mit 4/5, weil: SQLite ist super für Speicher direkt auf dem Gerät, besonders mit Tools wie Room auf Android." }
+      - { name: "MongoDB", what: "Dokumentendatenbank: speichert JSON-ähnliche Einträge statt Tabellen.", why: "Ich bewerte es mit 3/5, weil: MongoDB ist gut für unstrukturierte Daten und hat seine Einsatzzwecke." }
+      - { name: "Postgres", what: "PostgreSQL, eine leistungsfähige Open-Source-SQL-Datenbank.", why: "Ich bewerte es mit 5/5, weil: Postgres ist gerade mein Favorit, vielseitig und weit verbreitet." }
   - category: Frameworks
-    items: [Kotlin Multiplatform, JavaFX, Vue, Nuxt, Spring, Quarkus, React]
+    items:
+      - { name: "Kotlin Multiplatform", what: "Teilt Kotlin-Code zwischen Android, iOS, Desktop und Web.", why: "Ich bewerte es mit 5/5, weil: Es ist eine großartige Technologie, die ich in meinem Praktikum einsetzen durfte." }
+      - { name: "Android Jetpack", what: "Googles Bibliotheken für Android-Apps, samt Jetpack Compose für die Oberfläche.", why: "Ich bewerte es mit 5/5, weil: Es ist meine liebste Art, für Mobilgeräte zu entwickeln, es passt super zu Compose, und die APIs sind einfach zu nutzen." }
+      - { name: "JavaFX", what: "Toolkit für Desktop-Oberflächen in Java.", why: "Ich bewerte es mit 3/5, weil: JavaFX ist für einfachere UI-Apps gut, aber ich arbeite nicht wirklich gern damit." }
+      - { name: "Vue", what: "JavaScript-Framework für Weboberflächen aus Komponenten.", why: "Ich bewerte es mit 5/5, weil: Vue ist mein persönlicher Favorit für Webentwicklung, mit einer richtig schönen Syntax." }
+      - { name: "Nuxt", what: "Vue mit Routing, Server-Rendering und statischen Seiten. Diese Seite ist damit gebaut.", why: "Ich bewerte es mit 5/5, weil: Nuxt macht Vue noch besser, mit vielen Hilfsmitteln und deutlich weniger Boilerplate." }
+      - { name: "Tailwind CSS", what: "Gestaltet Webseiten mit kleinen Utility-Klassen direkt im Markup.", why: "Ich bewerte es mit 4/5, weil: Tailwind nimmt viel Arbeit ab, stößt bei komplexerem CSS aber an Grenzen." }
+      - { name: "React", what: "Metas Bibliothek für Benutzeroberflächen aus Komponenten.", why: "Ich bewerte es mit 3/5, weil: React war mein erstes JavaScript-Framework und ist mit vielen Bibliotheken weit verbreitet, sticht für mich aber nicht heraus." }
+      - { name: "Spring Boot", what: "Das Standard-Framework für Java- und Kotlin-Backends und Webdienste.", why: "Ich bewerte es mit 5/5, weil: Spring Boot ist mein liebstes Backend-Framework, mit einem riesigen Ökosystem und unglaublich vielen Bibliotheken und Startern." }
+      - { name: "Spring Security", what: "Anmeldung, Tokens und Zugriffsregeln für Spring-Anwendungen.", why: "Ich bewerte es mit 5/5, weil: Es macht Spring noch besser, und das sagt eigentlich schon alles." }
+      - { name: "JPA / Hibernate", what: "Bildet Datenbanktabellen auf Java- und Kotlin-Objekte ab.", why: "Ich bewerte es mit 5/5, weil: Es ist ein toller Mapper, der einem viel SQL-Kopfweh erspart, besonders zusammen mit Spring." }
+      - { name: "Quarkus", what: "Schnell startendes Java-Framework für Container und die Cloud.", why: "Ich bewerte es mit 4/5, weil: Quarkus hat schöne native Builds und spielt gut mit Docker zusammen, aber im Spring-Ökosystem bin ich mehr zu Hause." }
+      - { name: "Express", what: "Schlankes Webserver-Framework für Node.js.", why: "Ich bewerte es mit 2/5, weil: Ein Server in JavaScript hat für mich nur einen Zweck, Prototypen; für eine große Anwendung würde ich es nie wählen." }
+      - { name: "Fabric", what: "Werkzeugkette für Minecraft-Mods, die das Spiel selbst verändern.", why: "Ich bewerte es mit 5/5, weil: Fabric ist mein liebster Minecraft-Modloader, und besonders Loom und seine Mappings mag ich." }
+      - { name: "Spigot", what: "Minecraft-Server mit Plugin-Schnittstelle, um Servern Funktionen hinzuzufügen.", why: "Ich bewerte es mit 4/5, weil: Die API ist schön, aber sie nimmt zu viel ab, und einfacher Low-Level-Zugriff fehlt." }
   - category: Tools & DevOps
-    items: [Git, GitHub, Docker, Podman, Kubernetes, Linux, Windows, Vite, Gradle, Maven]
+    items:
+      - { name: "Git", what: "Versionsverwaltung: hält jede Änderung am Code fest.", why: "Ich bewerte es mit 5/5, weil: Es erklärt sich von selbst; wer Git nicht kennt, was macht der eigentlich?" }
+      - { name: "GitHub", what: "Hostet Git-Repositories, mit Issues und Pull Requests zur Zusammenarbeit.", why: "Ich bewerte es mit 4/5, weil: GitHub ist ein guter kostenloser Git-Host mit vielen Integrationen, aber die aufgedrängten KI-Funktionen mag ich nicht." }
+      - { name: "GitHub Actions", what: "Führt Builds, Tests und Deployments automatisch auf GitHub aus.", why: "Ich bewerte es mit 5/5, weil: Man bekommt damit richtig schöne Pipelines, die leicht einzurichten sind." }
+      - { name: "Docker", what: "Packt eine Anwendung samt allem, was sie braucht, in einen Container, der überall läuft.", why: "Ich bewerte es mit 5/5, weil: Docker macht das Deployment so einfach." }
+      - { name: "Kubernetes", what: "Betreibt und skaliert viele Container über mehrere Server.", why: "Ich bewerte es mit 3/5, weil: Kubernetes ist für große Anwendungen toll, für die meisten meiner Projekte aber mehr als nötig." }
+      - { name: "Vite", what: "Schnelles Build-Tool und Entwicklungsserver für Webprojekte.", why: "Ich bewerte es mit 5/5, weil: Vite macht vieles richtig, und ich verwende es jedes Mal." }
+      - { name: "Gradle", what: "Build-Tool für Java- und Kotlin-Projekte, in Code konfiguriert.", why: "Ich bewerte es mit 5/5, weil: Gradle ist mein liebstes Build-System und sehr flexibel." }
+      - { name: "Maven", what: "Das bewährte Build- und Abhängigkeitswerkzeug für Java.", why: "Ich bewerte es mit 4/5, weil: Maven ist ein gutes Build-System, aber nicht so flexibel wie Gradle, das ich bevorzuge." }
+      - { name: "Flyway", what: "Versionierte Datenbank-Migrationen, die mit der Anwendung laufen.", why: "Ich bewerte es mit 3/5, weil: Flyway macht das Versionieren einer Datenbank einfach, aber ich habe es noch zu wenig genutzt, um es höher zu bewerten." }
+      - { name: "Swagger", what: "Beschreibt und dokumentiert Web-APIs (OpenAPI) und lässt sie ausprobieren.", why: "Ich bewerte es mit 5/5, weil: Swagger ist für jede mittlere bis große API ein Muss." }
+  - category: Tests
+    items:
+      - { name: "Jest", what: "Test-Runner für JavaScript und TypeScript.", why: "Ich bewerte es mit 5/5, weil: Ich mag die Syntax zum Schreiben von Tests und habe Jest oft zum Testen von JavaScript- und TypeScript-Code verwendet." }
+      - { name: "JUnit", what: "Das Standard-Test-Framework für Java und Kotlin.", why: "Ich bewerte es mit 5/5, weil: JUnit ist ein großartiges Framework für Java, der Industriestandard, und macht vieles richtig." }
+      - { name: "xUnit", what: "xUnit.net, das gängige Test-Framework für C# und .NET.", why: "Ich bewerte es mit 4/5, weil: xUnit ist gut und JUnit sehr ähnlich, aber die Aufteilung in Facts und Theories mag ich nicht." }
+      - { name: "Playwright", what: "Steuert echte Browser, um Webanwendungen durchgehend zu testen.", why: "Ich bewerte es mit 5/5, weil: Playwright ist super für UI-Tests und hat inzwischen auch schöne Einsatzmöglichkeiten mit KI." }
+      - { name: "Selenium", what: "Browser-Automatisierung, seit Langem zum Testen von Websites genutzt.", why: "Ich bewerte es mit 4/5, weil: Selenium macht im Grunde dasselbe wie Playwright, aber Playwright gefällt mir besser." }
