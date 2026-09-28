@@ -377,6 +377,8 @@ Search hits get the class `.is-search-hit` for a few seconds, and the theme styl
 ### Default theme: `drafting`
 A technical-drawing look in moss green. Colors come from the Osmium theme and the avatar.
 
+Bushes (`PixelBush.vue`, part of the background): pixel bushes in the avatar's greens grow around the bottom-left and top-right corners on load (a round mound at the corner, tapering along both edges), leaf by leaf outward from the corner, then small white flowers open on their inner edge. Generated from a seed (same on server and browser); size in bush pixels via `width`, `height`, `thickness`, and `mound` (the corner mound; lower is more L-shaped); behind the sheets, above the paper.
+
 Light or dark: `data-theme` on `<html>`, set before first paint by the head script in `nuxt.config.ts` (the saved choice in `localStorage.theme`, else the system setting, which it keeps following until a choice is made). The sun/moon button in the title block switches it (`useThemeMode`); with the View Transitions API the new colours spread over the page as a circle from the click, otherwise (and with reduced motion) it switches at once. Phones hide the title block and follow the system.
 
 | Token | Dark (default when the system is dark) | Light (paper) | Source |

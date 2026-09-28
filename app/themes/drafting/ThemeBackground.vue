@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PixelBush from './PixelBush.vue'
+
 const props = defineProps<{ x: number, total: number }>()
 
 // The grid scrolls with the deck so all sheets read as one long roll of paper.
@@ -7,6 +9,9 @@ const offset = computed(() => `calc(${props.x} * -100vw)`)
 
 <template>
   <div class="paper" aria-hidden="true" :style="{ '--offset': offset }" />
+  <!-- bushes like the one in the avatar, growing in from two corners -->
+  <PixelBush corner="bottom-left" :seed="7" :height="30" :thickness="11" :mound="0.8" />
+  <PixelBush corner="top-right" :seed="23" :delay="1300" :thickness="9" />
 </template>
 
 <style scoped>
