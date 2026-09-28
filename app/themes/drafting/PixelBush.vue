@@ -1,9 +1,12 @@
 <script setup lang="ts">
 // A pixel-art bush like the one in the avatar, growing out of a corner of the page, with small
 // white flowers opening on it once it has grown. Generated from a seed, so the server and the
-// browser draw the same bush. Purely decorative.
+// browser draw the same bush. Purely decorative. Placed on an edge instead of a corner, it is a
+// small patch: a low mound standing on that edge, growing out from the middle of its base.
 const props = withDefaults(defineProps<{
-  corner: 'bottom-left' | 'top-right'
+  corner: 'bottom-left' | 'top-right' | 'top-left' | 'bottom' | 'top' | 'left' | 'right'
+  /** patches only: where along the edge, from the left (top, bottom) or the top (left, right) */
+  at?: string
   seed?: number
   /** ms before it starts growing */
   delay?: number
@@ -22,7 +25,8 @@ const H = props.height
 // the avatar's bush, dark to light
 const PALETTE = ['#2c5a2c', '#366834', '#629134', '#6ca049', '#b5b641', '#d4d25a']
 const GROW = 1400 // ms from the first to the last leaf
-const FLOWERS = Math.round((W + H) / 8)
+const PATCH = !props.corner.includes('-')
+const FLOWERS = PATCH ? (W >= 10 ? 2 : 1) : Math.round((W + H) / 8)
 
 function rng(seed: number) {
   let a = seed >>> 0
@@ -40,6 +44,7 @@ interface Flower { x: number, y: number, delay: number }
 
 const bush = computed(() => {
   const rand = rng(props.seed)
+  if (PATCH) return grow(rand, patchClumps(rand))
   // leaf clumps along both edges, an L around the corner (0, 0 is the corner): thickest at the
   // corner and thinner further out, so the bush hugs the edges and stays out of the content
   const T = props.thickness
@@ -59,7 +64,19 @@ const bush = computed(() => {
   // a round mound at the corner that the two arms grow out of
   const M = props.mound
   clumps.push({ x: 3, y: 3, r: T * 1.05 * M }, { x: T * 0.9, y: T * 0.45, r: T * 0.8 * M }, { x: T * 0.45, y: T * 0.9, r: T * 0.8 * M })
+  return grow(rand, clumps)
+})
 
+/** A patch: a few clumps side by side on the base line, the middle one tallest. */
+function patchClumps(rand: () => number) {
+  const n = 3
+  return Array.from({ length: n }, (_, i) => {
+    const f = i / (n - 1) - 0.5
+    return { x: W / 2 + f * W * 0.5 + (rand() - 0.5) * 1.5, y: 0, r: H * (1 - Math.abs(f) * 0.6) * (0.85 + rand() * 0.15) }
+  })
+}
+
+function grow(rand: () => number, clumps: { x: number, y: number, r: number }[]) {
   const cells: Cell[] = []
   const filled = new Set<string>()
   for (let y = 0; y < H; y++) {
@@ -77,24 +94,26 @@ const bush = computed(() => {
       // light from above: the far side of each clump is lighter, the side toward the corner darker
       const shade = 0.5 + best.dy * 0.35 - best.dx * 0.12 - best.d * 0.25 + (rand() - 0.5) * 0.45
       const idx = Math.max(0, Math.min(PALETTE.length - 1, Math.floor(shade * PALETTE.length)))
-      // grows out from the corner along both arms
-      const dist = Math.min(1, Math.max(x / W, y / H))
+      // grows out from the corner along both arms; a patch from the middle of its base
+      const dist = PATCH ? Math.min(1, Math.hypot((x - W / 2) / (W / 2), y / H)) : Math.min(1, Math.max(x / W, y / H))
       cells.push({ x, y, color: PALETTE[idx]!, delay: Math.round(dist * GROW + rand() * 180) })
     }
   }
 
-  // flowers on the outer edge, away from the corner, opening once the bush is grown
-  // on the inner edge of either arm, away from the corner
-  const edge = cells.filter(c => Math.max(c.x / W, c.y / H) > 0.15
-    && (c.x > c.y ? !filled.has(`${c.x},${c.y + 1}`) : !filled.has(`${c.x + 1},${c.y}`)))
+  // flowers on the inner edge of either arm, away from the corner, opening once the bush is grown;
+  // on a patch, along its top
+  const edge = PATCH
+    ? cells.filter(c => c.y > 0 && !filled.has(`${c.x},${c.y + 1}`))
+    : cells.filter(c => Math.max(c.x / W, c.y / H) > 0.15
+      && (c.x > c.y ? !filled.has(`${c.x},${c.y + 1}`) : !filled.has(`${c.x + 1},${c.y}`)))
   const flowers: Flower[] = []
   for (let i = 0; i < FLOWERS && edge.length; i++) {
     const c = edge.splice(Math.floor(rand() * edge.length), 1)[0]!
     if (flowers.some(f => Math.abs(f.x - c.x) < 4 && Math.abs(f.y - c.y) < 3)) continue
-    flowers.push({ x: c.x, y: c.y, delay: GROW + 200 + i * 160 + Math.round(rand() * 120) })
+    flowers.push({ x: c.x, y: c.y, delay: (PATCH ? GROW / 2 : GROW) + 200 + i * 160 + Math.round(rand() * 120) })
   }
   return { cells, flowers }
-})
+}
 </script>
 
 <template>
@@ -104,7 +123,7 @@ const bush = computed(() => {
     :viewBox="`0 0 ${W} ${H}`"
     :width="W * PX"
     :height="H * PX"
-    :style="{ '--delay': `${delay}ms` }"
+    :style="{ '--delay': `${delay}ms`, '--at': at }"
     aria-hidden="true"
     shape-rendering="crispEdges"
   >
@@ -140,7 +159,8 @@ const bush = computed(() => {
 <style scoped>
 .bush {
   position: fixed;
-  z-index: 0;
+  /* over the frame line, under the sheets (which come later in the page) */
+  z-index: 1;
   pointer-events: none;
   overflow: visible;
 }
@@ -155,6 +175,39 @@ const bush = computed(() => {
   right: 0;
   top: 0;
   transform: scale(-1, -1);
+}
+
+/* a smaller one hanging from the top left corner */
+.bush-top-left {
+  left: 0;
+  top: 0;
+  transform: scaleY(-1);
+}
+
+/* patches: standing on an edge, the base on the edge and the leaves pointing into the page */
+.bush-bottom {
+  bottom: 0;
+  left: var(--at);
+}
+
+.bush-top {
+  top: 0;
+  left: var(--at);
+  transform: scaleY(-1);
+}
+
+.bush-left {
+  left: 0;
+  top: var(--at);
+  transform-origin: top left;
+  transform: rotate(90deg) translateY(-100%);
+}
+
+.bush-right {
+  right: 0;
+  top: var(--at);
+  transform-origin: top right;
+  transform: rotate(-90deg) translateY(-100%);
 }
 
 /* leaves appear one by one, outward from the corner */
@@ -184,6 +237,14 @@ html.js .flower {
 }
 
 @media (max-width: 767px) {
+  .bush-top-left,
+  .bush-bottom,
+  .bush-top,
+  .bush-left,
+  .bush-right {
+    display: none;
+  }
+
   .bush {
     width: calc(v-bind(W) * 5px);
     height: calc(v-bind(H) * 5px);

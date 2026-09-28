@@ -58,7 +58,8 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure))
   inset: var(--frame-gap);
   width: calc(100vw - 2 * var(--frame-gap));
   height: calc(100dvh - 2 * var(--frame-gap));
-  z-index: 20;
+  /* above the paper, below the bushes and the sheets */
+  z-index: 0;
   pointer-events: none;
   overflow: visible;
 }
