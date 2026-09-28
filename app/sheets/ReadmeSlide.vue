@@ -19,6 +19,9 @@ const built = computed(() => findProject(props.project)?.built)
     <!-- data-scroll: the deck lets wheel and arrow keys scroll this before moving on -->
     <div class="rd-scroll" data-scroll>
       <section v-if="built" class="rd-built" :aria-label="$t('readme.built')">
+        <!-- the box is drawn in first: its background wipes across, then the accent bar -->
+        <span class="rd-built-bg" data-build="line" aria-hidden="true" />
+        <span class="rd-built-bar" data-build="vline" aria-hidden="true" />
         <p data-build="print"><strong>{{ $t('readme.problem') }}</strong> {{ built.problem }}</p>
         <p data-build="print"><strong>{{ $t('readme.solution') }}</strong> {{ built.solution }}</p>
       </section>
@@ -36,10 +39,10 @@ const built = computed(() => findProject(props.project)?.built)
   gap: 16px;
 }
 
+/* like a post: the kicker above the title, where a post has its date */
 .rd-head {
   display: flex;
-  align-items: baseline;
-  gap: 18px;
+  flex-direction: column;
 }
 
 .rd-kicker {
@@ -48,13 +51,31 @@ const built = computed(() => findProject(props.project)?.built)
 }
 
 .rd-built {
+  position: relative;
+  /* keeps the drawn background behind the text but in front of the sheet */
+  isolation: isolate;
   display: grid;
   gap: 10px;
   margin-bottom: 28px;
   padding: 16px 20px;
-  border-left: 2px solid var(--accent);
-  background: color-mix(in srgb, var(--line) 6%, transparent);
   line-height: 1.6;
+}
+
+.rd-built-bg,
+.rd-built-bar {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.rd-built-bg {
+  background: color-mix(in srgb, var(--line) 6%, transparent);
+}
+
+.rd-built-bar {
+  right: auto;
+  width: 2px;
+  background: var(--accent);
 }
 
 .rd-built strong {
@@ -63,6 +84,7 @@ const built = computed(() => findProject(props.project)?.built)
 }
 
 .rd-head h2 {
+  margin-top: 8px;
   font-size: clamp(2rem, calc(var(--vw) * 4), 3.2rem);
 }
 

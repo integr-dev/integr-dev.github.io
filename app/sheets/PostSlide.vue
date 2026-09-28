@@ -98,7 +98,6 @@ const slug = props.path.split('/').pop()!
 }
 
 .ps-body {
-  max-width: 76ch;
   padding-bottom: 48px;
   font-size: 1.05rem;
   line-height: 1.7;
@@ -109,10 +108,16 @@ const slug = props.path.split('/').pop()!
   margin: 1.8em 0 0.5em;
 }
 
+.ps-body :deep(h3) {
+  font-size: 1.15rem;
+  margin: 1.4em 0 0.4em;
+}
+
 .ps-body :deep(p),
 .ps-body :deep(ul),
 .ps-body :deep(ol),
-.ps-body :deep(pre) {
+.ps-body :deep(pre),
+.ps-body :deep(table) {
   margin: 0 0 1em;
 }
 
@@ -131,6 +136,26 @@ const slug = props.path.split('/').pop()!
   font-size: 0.88rem;
 }
 
+.ps-body :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.ps-body :deep(th),
+.ps-body :deep(td) {
+  text-align: left;
+  vertical-align: top;
+  padding: 6px 12px 6px 0;
+  border-bottom: 1px dashed var(--bg-grid-strong);
+}
+
+.ps-body :deep(th) {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--line);
+}
 
 @media (max-width: 767px) {
   .ps-scroll {

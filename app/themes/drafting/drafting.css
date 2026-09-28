@@ -178,11 +178,15 @@ a:hover {
 }
 
 /* code blocks (shiki, everforest pair) */
+/* no outline, also not when focused (a scrollable block can take focus) */
 pre {
   background: var(--code-bg);
-  border: 1px solid var(--bg-grid-strong);
   border-radius: var(--radius);
   font-family: var(--font-mono);
+}
+
+pre:focus-visible {
+  outline: none;
 }
 
 pre code .line {
