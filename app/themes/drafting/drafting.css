@@ -209,6 +209,14 @@ pre code .line {
   mix-blend-mode: normal;
 }
 
+/* ---------- pixel titles: the main title of every sheet, in the avatar's pixel look ---------- */
+
+.sheet h2 {
+  font-family: var(--font-pixel);
+  /* pixel glyphs sit on a grid; squeezing them together smears the pixels */
+  letter-spacing: 0;
+}
+
 /* ---------- down / up arrows: there is a page below / above ---------- */
 
 .deck-down,

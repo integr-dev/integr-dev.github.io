@@ -27,7 +27,7 @@ useSeoMeta({
     <component :is="theme.ThemeBackground" :x="0" :total="1" />
     <component :is="theme.BuildOverlay" v-if="theme.BuildOverlay" />
     <main class="error" data-build-root>
-      <p class="error-code mono" data-build="type">{{ error.statusCode }}</p>
+      <p class="error-code" data-build="type">{{ error.statusCode }}</p>
       <h1 data-build="type">{{ notFound ? t('error.notFound') : t('error.failed') }}</h1>
       <span class="rule" data-build="line" />
       <p class="error-text" data-build="print">
@@ -56,12 +56,16 @@ useSeoMeta({
 }
 
 .error-code {
+  font-family: var(--font-pixel);
+  font-weight: 700;
   font-size: clamp(4rem, 14vw, 8rem);
   line-height: 1;
   color: var(--line);
 }
 
 h1 {
+  font-family: var(--font-pixel);
+  letter-spacing: 0;
   margin-top: 16px;
   font-size: clamp(1.8rem, 5vw, 2.8rem);
 }

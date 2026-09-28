@@ -393,7 +393,7 @@ Light or dark: `data-theme` on `<html>`, set before first paint by the head scri
 
 - No orange anywhere.
 - The accent is used only for active things: the pen dot, keyboard focus, the current tick in the title block, and search matches (as a highlighter wash at about 30%).
-- Fonts: **JetBrains Mono** (labels, numbers, code) + **Schibsted Grotesk** (text).
+- Fonts: **JetBrains Mono** (labels, numbers, code) + **Schibsted Grotesk** (text) + **Pixelify Sans** bold (`--font-pixel`: the main title of every sheet, the intro name, the Helix download number, the 404 page).
 - Icons: **Font Awesome 6 Free** (solid + brands), the same pack the previous site used, via `@fortawesome/vue-fontawesome`. No Lucide or other UI icon sets. Exception: technology logos on the Skills sheet come from **Simple Icons** (monochrome brand logos Font Awesome does not have, `app/sheets/skillIcons.ts`), with Font Awesome fallbacks.
 - Butterfly: a small pixel sprite in the accent yellow (the butterfly from the avatar, `ButterflySprite.vue`). It rests on the title block and flies to the matched element when a search result is picked. Hovering or clicking it plays a random trick (hop, spin, loop, turn, dash, shake). While the title block is expanded it keeps flying from one random spot to the next, and lands back on it once it collapses. The title block announces this with the window events `titleblock:expand` / `titleblock:collapse`. While a sheet is being drawn it hides, and the pen, drawn as the same butterfly, does the work. Hidden under `prefers-reduced-motion`.
 - Logo / favicon: the GitHub avatar (pixel cat) with rounded corners, `public/logo.png`. Pixel art is rendered with `image-rendering: pixelated`.

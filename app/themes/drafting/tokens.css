@@ -4,6 +4,8 @@
   --font-display: 'Schibsted Grotesk', ui-sans-serif, sans-serif;
   --font-body: 'Schibsted Grotesk', ui-sans-serif, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* the big titles: sheet titles, the intro name, the Helix number */
+  --font-pixel: 'Pixelify Sans', var(--font-display);
 
   --radius: 2px;
   --frame-gap: clamp(12px, 2vw, 24px);
