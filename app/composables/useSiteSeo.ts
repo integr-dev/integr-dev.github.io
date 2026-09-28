@@ -226,9 +226,11 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
           {
             '@type': 'WebSite',
             '@id': `${SITE_URL}/#website`,
-            'url': SITE_URL,
+            // Google takes the site name shown above the URL in results from this node on the home
+            // page; the url has to match the home page's canonical URL exactly (with the slash)
+            'url': `${SITE_URL}/`,
             'name': base.fullName,
-            'alternateName': base.handle,
+            'alternateName': [base.handle, new URL(SITE_URL).host],
             'publisher': personRef,
           },
         ],
