@@ -2,7 +2,8 @@
 
 Run after adding or editing a post or project, then commit the results:
     python3 scripts/og.py
-Writes public/og.png (home), public/og/posts/<slug>.png and public/og/projects/<slug>.png.
+Writes public/og.png (home), public/og/posts/<slug>.png and public/og/projects/<slug>.png, and the
+German cards as public/og/de.png and public/og/de/... (texts from content/de where translated).
 Needs Pillow and PyYAML. Fonts: Schibsted Grotesk and JetBrains Mono (both SIL OFL) in scripts/fonts.
 """
 import glob
@@ -21,7 +22,27 @@ MUTED = (185, 176, 140)
 LINE = (128, 181, 95)
 WOOD = (107, 86, 56)
 ACC = (232, 213, 106)
-MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+# the words on the cards, per language (months as on the site, app/composables/useSiteContent.ts)
+LANGS = {
+    'en': {
+        'prefix': '',
+        'from': 'from',
+        'line': 'Kotlin, open source, tools and servers.',
+        'post': 'post',
+        'project': 'project',
+        'months': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        'date': '{d} {m} {y}',
+    },
+    'de': {
+        'prefix': '/de',
+        'from': 'aus',
+        'line': 'Kotlin, Open Source, Tools und Server.',
+        'post': 'Beitrag',
+        'project': 'Projekt',
+        'months': ['Jän.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sep.', 'Okt.', 'Nov.', 'Dez.'],
+        'date': '{d}. {m} {y}',
+    },
+}
 
 
 def font(name, size, weight):
@@ -90,7 +111,7 @@ def footer_line(d, x0, text, mono, y=H - G - 44):
     d.text((x0 + 22, y), text, font=mono, fill=MUTED)
 
 
-def home(profile, flagships, out):
+def home(profile, flagships, words, out):
     """public/og.png: the card for the home page."""
     im, d = base()
     size = 276
@@ -100,11 +121,12 @@ def home(profile, flagships, out):
     d.text((x0, 150), profile['fullName'], font=font('SchibstedGrotesk.ttf', 92, 700), fill=FG)
     d.line([(x0, 275), (x0 + 500, 275)], fill=LINE, width=2)
     body = font('SchibstedGrotesk.ttf', 34, 400)
-    d.text((x0, 300), f"{profile['handle']} · {profile['role']} from {profile['location']}", font=body, fill=FG)
-    d.text((x0, 352), 'Kotlin, open source, tools and servers.', font=body, fill=MUTED)
+    d.text((x0, 300), f"{profile['handle']} · {profile['role']} {words['from']} {profile['location']}", font=body, fill=FG)
+    d.text((x0, 352), words['line'], font=body, fill=MUTED)
     mono = font('JetBrainsMono.ttf', 22, 400)
     d.text((x0, H - G - 70), 'integr.is-a.dev', font=mono, fill=LINE)
     footer_line(d, x0, '  '.join(flagships), mono)
+    os.makedirs(os.path.dirname(out), exist_ok=True)
     im.save(out, optimize=True)
     print('wrote', os.path.relpath(out, ROOT))
 
@@ -143,30 +165,47 @@ def card(kicker, title, text, footer, out):
     print('wrote', os.path.relpath(out, ROOT))
 
 
+def overrides(path):
+    """The German texts for a content file, or nothing where it is not translated."""
+    if not os.path.exists(path):
+        return {}
+    text = open(path, encoding='utf-8').read()
+    return (yaml.safe_load(text.split('---', 2)[1]) if text.startswith('---') else yaml.safe_load(text)) or {}
+
+
 def main():
-    profile = yaml.safe_load(open(os.path.join(ROOT, 'content', 'profile.yml'), encoding='utf-8'))
-    projects = [frontmatter(p) for p in glob.glob(os.path.join(ROOT, 'content', 'projects', '*.md'))]
+    content = os.path.join(ROOT, 'content')
+    profile = yaml.safe_load(open(os.path.join(content, 'profile.yml'), encoding='utf-8'))
+    projects = [frontmatter(p) for p in glob.glob(os.path.join(content, 'projects', '*.md'))]
     flagships = [p['title'] for p in sorted(projects, key=lambda p: p['order']) if p['tier'] == 'flagship']
-    home(profile, flagships, os.path.join(ROOT, 'public', 'og.png'))
 
-    for path in sorted(glob.glob(os.path.join(ROOT, 'content', 'posts', '*.md'))):
-        fm = frontmatter(path)
-        if fm.get('draft'):
-            continue
-        slug = os.path.basename(path)[:-3]
-        y, m, day = (int(n) for n in str(fm['date']).split('-'))
-        card(f'post · {day} {MONTHS[m - 1]} {y}', fm['title'], fm['summary'],
-             f'Erik Reitbauer  ·  integr.is-a.dev/posts/{slug}',
-             os.path.join(ROOT, 'public', 'og', 'posts', f'{slug}.png'))
+    for lang, words in LANGS.items():
+        de = lang == 'de'
+        out = os.path.join(ROOT, 'public', 'og', 'de') if de else os.path.join(ROOT, 'public', 'og')
+        prof = {**profile, **overrides(os.path.join(content, 'de', 'profile.yml'))} if de else profile
+        home(prof, flagships, words, out + '.png' if de else os.path.join(ROOT, 'public', 'og.png'))
 
-    for path in sorted(glob.glob(os.path.join(ROOT, 'content', 'projects', '*.md'))):
-        fm = frontmatter(path)
-        if fm['tier'] != 'flagship':
-            continue
-        slug = os.path.basename(path)[:-3]
-        card('project · ' + ', '.join(fm['stack'][:4]), fm['title'], fm['tagline'],
-             f'Erik Reitbauer  ·  integr.is-a.dev/projects/{slug}',
-             os.path.join(ROOT, 'public', 'og', 'projects', f'{slug}.png'))
+        # posts are written in English only; the card around them follows the language
+        for path in sorted(glob.glob(os.path.join(content, 'posts', '*.md'))):
+            fm = frontmatter(path)
+            if fm.get('draft'):
+                continue
+            slug = os.path.basename(path)[:-3]
+            y, m, day = (int(n) for n in str(fm['date']).split('-'))
+            date = words['date'].format(d=day, m=words['months'][m - 1], y=y)
+            card(f"{words['post']} · {date}", fm['title'], fm['summary'],
+                 f"Erik Reitbauer  ·  integr.is-a.dev{words['prefix']}/posts/{slug}",
+                 os.path.join(out, 'posts', f'{slug}.png'))
+
+        for path in sorted(glob.glob(os.path.join(content, 'projects', '*.md'))):
+            fm = frontmatter(path)
+            if fm['tier'] != 'flagship':
+                continue
+            slug = os.path.basename(path)[:-3]
+            tagline = overrides(os.path.join(content, 'de', 'projects', f'{slug}.md')).get('tagline') if de else None
+            card(f"{words['project']} · " + ', '.join(fm['stack'][:4]), fm['title'], tagline or fm['tagline'],
+                 f"Erik Reitbauer  ·  integr.is-a.dev{words['prefix']}/projects/{slug}",
+                 os.path.join(out, 'projects', f'{slug}.png'))
 
 
 if __name__ == '__main__':

@@ -11,7 +11,7 @@ definePageMeta({ key: 'deck' })
 
 const route = useRoute()
 const nav = useDeckNav()
-const { locale } = useI18n()
+const { t, locale } = useI18n()
 const content = await useSiteContent()
 
 // one page below the post list per post (sheets.config: slidesFrom 'posts')
@@ -26,7 +26,11 @@ if (!nav.applyPath(route.path)) {
 }
 
 useDeckSeo(content, nav)
-useHead({ htmlAttrs: { lang: () => (locale.value === 'de' ? 'de-AT' : 'en') } })
+useHead({
+  htmlAttrs: { lang: () => (locale.value === 'de' ? 'de-AT' : 'en') },
+  // the feed itself is English; its name follows the page language
+  link: () => [{ rel: 'alternate', type: 'application/rss+xml', title: `${content.profile.value?.fullName} · ${t('sheets.posts')}`, href: '/feed.xml' }],
+})
 </script>
 
 <template>

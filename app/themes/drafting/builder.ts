@@ -217,21 +217,37 @@ async function blockImage(img: HTMLImageElement, signal: AbortSignal, speed: num
 
 // ---------- counting ----------
 
+// the element's own text nodes while it counts, put back when the count ends, so the framework
+// can keep updating them (a language switch mid-count lands once the count is over)
+const counting = new WeakMap<HTMLElement, Node[]>()
+
+function endCount(el: HTMLElement) {
+  const nodes = counting.get(el)
+  if (!nodes) return
+  el.replaceChildren(...nodes)
+  counting.delete(el)
+}
+
 async function countUp(el: HTMLElement, signal: AbortSignal, speed: number) {
-  const target = el.dataset.value ?? el.textContent ?? ''
-  el.dataset.value = target
-  const m = target.match(/[\d,]+/)
+  endCount(el)
+  const target = el.textContent ?? ''
+  const m = target.match(/\d[\d.,]*\d|\d/)
   if (!m) return
-  const n = Number(m[0].replace(/,/g, ''))
-  const fmt = (v: number) => (m[0].includes(',') ? v.toLocaleString('en-US') : String(v))
+  // keeps the thousands separator the value was written with: 1,400 or 1.400
+  const sep = m[0].match(/[.,]/)?.[0]
+  const n = Number(m[0].replace(/[.,]/g, ''))
+  const fmt = (v: number) => (sep ? v.toLocaleString(sep === '.' ? 'de-DE' : 'en-US') : String(v))
+  counting.set(el, [...el.childNodes])
+  const shown = document.createTextNode(target)
+  el.replaceChildren(shown)
   try {
     await frames(Math.min(900, 300 + n / 3) / speed, signal, (p) => {
       const eased = 1 - (1 - p) ** 3
-      el.textContent = target.replace(m[0], fmt(Math.round(n * eased)))
+      shown.nodeValue = target.replace(m[0], fmt(Math.round(n * eased)))
     })
   }
   finally {
-    el.textContent = target
+    endCount(el)
   }
 }
 
@@ -432,7 +448,7 @@ export const builder: Builder = {
       el.querySelectorAll('.on').forEach(c => c.classList.remove('on'))
       el.querySelectorAll('.caret').forEach(c => c.remove())
       if (el.nextElementSibling?.classList.contains('b-canvas')) el.nextElementSibling.remove()
-      if (el.dataset.value) el.textContent = el.dataset.value
+      endCount(el)
       if (kindOf(el) === 'custom') el.dispatchEvent(new CustomEvent('build-reset'))
     }
     root.classList.remove('is-built')

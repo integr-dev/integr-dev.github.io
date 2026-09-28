@@ -68,7 +68,6 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-        { rel: 'alternate', type: 'application/rss+xml', title: 'Erik Reitbauer · Posts', href: '/feed.xml' },
       ],
     },
   },

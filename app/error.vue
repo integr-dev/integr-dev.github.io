@@ -17,7 +17,7 @@ const links = computed(() => [
 usePageBuild(500)
 
 useSeoMeta({
-  title: `${notFound.value ? t('error.notFoundTitle') : t('error.errorTitle')} · Erik Reitbauer`,
+  title: () => `${notFound.value ? t('error.notFoundTitle') : t('error.errorTitle')} · Erik Reitbauer`,
   robots: 'noindex',
 })
 </script>
@@ -31,7 +31,7 @@ useSeoMeta({
       <h1 data-build="type">{{ notFound ? t('error.notFound') : t('error.failed') }}</h1>
       <span class="rule" data-build="line" />
       <p class="error-text" data-build="print">
-        {{ notFound ? t('error.notFoundText') : error.statusMessage }}
+        {{ notFound ? t('error.notFoundText') : t('error.failedText') }}
       </p>
       <p class="error-links mono" data-build="chips">
         <a v-for="l in links" :key="l.to" :href="l.to">{{ l.label }}</a>

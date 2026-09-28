@@ -1,5 +1,4 @@
 export const SITE_URL = 'https://integr.is-a.dev'
-export const OG_IMAGE = `${SITE_URL}/og.png`
 
 type Profile = NonNullable<Awaited<ReturnType<typeof useSiteContent>>['profile']['value']>
 
@@ -75,11 +74,14 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
     const sheet = nav.sheet.value
     const slide = nav.slideId.value
     const project = projects.value.find(x => x.stem.endsWith(`/${sheet.id}`))
+    // social cards in the page language (scripts/og.py): /og.png and /og/..., German under /og/de
+    const card = (path: string) => `${SITE_URL}/og${de ? '/de' : ''}${path}`
+    const homeCard = de ? `${SITE_URL}/og/de.png` : `${SITE_URL}/og.png`
 
     if (project && project.tier === 'flagship') {
       const readme = slide === 'readme'
       const repo = project.links.find(l => l.href.startsWith('https://github.com/'))?.href
-      const image = `${SITE_URL}/og/projects/${sheet.id}.png`
+      const image = card(`/projects/${sheet.id}.png`)
       return {
         title: `${readme ? t('seo.readme', { project: project.title }) : project.title} · ${p.fullName}`,
         description: project.tagline,
@@ -102,7 +104,7 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
     if (sheet.id === 'posts' && slide && slide !== 'list') {
       const post = posts.value.find(x => x.path === `/posts/${slide}`)
       if (post) {
-        const image = `${SITE_URL}/og/posts/${slide}.png`
+        const image = card(`/posts/${slide}.png`)
         return {
           title: `${post.title} · ${p.fullName}`,
           description: post.summary,
@@ -133,7 +135,7 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
       return {
         title,
         description,
-        image: OG_IMAGE,
+        image: homeCard,
         type: 'profile',
         nodes: [
           {
@@ -174,7 +176,7 @@ export function useDeckSeo({ profile, skills, projects, posts }: SiteContent, na
     return {
       title: `${more ? t('seo.moreTitle') : t(`sheets.${sheet.id}`)} · ${p.fullName}`,
       description: more ? t('seo.more', { name: p.fullName }) : (descriptions[sheet.id] ?? p.pitch),
-      image: OG_IMAGE,
+      image: homeCard,
       type: 'website',
       nodes: [],
     }

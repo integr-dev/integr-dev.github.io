@@ -11,6 +11,11 @@ const lightbox = useLightbox()
 const { t, te, locale } = useI18n()
 // labels that come from the content (stat names, visual names), translated where a message exists
 const label = (group: string, key: string) => (te(`${group}.${key}`) ? t(`${group}.${key}`) : key)
+// stat values in the reader's format: a month (2026-08) as a date, 1,400 as 1.400 in German
+function value(v: string) {
+  if (/^\d{4}-\d{2}$/.test(v)) return formatDate(`${v}-01`, false, locale.value)
+  return locale.value === 'de' ? v.replace(/\d{1,3}(?:,\d{3})+/g, n => n.replace(/,/g, '.')) : v
+}
 
 const props = withDefaults(defineProps<{ project: string, visual?: 'left' | 'right', sheetId?: string }>(), { visual: 'left' })
 const { project: find } = await useSiteContent()
@@ -99,7 +104,7 @@ const asOf = computed(() => {
       <p v-if="p.stats" class="f-stats mono" data-build="chips">
         <template v-for="(s, i) in p.stats.items" :key="s.label">
           <span v-if="i" class="sep" aria-hidden="true">/</span>
-          <span><b data-build="count">{{ s.value }}</b> {{ label('stats', s.label) }}</span>
+          <span><b data-build="count">{{ value(s.value) }}</b> {{ label('stats', s.label) }}</span>
         </template>
         <a class="f-source" :href="p.stats.source" target="_blank" rel="noopener">{{ t('flagship.asOf', { date: asOf }) }}</a>
       </p>
@@ -115,7 +120,7 @@ const asOf = computed(() => {
 
     <div class="f-visual">
       <a v-if="p.badge && !visuals.some(v => v.kind === 'chart')" class="f-badge" :href="p.badge.href" target="_blank" rel="noopener">
-        <span class="badge-value" data-build="count">{{ p.badge.value }}</span>
+        <span class="badge-value" data-build="count">{{ value(p.badge.value) }}</span>
         <span class="badge-dim" data-build="line" />
         <span class="badge-label mono" data-build="type">{{ p.badge.label }}, {{ asOf }}</span>
       </a>
@@ -140,7 +145,7 @@ const asOf = computed(() => {
 
             <template v-else-if="v.kind === 'chart' && v.chart">
               <a v-if="p.badge" class="f-badge" :href="p.badge.href" target="_blank" rel="noopener">
-                <span class="badge-value" data-build="count">{{ p.badge.value }}</span>
+                <span class="badge-value" data-build="count">{{ value(p.badge.value) }}</span>
                 <span class="badge-dim" data-build="line" />
                 <span class="badge-label mono" data-build="type">{{ p.badge.label }}, {{ asOf }}</span>
               </a>
