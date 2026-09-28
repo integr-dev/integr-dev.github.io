@@ -128,7 +128,7 @@ function pick(i: number, e: MouseEvent) {
       <button type="button" class="tb-search" @click="emit('search')">
         <kbd>/</kbd> {{ $t('titleBlock.search') }}
       </button>
-      <NuxtLink class="tb-lang" :to="switchLocalePath(otherLocale)" :hreflang="otherLocale" :aria-label="$t('titleBlock.language')">
+      <NuxtLink class="tb-lang" :to="switchLocalePath(otherLocale)" :prefetch="false" :hreflang="otherLocale" :aria-label="$t('titleBlock.language')">
         {{ otherLocale.toUpperCase() }}
       </NuxtLink>
       <button
