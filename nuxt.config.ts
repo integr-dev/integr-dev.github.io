@@ -14,6 +14,20 @@ export default defineNuxtConfig({
     },
   },
 
+  // Cache lifetimes for the files without a hash in their name (the hashed ones in /_nuxt and
+  // /_fonts are kept for a year by default; pages are always checked). Written into _headers.
+  // stale-while-revalidate: a cached copy shows at once while a fresh one is fetched behind it.
+  routeRules: {
+    '/img/**': { headers: { 'cache-control': 'public, max-age=86400, stale-while-revalidate=604800' } },
+    '/og.png': { headers: { 'cache-control': 'public, max-age=86400, stale-while-revalidate=604800' } },
+    '/og/**': { headers: { 'cache-control': 'public, max-age=86400, stale-while-revalidate=604800' } },
+    '/favicon-32.png': { headers: { 'cache-control': 'public, max-age=604800' } },
+    '/apple-touch-icon.png': { headers: { 'cache-control': 'public, max-age=604800' } },
+    '/logo.png': { headers: { 'cache-control': 'public, max-age=604800' } },
+    // the path carries a hash of the messages
+    '/_i18n/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+  },
+
   experimental: {
     // Every path is the same deck, and its data comes with the first page. Without this, Nuxt fetches
     // the path's _payload.json on every move and every language switch, and waits for it.
