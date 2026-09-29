@@ -31,7 +31,7 @@ export default defineNuxtConfig({
     repository: {
       provider: 'github',
       owner: 'integr-dev',
-      repo: 'integr-dev.github.io',
+      repo: 'portfolio',
       branch: 'master',
       private: false,
     },
