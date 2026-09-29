@@ -107,13 +107,20 @@ export default defineNuxtConfig({
         workers_dev: false,
         preview_urls: false,
         routes: [{ pattern: 'integr.cc', custom_domain: true }],
+        // Cloudflare serves the prerendered pages itself, and 404.html for any path it has no file
+        // for, without starting the Worker. The Worker only runs for Nuxt Studio (the editor, its
+        // login and API, its service worker) and for Nuxt Content's queries while editing.
+        assets: {
+          not_found_handling: '404-page',
+          run_worker_first: ['/admin', '/__nuxt_studio/*', '/__nuxt_content/*', '/sw.js'],
+        },
         d1_databases: [{ binding: 'DB', database_name: 'portfolio', database_id: 'a53ffdd4-ff4e-4ebc-8de2-c94b793abf05' }],
       },
     },
     prerender: {
       // every deck position is its own page; the post pages are found by crawling the post list
       crawlLinks: true,
-      routes: [...staticPaths(), ...staticPaths().map(p => `/de${p === '/' ? '' : p}`), '/sitemap.xml', '/feed.xml'],
+      routes: [...staticPaths(), ...staticPaths().map(p => `/de${p === '/' ? '' : p}`), '/sitemap.xml', '/feed.xml', '/404.html'],
       // /posts.html instead of /posts/index.html: Cloudflare serves it at /posts without a trailing
       // slash redirect, so the URLs stay exactly the canonical ones
       autoSubfolderIndex: false,

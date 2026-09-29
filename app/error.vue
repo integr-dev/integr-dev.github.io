@@ -3,7 +3,7 @@ import type { NuxtError } from '#app'
 import { theme } from '~/themes/active'
 import { withLocale } from '~/deck/paths'
 
-// Shown for unknown URLs (GitHub Pages serves the generated 404.html) and for errors while rendering.
+// Shown for unknown URLs (Cloudflare serves the prerendered 404.html shell) and for errors while rendering.
 const props = defineProps<{ error: NuxtError }>()
 const notFound = computed(() => props.error.statusCode === 404)
 const { t, locale } = useI18n()
