@@ -18,10 +18,34 @@ body {
    zoom back out: calc(var(--vw) * 100) is always exactly the width of the window. */
 :root {
   --zoom: 1;
-  --vw: calc(1vw / var(--zoom));
+  /* the Nuxt Studio panel's width while it is open (plugins/studio-stage.client.ts), in screen pixels */
+  --stage-left: 0px;
+  --vw: calc((1vw - var(--stage-left) / 100) / var(--zoom));
   --vh: calc(1vh / var(--zoom));
   --dvh: calc(1dvh / var(--zoom));
   --svh: calc(1svh / var(--zoom));
+}
+
+/* The Studio panel open: the page is laid out right of it, as in a window that starts there.
+   Studio's push of the body is undone; #__nuxt moves over instead and holds the fixed elements. */
+html[data-stage] body {
+  margin-left: 0 !important;
+}
+
+html[data-stage] #__nuxt {
+  margin-left: calc(var(--stage-left) / var(--zoom));
+  contain: layout;
+}
+
+/* Studio's own element: otherwise an empty inline box under the page, and its panel, though drawn,
+   takes no clicks or scrolling (they fall through to the page). Not zoomed with the page: at its
+   own size, and its tooltips and menus land where they are measured. */
+nuxt-studio {
+  position: fixed;
+  inset: 0 auto auto 0;
+  display: block;
+  z-index: 2147483647;
+  zoom: calc(1 / var(--zoom));
 }
 
 html {

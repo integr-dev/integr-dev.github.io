@@ -35,12 +35,12 @@ export function usePageBuild(delay = 300) {
   }
 
   function onPointerDown(e: PointerEvent) {
-    if ((e.target as HTMLElement).closest('a, button')) return
+    if (fromStudio(e) || (e.target as HTMLElement).closest('a, button')) return
     skip()
   }
 
   function onKey(e: KeyboardEvent) {
-    if (current && [' ', 'Enter', 'Escape'].includes(e.key)) {
+    if (current && !fromStudio(e) && [' ', 'Enter', 'Escape'].includes(e.key)) {
       e.preventDefault()
       skip()
     }

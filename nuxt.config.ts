@@ -2,7 +2,7 @@ import { staticPaths } from './app/deck/paths'
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-09-01',
-  modules: ['@nuxt/content', '@nuxt/fonts', '@nuxtjs/i18n'],
+  modules: ['@nuxt/content', '@nuxt/fonts', '@nuxtjs/i18n', 'nuxt-studio'],
 
   ssr: true,
 
@@ -19,6 +19,19 @@ export default defineNuxtConfig({
       markdown: {
         highlight: { theme: { default: 'everforest-light', dark: 'everforest-dark' }, langs: ['kotlin', 'ts', 'bash', 'yaml', 'json'] },
       },
+    },
+  },
+
+  // Nuxt Studio: edit the content in the browser at /admin. In dev it writes straight to the files
+  // here; in production publishing commits to the repository.
+  studio: {
+    route: '/admin',
+    repository: {
+      provider: 'github',
+      owner: 'integr-dev',
+      repo: 'integr-dev.github.io',
+      branch: 'master',
+      private: false,
     },
   },
 
@@ -62,9 +75,10 @@ export default defineNuxtConfig({
         // Everything wider than a phone is zoomed so the page looks like it does in the reference
         // window (1694 x 971), just bigger or smaller (not below 0.6); browser zoom therefore keeps the
         // same look too. Phones keep their own layout. --vw etc. in base.css divide the zoom back out.
+        // With the Nuxt Studio panel open the window counts from its right edge (__stageLeft).
         // Set here rather than in app.vue: the error page (404) replaces app.vue.
         {
-          innerHTML: `(function(){var d=document.documentElement;d.classList.add('js');var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);function z(){var k=innerWidth<768?1:Math.max(0.6,Math.min(innerWidth/1694,innerHeight/971));d.style.zoom=k;d.style.setProperty('--zoom',k)}z();addEventListener('resize',z)})()`,
+          innerHTML: `(function(){var d=document.documentElement;d.classList.add('js');var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);function z(){var k=innerWidth<768?1:Math.max(0.6,Math.min((innerWidth-(window.__stageLeft||0))/1694,innerHeight/971));d.style.zoom=k;d.style.setProperty('--zoom',k)}z();addEventListener('resize',z)})()`,
           tagPosition: 'head',
         },
       ],

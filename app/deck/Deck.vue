@@ -95,7 +95,7 @@ function isTyping(e: Event) {
 }
 
 function onKey(e: KeyboardEvent) {
-  if (lightbox.isOpen.value) return
+  if (lightbox.isOpen.value || fromStudio(e)) return
   // Space, Enter or Escape while a sheet is being drawn: show it at once
   if (build.building.value && !isTyping(e) && !searchOpen.value && [' ', 'Enter', 'Escape'].includes(e.key)) {
     e.preventDefault()
@@ -153,7 +153,7 @@ let lastWheel = 0
 let acc = 0
 
 function onWheel(e: WheelEvent) {
-  if (narrow.value || searchOpen.value || lightbox.isOpen.value) return
+  if (narrow.value || searchOpen.value || lightbox.isOpen.value || fromStudio(e)) return
   const now = performance.now()
   const gap = now - lastWheel
   lastWheel = now
@@ -204,7 +204,7 @@ function onWheel(e: WheelEvent) {
 let touchStart: { x: number, y: number } | null = null
 
 function onTouchStart(e: TouchEvent) {
-  const t = e.touches[0]
+  const t = fromStudio(e) ? undefined : e.touches[0]
   touchStart = t ? { x: t.clientX, y: t.clientY } : null
 }
 
