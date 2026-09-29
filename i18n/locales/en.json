@@ -79,7 +79,7 @@
       "email": "reply to",
       "message": "message",
       "send": "send",
-      "sending": "sending …",
+      "sending": "sending",
       "sent": "Sent. I'll answer by email.",
       "error": "That didn't work. Try again, or write to {email}.",
       "close": "close"
