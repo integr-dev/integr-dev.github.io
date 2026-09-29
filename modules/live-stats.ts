@@ -117,23 +117,42 @@ async function latestPush(): Promise<BuildInfo['latestPush']> {
 
 const cache = new Map<string, Promise<any>>()
 
-function get(url: string, headers: Record<string, string> = {}) {
-  if (!cache.has(url)) {
-    cache.set(url, fetch(url, { headers: { 'user-agent': 'integr.cc live-stats', ...headers } }).then(async (res) => {
-      if (!res.ok) throw new Error(`${res.status} ${url}`)
+class HttpError extends Error {
+  constructor(readonly status: number, url: string) {
+    super(`${status} ${url}`)
+  }
+}
+
+function get(url: string, headers: Record<string, string> = {}, key = url) {
+  if (!cache.has(key)) {
+    cache.set(key, fetch(url, { headers: { 'user-agent': 'integr.cc live-stats', ...headers } }).then(async (res) => {
+      if (!res.ok) throw new HttpError(res.status, url)
       return { body: await res.json(), link: res.headers.get('link') ?? '' }
     }))
   }
-  return cache.get(url)!
+  return cache.get(key)!
 }
 
-// optional GITHUB_TOKEN (a build variable): the API allows only 60 requests an hour without one
-function github(path: string) {
+// optional GITHUB_TOKEN (a build variable): the API allows only 60 requests an hour without one.
+// A token GitHub turns down (expired, revoked: 401/403) is dropped for the rest of the build, and
+// the requests go on without it.
+let tokenRejected = false
+
+async function github(path: string) {
+  const url = `https://api.github.com/${path}`
+  const accept = { accept: 'application/vnd.github+json' }
   const token = process.env.GITHUB_TOKEN
-  return get(`https://api.github.com/${path}`, {
-    accept: 'application/vnd.github+json',
-    ...(token ? { authorization: `Bearer ${token}` } : {}),
-  })
+  if (token && !tokenRejected) {
+    try {
+      return await get(url, { ...accept, authorization: `Bearer ${token}` })
+    }
+    catch (e) {
+      if (!(e instanceof HttpError) || (e.status !== 401 && e.status !== 403)) throw e
+      if (!tokenRejected) console.warn(`[live-stats] GITHUB_TOKEN was turned down (${e.status}), going on without it`)
+      tokenRejected = true
+    }
+  }
+  return get(url, accept, `${url} (no token)`)
 }
 
 /** How many items a list has, read from the last page's number with one item per page. */
