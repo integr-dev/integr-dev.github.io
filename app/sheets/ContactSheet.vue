@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import buildInfo from '#build/build-info.mjs'
+
 const { profile } = await useSiteContent()
+// when the site was last built (every day at the latest, see modules/live-stats.ts)
+const updated = buildInfo.builtAt.slice(0, 10)
 
 const iconFor = (name: string) => (name === 'github' ? ['fab', 'github'] : ['fas', name])
 </script>
@@ -23,6 +27,7 @@ const iconFor = (name: string) => (name === 'github' ? ['fab', 'github'] : ['fas
       </ul>
       <p class="c-cv muted" data-build="print">{{ profile.cvNote }}</p>
       <p class="c-done mono" data-build="type">{{ $t('contact.done') }}</p>
+      <p class="c-updated mono muted" data-build="type">{{ $t('contact.updated', { date: formatDate(updated, true, $i18n.locale) }) }}</p>
     </div>
   </div>
 </template>
@@ -96,5 +101,10 @@ const iconFor = (name: string) => (name === 'github' ? ['fab', 'github'] : ['fas
   margin-top: 36px;
   font-size: 0.85rem;
   color: var(--line);
+}
+
+.c-updated {
+  margin-top: 6px;
+  font-size: 0.75rem;
 }
 </style>

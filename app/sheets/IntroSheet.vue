@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import buildInfo from '#build/build-info.mjs'
 import PixelAvatar from './PixelAvatar.vue'
 import { useDeckNav } from '~/deck/useDeckNav'
 
@@ -11,6 +12,12 @@ const nav = useDeckNav()
 const { t, locale } = useI18n()
 // English roles read as common nouns in running text; German nouns keep their capital
 const role = computed(() => (profile.value ? (locale.value === 'de' ? profile.value.role : profile.value.role.toLowerCase()) : ''))
+
+// "currently": my newest public push, from the build. The page shows its date; the browser then
+// says how long ago that was.
+const push = buildInfo.latestPush
+const now = ref<number>()
+const pushedWhen = computed(() => push && (now.value ? relativeTime(push.at, locale.value, now.value) : formatDate(push.at.slice(0, 10), true, locale.value)))
 
 // shortcuts from the first screen to the places people look for most
 const shortcuts = [
@@ -29,6 +36,7 @@ function open(sheet: string) {
 
 onMounted(() => {
   if (profile.value) age.value = ageFrom(profile.value.birth)
+  now.value = Date.now()
   measureLinks()
   window.addEventListener('resize', measureLinks)
 })
@@ -151,6 +159,12 @@ watch(() => nav.x.value, (x, was) => {
       <h1 class="intro-facts" data-build="type">
         {{ t('intro.facts', { name: profile.fullName, age, role, location: profile.location }) }}
       </h1>
+      <i18n-t v-if="push" keypath="intro.currently" tag="p" class="intro-now" data-build="print" scope="global">
+        <template #repo>
+          <a :href="push.url" target="_blank" rel="noopener">{{ push.repo }}</a>
+        </template>
+        <template #when>{{ pushedWhen }}</template>
+      </i18n-t>
       <p class="intro-pitch" data-build="print">
         {{ profile.pitch }}
       </p>
@@ -246,6 +260,21 @@ figcaption {
   line-height: 1.55;
   font-size: 1.35rem;
   color: var(--fg);
+}
+
+/* part of the text: a quiet sentence under the facts */
+.intro-now {
+  margin-top: 4px;
+  font-size: 1.05rem;
+  color: var(--fg-muted);
+}
+
+.intro-now a {
+  color: inherit;
+}
+
+.intro-now a:hover {
+  color: var(--accent);
 }
 
 .intro-pitch {

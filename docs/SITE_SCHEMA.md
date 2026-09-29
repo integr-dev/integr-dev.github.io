@@ -118,6 +118,7 @@ To add a flagship: add `content/en/projects/<slug>.md` with `tier: flagship`, th
 - Drawn shortcut buttons: Projects, Posts, Contact
 - Live age (computed from the birth year and month, which are not shown), "Austria"
 - One-line pitch (Kotlin-first developer, open source)
+- Under the facts, a quiet sentence: "Last worked on <repo>, <when>." (the repo name links to it). It is my newest public push across `integr-dev` and `e-reitbauer` (the site's own repo left out), read from GitHub by the build (`#build/build-info.mjs`, `modules/live-stats.ts`; also in dev). The page carries the push's date; the browser turns it into "2 days ago" / "vor 2 Tagen". No push found: no line.
 - Hint: "press / to search" and "→ to continue"
 - **No school name.**
 
@@ -187,7 +188,7 @@ Clicking a skill (or tapping it, or Enter / Space) unfolds that row downwards, o
 
 ### 10 · Contact
 - Heading, one line, the email large (mailto), links.
-- Then the CV note and a closing "Done."
+- Then the CV note, a closing "Done." and, small under it, "Last updated <date>." (the build date, so at most a day old with the daily rebuild).
 - Email: **hello@integr.cc**
 - GitHub: `integr-dev`, `e-reitbauer` · Modrinth
 - Line: **"CV available on request."** No download, no CV section.

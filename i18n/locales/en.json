@@ -20,7 +20,8 @@
       "search": "search",
       "skipKey": "click",
       "skip": "skip the drawing"
-    }
+    },
+    "currently": "Last worked on {repo}, {when}."
   },
   "flagship": {
     "why": "Why it's here.",
@@ -66,7 +67,8 @@
   },
   "contact": {
     "lead": "Email is the fastest way to reach me.",
-    "done": "Done."
+    "done": "Done.",
+    "updated": "Last updated {date}."
   },
   "deck": {
     "nextSheet": "Next sheet: projects",

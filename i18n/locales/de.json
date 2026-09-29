@@ -20,7 +20,8 @@
       "search": "Suche",
       "skipKey": "Klick",
       "skip": "Zeichnen überspringen"
-    }
+    },
+    "currently": "Zuletzt an {repo} gearbeitet, {when}."
   },
   "flagship": {
     "why": "Warum es hier ist.",
@@ -66,7 +67,8 @@
   },
   "contact": {
     "lead": "Per E-Mail erreichst du mich am schnellsten.",
-    "done": "Fertig."
+    "done": "Fertig.",
+    "updated": "Zuletzt aktualisiert: {date}."
   },
   "deck": {
     "nextSheet": "Nächstes Blatt: Projekte",

@@ -18,7 +18,21 @@ import { parseFrontMatter } from 'remark-mdc'
  *   modrinth:downloads:<slug>, modrinth:followers:<slug>
  *
  * A badge shows its number rounded down to the hundred, with a "+".
+ *
+ * Also from the build (#build/build-info.mjs): when the site was built, and the newest public push
+ * of ACCOUNTS (the intro's "currently" line).
  */
+
+const ACCOUNTS = ['integr-dev', 'e-reitbauer']
+// the site itself is pushed to all the time (Studio, deploys); it would always be the newest
+const NOT_CURRENT = ['integr-dev/portfolio']
+
+export interface BuildInfo {
+  /** ISO time of the build (in dev: of the dev server's start) */
+  builtAt: string
+  /** the newest public push over ACCOUNTS */
+  latestPush: { repo: string, url: string, at: string } | null
+}
 
 export interface LiveProject {
   asOf: string
@@ -39,6 +53,19 @@ export default defineNuxtModule({
     addTemplate({
       filename: 'live-stats.mjs',
       getContents: async () => `export default ${JSON.stringify(enabled ? await collect(dir) : {})}`,
+    })
+    const builtAt = new Date().toISOString()
+    addTemplate({
+      filename: 'build-info.mjs',
+      // the one push lookup also runs in dev, so the intro line can be seen there
+      getContents: async () => `export default ${JSON.stringify({ builtAt, latestPush: nuxt.options._prepare ? null : await latestPush() } satisfies BuildInfo)}`,
+    })
+    addTypeTemplate({
+      filename: 'types/build-info.d.ts',
+      getContents: () => `declare module '#build/build-info.mjs' {
+  const info: import('${join(nuxt.options.rootDir, 'modules/live-stats')}').BuildInfo
+  export default info
+}`,
     })
     addTypeTemplate({
       filename: 'types/live-stats.d.ts',
@@ -72,6 +99,21 @@ async function collect(dir: string): Promise<Record<string, LiveProject>> {
 }
 
 const format = (n: number) => n.toLocaleString('en-US')
+
+async function latestPush(): Promise<BuildInfo['latestPush']> {
+  try {
+    const pushes = (await Promise.all(ACCOUNTS.map(async a => (await github(`users/${a}/events/public?per_page=100`)).body as Json[])))
+      .flat()
+      .filter(e => e.type === 'PushEvent' && !NOT_CURRENT.includes(e.repo.name))
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))
+    const push = pushes[0]
+    return push ? { repo: push.repo.name.split('/')[1], url: `https://github.com/${push.repo.name}`, at: push.created_at } : null
+  }
+  catch (e) {
+    console.warn(`[live-stats] latest push: none shown (${(e as Error).message})`)
+    return null
+  }
+}
 
 const cache = new Map<string, Promise<any>>()
 
