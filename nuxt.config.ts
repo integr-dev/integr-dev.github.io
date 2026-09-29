@@ -15,6 +15,8 @@ export default defineNuxtConfig({
 
   content: {
     experimental: { sqliteConnector: 'native' },
+    // on Cloudflare the content lives in the D1 database bound as DB (nitro.cloudflare below)
+    database: { type: 'd1', bindingName: 'DB' },
     build: {
       markdown: {
         highlight: { theme: { default: 'everforest-light', dark: 'everforest-dark' }, langs: ['kotlin', 'ts', 'bash', 'yaml', 'json'] },
@@ -48,7 +50,7 @@ export default defineNuxtConfig({
   // English at the plain paths, German under /de (messages in i18n/locales, German content in
   // content/de). No automatic redirect by browser language: the switch is in the title block.
   i18n: {
-    baseUrl: 'https://integr.is-a.dev',
+    baseUrl: 'https://integr.cc',
     defaultLocale: 'en',
     strategy: 'prefix_except_default',
     locales: [
@@ -89,12 +91,24 @@ export default defineNuxtConfig({
     },
   },
 
+  // A Cloudflare Worker: every page is prerendered and served as a static file; the Worker itself only
+  // answers what is not (Studio at /admin, its login and API, unknown paths). Deployed by Cloudflare
+  // Workers Builds on every push to master (npm run build, then npx wrangler deploy).
   nitro: {
+    preset: 'cloudflare_module',
+    cloudflare: {
+      deployConfig: true,
+      nodeCompat: true,
+      wrangler: {
+        name: 'integr',
+        d1_databases: [{ binding: 'DB', database_name: 'portfolio', database_id: 'a53ffdd4-ff4e-4ebc-8de2-c94b793abf05' }],
+      },
+    },
     prerender: {
       // every deck position is its own page; the post pages are found by crawling the post list
       crawlLinks: true,
       routes: [...staticPaths(), ...staticPaths().map(p => `/de${p === '/' ? '' : p}`), '/sitemap.xml', '/feed.xml'],
-      // /posts.html instead of /posts/index.html: GitHub Pages serves both without a trailing
+      // /posts.html instead of /posts/index.html: Cloudflare serves it at /posts without a trailing
       // slash redirect, so the URLs stay exactly the canonical ones
       autoSubfolderIndex: false,
     },

@@ -124,7 +124,7 @@ def home(profile, flagships, words, out):
     d.text((x0, 300), f"{profile['handle']} · {profile['role']} {words['from']} {profile['location']}", font=body, fill=FG)
     d.text((x0, 352), words['line'], font=body, fill=MUTED)
     mono = font('JetBrainsMono.ttf', 22, 400)
-    d.text((x0, H - G - 70), 'integr.is-a.dev', font=mono, fill=LINE)
+    d.text((x0, H - G - 70), 'integr.cc', font=mono, fill=LINE)
     footer_line(d, x0, '  '.join(flagships), mono)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     im.save(out, optimize=True)
@@ -195,7 +195,7 @@ def main():
             y, m, day = (int(n) for n in str(fm['date']).split('-'))
             date = words['date'].format(d=day, m=words['months'][m - 1], y=y)
             card(f"{words['post']} · {date}", fm['title'], fm['summary'],
-                 f"Erik Reitbauer  ·  integr.is-a.dev{words['prefix']}/posts/{slug}",
+                 f"Erik Reitbauer  ·  integr.cc{words['prefix']}/posts/{slug}",
                  os.path.join(out, 'posts', f'{slug}.png'))
 
         for path in sorted(glob.glob(os.path.join(en, 'projects', '*.md'))):
@@ -205,7 +205,7 @@ def main():
             slug = os.path.basename(path)[:-3]
             tagline = overrides(os.path.join(content, 'de', 'projects', f'{slug}.md')).get('tagline') if de else None
             card(f"{words['project']} · " + ', '.join(fm['stack'][:4]), fm['title'], tagline or fm['tagline'],
-                 f"Erik Reitbauer  ·  integr.is-a.dev{words['prefix']}/projects/{slug}",
+                 f"Erik Reitbauer  ·  integr.cc{words['prefix']}/projects/{slug}",
                  os.path.join(out, 'projects', f'{slug}.png'))
 
 

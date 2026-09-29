@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://integr.is-a.dev'
+export const SITE_URL = 'https://integr.cc'
 
 type Profile = NonNullable<Awaited<ReturnType<typeof useSiteContent>>['profile']['value']>
 

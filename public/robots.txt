@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://integr.is-a.dev/sitemap.xml
+Sitemap: https://integr.cc/sitemap.xml
