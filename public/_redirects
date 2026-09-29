@@ -1,0 +1,9 @@
+# Short links, answered by Cloudflare's static layer (no Worker). 302, so a target can still change.
+/gh         https://github.com/integr-dev                 302
+/modrinth   https://modrinth.com/user/integr              302
+/rss        /feed.xml                                     302
+/osmium     https://github.com/integr-dev/osmium          302
+/helix      https://modrinth.com/mod/helix                302
+/backbone   https://github.com/integr-dev/backbone        302
+/clay       https://github.com/clay-doc/clay              302
+/forkcast   https://github.com/e-reitbauer/forkcast       302
