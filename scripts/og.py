@@ -175,8 +175,9 @@ def overrides(path):
 
 def main():
     content = os.path.join(ROOT, 'content')
-    profile = yaml.safe_load(open(os.path.join(content, 'profile.yml'), encoding='utf-8'))
-    projects = [frontmatter(p) for p in glob.glob(os.path.join(content, 'projects', '*.md'))]
+    en = os.path.join(content, 'en')
+    profile = yaml.safe_load(open(os.path.join(en, 'profile.yml'), encoding='utf-8'))
+    projects = [frontmatter(p) for p in glob.glob(os.path.join(en, 'projects', '*.md'))]
     flagships = [p['title'] for p in sorted(projects, key=lambda p: p['order']) if p['tier'] == 'flagship']
 
     for lang, words in LANGS.items():
@@ -186,7 +187,7 @@ def main():
         home(prof, flagships, words, out + '.png' if de else os.path.join(ROOT, 'public', 'og.png'))
 
         # posts are written in English only; the card around them follows the language
-        for path in sorted(glob.glob(os.path.join(content, 'posts', '*.md'))):
+        for path in sorted(glob.glob(os.path.join(en, 'posts', '*.md'))):
             fm = frontmatter(path)
             if fm.get('draft'):
                 continue
@@ -197,7 +198,7 @@ def main():
                  f"Erik Reitbauer  ·  integr.is-a.dev{words['prefix']}/posts/{slug}",
                  os.path.join(out, 'posts', f'{slug}.png'))
 
-        for path in sorted(glob.glob(os.path.join(content, 'projects', '*.md'))):
+        for path in sorted(glob.glob(os.path.join(en, 'projects', '*.md'))):
             fm = frontmatter(path)
             if fm['tier'] != 'flagship':
                 continue

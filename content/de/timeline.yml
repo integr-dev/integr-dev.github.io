@@ -1,4 +1,3 @@
-# German version of timeline.yml, same entries in the same order. DRAFT: check the wording.
 entries:
   - when: "2021"
     title: Einstieg mit Java

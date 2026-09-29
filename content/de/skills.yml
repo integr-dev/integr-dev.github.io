@@ -1,5 +1,3 @@
-# German version of skills.yml: category names and the text of each skill; names, order and ratings
-# come from the English file (matched by name). DRAFT: check the wording.
 categories:
   - category: Sprachen
     items:

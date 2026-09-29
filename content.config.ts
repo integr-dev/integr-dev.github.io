@@ -9,7 +9,8 @@ export default defineContentConfig({
   collections: {
     projects: defineCollection({
       type: 'page',
-      source: 'projects/*.md',
+      // English in content/en/, German in content/de/; the prefix keeps the paths free of the language
+      source: { include: 'en/projects/*.md', prefix: '/projects' },
       schema: z.object({
         tagline: z.string(),
         tier: z.enum(['flagship', 'featured', 'more']),
@@ -64,12 +65,12 @@ export default defineContentConfig({
     // long form text shown on the page below each flagship
     readmes: defineCollection({
       type: 'page',
-      source: 'readmes/*.md',
+      source: { include: 'en/readmes/*.md', prefix: '/readmes' },
     }),
 
     posts: defineCollection({
       type: 'page',
-      source: 'posts/*.md',
+      source: { include: 'en/posts/*.md', prefix: '/posts' },
       schema: z.object({
         date: z.string(),
         tags: z.array(z.string()).default([]),
@@ -80,12 +81,13 @@ export default defineContentConfig({
 
     timeline: defineCollection({
       type: 'data',
-      source: 'timeline.yml',
+      source: 'en/timeline.yml',
       schema: z.object({
         entries: z.array(z.object({ when: z.string(), title: z.string(), detail: z.string().optional() })),
       }),
     }),
 
+    // same entries in the same order as timeline.yml
     timeline_de: defineCollection({
       type: 'data',
       source: 'de/timeline.yml',
@@ -94,18 +96,23 @@ export default defineContentConfig({
       }),
     }),
 
+    // shown by category on the Skills sheet; a click on a skill shows what it is, its rating and why,
+    // favorite: true puts a star next to it
     skills: defineCollection({
       type: 'data',
-      source: 'skills.yml',
+      source: 'en/skills.yml',
       schema: z.object({ categories: z.array(z.object({ category: z.string(), items: z.array(skill) })) }),
     }),
 
+    // German skills: category names and the text of each skill; names, order and ratings come from the
+    // English file (matched by name)
     skills_de: defineCollection({
       type: 'data',
       source: 'de/skills.yml',
       schema: z.object({ categories: z.array(z.object({ category: z.string(), items: z.array(skill) })) }),
     }),
 
+    // German profile: only the translated text; everything else comes from profile.yml
     profile_de: defineCollection({
       type: 'data',
       source: 'de/profile.yml',
@@ -120,12 +127,13 @@ export default defineContentConfig({
 
     profile: defineCollection({
       type: 'data',
-      source: 'profile.yml',
+      source: 'en/profile.yml',
       schema: z.object({
         handle: z.string(),
         name: z.string(),
         fullName: z.string(),
         role: z.string(),
+        // what I am looking for, shown on the first screen
         lookingFor: z.string(),
         birth: z.object({ year: z.number(), month: z.number() }),
         location: z.string(),

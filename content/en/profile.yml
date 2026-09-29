@@ -4,7 +4,6 @@ fullName: Erik Reitbauer
 role: Software developer
 birth: { year: 2009, month: 5 }
 location: Austria
-# DRAFT: what you are looking for, shown on the first screen. Check and edit.
 lookingFor: Open to internships and student developer jobs.
 pitch: I write software, mostly in Kotlin, and publish most of it as open source. Servers, tools, libraries, and the odd experiment.
 email: hello@integr.cloud

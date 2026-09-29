@@ -1,5 +1,4 @@
 ---
-# German overrides for content/projects/osmium.md. DRAFT: check the wording.
 tagline: Steuert eine Flotte von Minecraft-Agenten ohne Oberfläche, die gemeinsam eine große Schematic bauen.
 why: Mein bisher größtes System. Eine Person lädt eine Schematic hoch, Osmium teilt sie in Segmente, gibt jedem Agenten seinen Teil, und ein Web-Dashboard verfolgt jeden Agenten live.
 built:
