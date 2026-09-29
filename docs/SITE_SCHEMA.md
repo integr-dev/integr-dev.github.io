@@ -1,4 +1,4 @@
-# integr.is-a.dev — Site Schema
+# integr.cc — Site Schema
 
 This spec describes the layout, content model and navigation of the site. The visual "decoration" (the drafting theme) is kept separate, so it can be replaced without touching the layout or the content.
 
@@ -23,8 +23,8 @@ Rules:
 
 - **Nuxt 4 + Vue 3 + TypeScript**
 - **@nuxt/content** holds projects, posts, timeline, skills and profile as files
-- Static output via `nuxt generate` → GitHub Pages (`integr.is-a.dev`)
-- No runtime backend
+- A Cloudflare Worker (`cloudflare_module` preset) on `integr.cc`, deployed by Cloudflare Workers Builds on every push to master (`npm run build`, then `npx wrangler deploy`). Every page is prerendered and served as a static file; the Worker only answers the rest: Nuxt Studio (`/admin`, its login and API) and unknown paths (the 404 page). Nuxt Content reads from the D1 database bound as `DB` there.
+- The old address `integr.is-a.dev` stays on GitHub Pages as a forwarding page only (`forward/index.html`, served for every path by `.github/workflows/deploy.yml`), which sends visitors to the same path on `integr.cc`.
 
 ---
 
@@ -108,7 +108,7 @@ export const sheets: SheetDef[] = [
 
 Types live in `app/deck/types.ts` (`SheetDef`, `SlideDef`, `SearchEntry`).
 
-To add a flagship: add `content/projects/<slug>.md` with `tier: flagship`, then one line in `sheets.config.ts`.
+To add a flagship: add `content/en/projects/<slug>.md` with `tier: flagship`, then one line in `sheets.config.ts`.
 
 ---
 
@@ -145,9 +145,9 @@ Draft "why" lines (to edit):
 - **Helix:** "Shipped to real users: 1,400+ downloads on Modrinth."
 
 ### Flagship README pages
-Every flagship sheet is a `stack`: the flagship page, and below it a README page (`ReadmeSlide`) with long form text from `content/readmes/<slug>.md`, headed by the project's `built` note (the problem and how it's solved). The text scrolls inside the page; the wheel and ↑/↓ scroll it first and move to the next page once the end is reached. Any element marked `data-scroll` inside a stack slide behaves this way.
+Every flagship sheet is a `stack`: the flagship page, and below it a README page (`ReadmeSlide`) with long form text from `content/en/readmes/<slug>.md`, headed by the project's `built` note (the problem and how it's solved). The text scrolls inside the page; the wheel and ↑/↓ scroll it first and move to the next page once the end is reached. Any element marked `data-scroll` inside a stack slide behaves this way.
 
-Whenever there is a page below the current one, a down arrow sits at the bottom centre (`.deck-down`, styled by the theme). A page above gets an up arrow at the top centre; on a post, "All posts" (a double arrow and label, set off from the single arrow by a short rule) sits left of it (back to the list; on phones the button stays in the post's header). Left and right arrows at the middle of the side edges lead to the neighbouring sheets on every sheet. All four arrows are bare accent-coloured arrows of one size, without any movement. On first load they fade in as the first bush flowers open (2.5s), and the resting butterfly with them. The intro shortcuts, the post's back button and the lightbox buttons (`data-fill`) fill with the accent colour block by block on hover, rows sweeping down like a screenshot being drawn, in about a third of a second, and empty the same way (`pixelFill.ts`).
+Whenever there is a page below the current one, a down arrow sits at the bottom centre (`.deck-down`, styled by the theme). A page above gets an up arrow at the top centre; on a post, "All posts" (a double arrow and label, set off from the single arrow by a short rule) sits left of it (back to the list; on phones the button stays in the post's header). Left and right arrows at the middle of the side edges lead to the neighbouring sheets on every sheet. All four arrows are bare accent-coloured arrows of one size, without any movement. On first load they fade in as the first bush flowers open (2.5s), and the resting butterfly with them.
 
 ### 06 · Projects (`stack`)
 - **Slide `main`:** columns for **Granum, Scry, Castl3d**. The page below it holds the rest, reached like any page below (down arrow, wheel, ↓).
@@ -174,7 +174,7 @@ Code and work milestones only, **no school entries**:
 | next | "Next up" |
 
 ### 09 · Skills
-Five columns, one per category (the list lives in `content/skills.yml`):
+Five columns, one per category (the list lives in `content/en/skills.yml`):
 
 | Category | Items |
 |---|---|
@@ -189,7 +189,7 @@ Clicking a skill (or tapping it, or Enter / Space) unfolds that row downwards, o
 ### 10 · Contact
 - Heading, one line, the email large (mailto), links.
 - Then the CV note and a closing "Done."
-- Email: **hello@integr.cloud**
+- Email: **hello@integr.cc**
 - GitHub: `integr-dev`, `e-reitbauer` · Modrinth
 - Line: **"CV available on request."** No download, no CV section.
 - End marker: **"Done."** This is the last element on the last sheet.
@@ -203,16 +203,24 @@ Phone, street address, exact birthdate, school history, CV file, extracurricular
 
 ```
 content/
-  profile.yml
-  projects/
-    osmium.md  clay.md  forkcast.md  backbone.md  helix.md
-    granum.md  scry.md  castl3d.md
-    aether.md  konvert.md  content-automation.md
-  posts/
-    2026-09-27-new-page.md
-  timeline.yml
-  skills.yml
+  en/                       # English: the source of all content
+    profile.yml
+    projects/
+      osmium.md  clay.md  forkcast.md  backbone.md  helix.md
+      granum.md  scry.md  castl3d.md
+      aether.md  konvert.md  content-automation.md
+    readmes/
+      osmium.md  clay.md  forkcast.md  backbone.md  helix.md
+    posts/
+      2026-09-27-new-page.md
+    timeline.yml
+    skills.yml
+  de/                       # German: only the translated text, laid over the English file of the same name
+    profile.yml  timeline.yml  skills.yml
+    projects/
 ```
+
+The language folder is not part of a page's path: `content/en/posts/x.md` is `/posts/x` (the collections' `prefix` in `content.config.ts`).
 
 ### Project frontmatter
 The schema is enforced in `content.config.ts`.
@@ -287,7 +295,7 @@ name: Erik
 birth: { year: 2009, month: 5 }   # only used to compute age; never rendered
 location: Austria
 pitch: "…"
-email: hello@integr.cloud
+email: hello@integr.cc
 cvNote: CV available on request.
 links:
   - { label: integr-dev, href: https://github.com/integr-dev, icon: github }   # icon: Font Awesome name
@@ -445,6 +453,7 @@ app/
   router.options.ts         # path changes never scroll
   assets/base.css           # structure-only CSS (reset, .sheet box)
   plugins/fontawesome.ts    # Font Awesome 6 icons used on the site
+  plugins/studio-stage.client.ts # lays the page out right of the Nuxt Studio panel while it is open
   composables/useSiteContent.ts   # all content queries, ageFrom, formatDate
   deck/
     sheets.config.ts        # §4
@@ -469,13 +478,15 @@ content/                    # §6
 public/                     # logo.png, favicons, img/
 ```
 
-Commands: `npm run dev`, `npm run generate` (static output in `.output/public`).
+Commands: `npm run dev`, `npm run build` (the Worker in `.output/server`, the prerendered pages in `.output/public`), `npm run generate` (static pages only).
 
 ---
 
 ## 8a. Size on screen
 
 The page is laid out for a reference window of 1694 x 971 (a MacBook browser window) and zoomed to fit any other window wider than a phone: `zoom` on `<html>` = min(width / 1694, height / 971), not below 0.6, set before first paint and on resize by the head script in nuxt.config. So large screens and browser zoom show the same picture, just bigger or smaller; phones (< 768px) keep their own layout at zoom 1. Zoom scales viewport units and on-screen positions as well, so sizes taken from the window use `var(--vw)`, `var(--vh)`, `var(--dvh)`, `var(--svh)` (base.css; they divide the zoom out) instead of `vw`/`vh`, and positions read with getBoundingClientRect or from pointer events are converted with `unzoomRect()` / `pageZoom()` (`app/utils/zoom.ts`) before being used for placement.
+
+Nuxt Studio (`nuxt-studio`, config `studio` in nuxt.config) edits the content in the browser; in dev it writes straight to `content/`. While its editor panel is open at the left of the window, the page is laid out as in a window that starts right of it (`plugins/studio-stage.client.ts`): Studio's push of the body and its inline `left` on fixed elements are undone, `#__nuxt` moves over by the panel's width and holds the fixed elements (`contain: layout`), the zoom and `--vw` are worked out from the width that is left (`--stage-left`, `window.__stageLeft`), `unzoomRect()` counts from the panel's edge and `stageWidth()` replaces `innerWidth`. The panel is not zoomed with the page (`zoom: 1 / --zoom`), so it keeps its own size and its tooltips land in place. Studio rewrites a file it saves (keys sorted, YAML comments dropped), so notes about content live in `content.config.ts` and here, not in the content files. The theme is mirrored as a `dark` class on `<html>`, which Studio follows. `<nuxt-studio>` is pinned top left above everything (else its panel takes no clicks). Keys, wheel and taps from the panel (`fromStudio()`, `app/utils/studio.ts`) are left to it: the deck and the builder ignore them.
 
 ## 8b. Languages (English, German)
 
@@ -493,10 +504,17 @@ The page is laid out for a reference window of 1694 x 971 (a MacBook browser win
 - `server/routes/feed.xml.ts` (prerendered): RSS 2.0 feed of the posts, linked in `<head>` and from the Posts sheet.
 - `public/og.png`: 1200×630 preview image for the home page. Posts and flagships have their own in `public/og/posts/` and `public/og/projects/`, generated by `python3 scripts/og.py` (Pillow, PyYAML; fonts in `scripts/fonts/`), which also writes the German set under `public/og/de`. Rerun it after adding or editing a post or project and commit the images.
 - The 404 page is drawn like the deck: `usePageBuild()` draws each `[data-build-root]` section once as it scrolls into view, one at a time with the same pen; a click or Space/Enter/Esc finishes it.
-- `app/error.vue`: the 404 page in the same style; GitHub Pages serves the generated `404.html` for unknown URLs.
+- `app/error.vue`: the 404 page in the same style; the Worker renders it for unknown URLs.
 - `profile.yml`: `fullName`, `role` and `lookingFor` feed the intro and the metadata.
 
 ## 10. Open items
 - Osmium has no screenshot yet. It uses a diagram until one exists.
 - Final wording of the intro pitch and the "why" lines.
 - Should stats be refreshed at build time from the GitHub/Modrinth APIs, or stay static with `asOf`? Default: static.
+
+## Drafts to check
+
+Content still marked as a draft (the notes used to be YAML comments in the files):
+
+- `content/en/profile.yml`: `lookingFor` (shown on the first screen).
+- German wording: `content/de/skills.yml`, `content/de/timeline.yml`, `content/de/profile.yml` and every file in `content/de/projects/`.

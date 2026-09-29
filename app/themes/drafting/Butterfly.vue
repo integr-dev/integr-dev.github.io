@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ButterflySprite from './ButterflySprite.vue'
 import { pen } from './builder'
-import { pageZoom, unzoomRect } from '~/utils/zoom'
+import { pageZoom, stageWidth, unzoomRect } from '~/utils/zoom'
 
 // The butterfly from the avatar. Rests on the title block and flies to search hits.
 // While a sheet is being drawn the pen (also a butterfly) takes over, so this one hides.
@@ -167,7 +167,7 @@ function wander() {
   const m = 80
   const z = pageZoom()
   const to = {
-    x: m + Math.random() * (window.innerWidth / z * 0.75 - m),
+    x: m + Math.random() * (stageWidth() / z * 0.75 - m),
     y: m + Math.random() * (window.innerHeight / z * 0.65 - m),
   }
   fly(to, () => {

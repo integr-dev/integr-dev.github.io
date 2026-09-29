@@ -1,0 +1,22 @@
+birth:
+  year: 2009
+  month: 5
+cvNote: CV available on request.
+email: hello@integr.cc
+fullName: Erik Reitbauer
+handle: integr
+links:
+  - label: integr-dev
+    href: https://github.com/integr-dev
+    icon: github
+  - label: e-reitbauer
+    href: https://github.com/e-reitbauer
+    icon: github
+  - label: Modrinth
+    href: https://modrinth.com/user/integr
+    icon: cube
+location: Austria
+lookingFor: Open to internships and student developer jobs.
+name: Erik
+pitch: I write software, mostly in Kotlin, and publish most of it as open source. Servers, tools, libraries, and the odd experiment.
+role: Software developer

@@ -1,5 +1,4 @@
 ---
-# German overrides for content/projects/forkcast.md. DRAFT: check the wording.
 tagline: Essensplanung mit einer Woche per Drag and Drop und einer Einkaufsliste, die sich selbst schreibt.
 why: Ein Teamprodukt mit echter Oberflächenarbeit. Planen per Drag and Drop, Zutatenlisten über Rezepte hinweg zusammengeführt, Freunde und neun Sprachen, auch von rechts nach links.
 built:

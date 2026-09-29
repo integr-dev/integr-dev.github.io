@@ -133,7 +133,7 @@ watch(() => nav.x.value, (x, was) => {
       <!-- first in the markup so they are drawn first; placed top right by CSS -->
       <ul ref="links" class="intro-links mono" data-build="chips" data-nopen>
         <li v-for="s in shortcuts" :key="s.sheet">
-          <button type="button" data-fill @click="open(s.sheet)">
+          <button type="button" @click="open(s.sheet)">
             {{ t(`intro.shortcuts.${s.key}`) }} <FontAwesomeIcon icon="arrow-right" />
           </button>
         </li>

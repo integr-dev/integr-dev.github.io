@@ -24,7 +24,7 @@ const slug = props.path.split('/').pop()!
 <template>
   <article v-if="post" class="sheet post-slide">
     <header class="ps-head">
-      <button type="button" class="ps-back mono" data-build="fade" data-fill @click="backToList">
+      <button type="button" class="ps-back mono" data-build="fade" @click="backToList">
         <FontAwesomeIcon icon="angles-up" /> {{ $t('posts.all') }}
       </button>
       <p class="ps-meta mono" data-build="type">

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import PixelBush from './PixelBush.vue'
 import PixelVine from './PixelVine.vue'
-import { pageZoom, unzoomRect } from '~/utils/zoom'
+import { pageZoom, stageWidth, unzoomRect } from '~/utils/zoom'
 
 const props = defineProps<{ x: number, total: number }>()
 
@@ -48,7 +48,7 @@ function hash(s: string) {
 
 function fill() {
   const z = pageZoom()
-  const W = window.innerWidth / z
+  const W = stageWidth() / z
   const H = window.innerHeight / z
   if (window.innerWidth < 768 || !root.value) {
     fillers.value = []

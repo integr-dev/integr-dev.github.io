@@ -1,7 +1,7 @@
 import { queryCollection } from '@nuxt/content/server'
 import { staticPaths, withLocale } from '../../app/deck/paths'
 
-const SITE_URL = 'https://integr.is-a.dev'
+const SITE_URL = 'https://integr.cc'
 
 // Prerendered at build time (nuxt.config nitro.prerender): every deck position is its own page,
 // plus one per published post, each in English and German (/de).

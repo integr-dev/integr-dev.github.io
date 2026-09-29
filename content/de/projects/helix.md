@@ -1,5 +1,4 @@
 ---
-# German overrides for content/projects/helix.md. DRAFT: check the wording.
 tagline: Ein Quality-of-Life-Mod für Fabric.
 why: An echte Spieler ausgeliefert und wird noch immer heruntergeladen.
 built:

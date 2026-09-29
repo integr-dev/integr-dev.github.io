@@ -1,6 +1,6 @@
 import { queryCollection } from '@nuxt/content/server'
 
-const SITE_URL = 'https://integr.is-a.dev'
+const SITE_URL = 'https://integr.cc'
 
 const escape = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')

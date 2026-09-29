@@ -1,8 +1,13 @@
 ---
 title: Why Osmium never holds a Minecraft login
-date: "2026-09-27"
-tags: [osmium, architecture, security]
+date: 2026-09-27
+description: Osmium coordinates a fleet of headless Minecraft agents that build one large schematic together. The obvious design would store each account's login in the backend and let the server start agents on demand. I went the other way, and it ended up shaping most of the system.
+draft: false
 summary: Osmium runs a fleet of Minecraft agents, but its backend never sees their credentials. That one rule shaped the protocol, the liveness model and how hosts connect.
+tags:
+  - osmium
+  - architecture
+  - security
 ---
 
 Osmium coordinates a fleet of headless Minecraft agents that build one large schematic together. The obvious design would store each account's login in the backend and let the server start agents on demand. I went the other way, and it ended up shaping most of the system.

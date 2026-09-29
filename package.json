@@ -18,11 +18,16 @@
     "@nuxt/fonts": "^0.14.0",
     "@nuxtjs/i18n": "^10.6.0",
     "nuxt": "^4.5.2",
+    "nuxt-studio": "^1.7.0",
     "simple-icons": "^16.33.0",
     "vue": "^3.5.43"
   },
   "devDependencies": {
     "typescript": "^5.9.3",
-    "vue-tsc": "^3.3.11"
+    "vue-tsc": "^3.3.11",
+    "wrangler": "^4.143.0"
+  },
+  "overrides": {
+    "mdast-util-to-markdown": "2.1.2"
   }
 }

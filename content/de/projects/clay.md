@@ -1,5 +1,4 @@
 ---
-# German overrides for content/projects/clay.md. DRAFT: check the wording.
 tagline: Ein Dokumentations-Framework, das sich in ein bestehendes Repository einfügt.
 why: Eine komplette Toolchain, die ich unter einer eigenen Organisation entworfen habe und pflege. Ein Frontend mit Vue und Nuxt plus ein Go-CLI, das aus einem Ordner voller Markdown eine fertige Website macht.
 built:
