@@ -106,6 +106,7 @@ export default defineNuxtConfig({
         // only integr.cc: no second copy of the site on portfolio.<account>.workers.dev
         workers_dev: false,
         preview_urls: false,
+        routes: [{ pattern: 'integr.cc', custom_domain: true }],
         d1_databases: [{ binding: 'DB', database_name: 'portfolio', database_id: 'a53ffdd4-ff4e-4ebc-8de2-c94b793abf05' }],
       },
     },
