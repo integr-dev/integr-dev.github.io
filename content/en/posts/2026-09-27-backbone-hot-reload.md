@@ -1,8 +1,13 @@
 ---
 title: Changing a Minecraft server without restarting it
-date: "2026-09-27"
-tags: [backbone, kotlin, minecraft]
+date: 2026-09-27
+description: "Developing plugins for a Spigot server usually means the same loop: change code, build a jar, restart the server, rejoin, test. Backbone removes the restart. Server logic lives in Kotlin scripts (.bb.kts) that are compiled and reloaded while the server keeps running."
+draft: false
 summary: Backbone lets server logic live in Kotlin scripts that reload while the server keeps running. How the lifecycle DSL keeps state across reloads.
+tags:
+  - backbone
+  - kotlin
+  - minecraft
 ---
 
 Developing plugins for a Spigot server usually means the same loop: change code, build a jar, restart the server, rejoin, test. [Backbone](https://github.com/integr-dev/backbone) removes the restart. Server logic lives in Kotlin scripts (`.bb.kts`) that are compiled and reloaded while the server keeps running.
