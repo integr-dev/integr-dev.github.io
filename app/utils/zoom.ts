@@ -6,13 +6,14 @@ declare global {
 }
 
 /**
- * The zoom on <html> (set in nuxt.config: the window's size relative to the reference window; 1 on phones).
+ * The zoom on the app (#__nuxt, from --zoom set in nuxt.config: the window's size relative to the
+ * reference window; 1 on phones).
  * Rects and pointer positions come in screen pixels; anything placed with CSS inside the page uses
  * page pixels, so divide by this.
  */
 export function pageZoom() {
   if (typeof document === 'undefined') return 1
-  return Number.parseFloat(getComputedStyle(document.documentElement).zoom) || 1
+  return Number.parseFloat(getComputedStyle(document.getElementById('__nuxt') ?? document.documentElement).zoom) || 1
 }
 
 /** Where the page starts on screen, in screen pixels: right of the Studio panel while it is open, else 0. */

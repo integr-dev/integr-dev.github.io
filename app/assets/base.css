@@ -13,7 +13,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* The page is zoomed to look like the reference window (nuxt.config sets --zoom and zoom on <html>). Zoom scales
+/* The page is zoomed to look like the reference window (nuxt.config sets --zoom). Zoom scales
    viewport units too, so every size taken from the viewport goes through these, which divide the
    zoom back out: calc(var(--vw) * 100) is always exactly the width of the window. */
 :root {
@@ -24,6 +24,12 @@ body {
   --vh: calc(1vh / var(--zoom));
   --dvh: calc(1dvh / var(--zoom));
   --svh: calc(1svh / var(--zoom));
+}
+
+/* Only the app is zoomed, not <html>: what others put into the page (password manager menus, the
+   browser's autofill, the Studio panel) stays at its own size and lands where it measures. */
+#__nuxt {
+  zoom: var(--zoom);
 }
 
 /* The Studio panel open: the page is laid out right of it, as in a window that starts there.
@@ -38,14 +44,12 @@ html[data-stage] #__nuxt {
 }
 
 /* Studio's own element: otherwise an empty inline box under the page, and its panel, though drawn,
-   takes no clicks or scrolling (they fall through to the page). Not zoomed with the page: at its
-   own size, and its tooltips and menus land where they are measured. */
+   takes no clicks or scrolling (they fall through to the page). */
 nuxt-studio {
   position: fixed;
   inset: 0 auto auto 0;
   display: block;
   z-index: 2147483647;
-  zoom: calc(1 / var(--zoom));
 }
 
 html {

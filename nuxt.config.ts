@@ -87,11 +87,12 @@ export default defineNuxtConfig({
         // can be revealed, and picks light or dark (the saved choice, else the system setting).
         // Everything wider than a phone is zoomed so the page looks like it does in the reference
         // window (1694 x 971), just bigger or smaller (not below 0.6); browser zoom therefore keeps the
-        // same look too. Phones keep their own layout. --vw etc. in base.css divide the zoom back out.
+        // same look too. Phones keep their own layout. The script only sets --zoom; base.css zooms
+        // #__nuxt with it, and --vw etc. divide it back out.
         // With the Nuxt Studio panel open the window counts from its right edge (__stageLeft).
         // Set here rather than in app.vue: the error page (404) replaces app.vue.
         {
-          innerHTML: `(function(){var d=document.documentElement;d.classList.add('js');var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);function z(){var k=innerWidth<768?1:Math.max(0.6,Math.min((innerWidth-(window.__stageLeft||0))/1694,innerHeight/971));d.style.zoom=k;d.style.setProperty('--zoom',k)}z();addEventListener('resize',z)})()`,
+          innerHTML: `(function(){var d=document.documentElement;d.classList.add('js');var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);function z(){var k=innerWidth<768?1:Math.max(0.6,Math.min((innerWidth-(window.__stageLeft||0))/1694,innerHeight/971));d.style.setProperty('--zoom',k)}z();addEventListener('resize',z)})()`,
           tagPosition: 'head',
         },
       ],

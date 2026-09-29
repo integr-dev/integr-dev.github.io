@@ -200,6 +200,9 @@ onBeforeUnmount(() => {
   padding: 56px 24px;
   overflow: hidden;
   background: color-mix(in srgb, var(--bg) 88%, transparent);
+  /* at the screen's own scale, not the page zoom: password managers and the browser's autofill
+     place their menus by the fields' screen position, which the zoom would throw off */
+  zoom: calc(1 / var(--zoom));
 }
 
 /* ---------- the card ---------- */
