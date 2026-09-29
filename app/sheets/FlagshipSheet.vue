@@ -102,7 +102,8 @@ const asOf = computed(() => {
 <template>
   <article v-if="p" class="sheet flagship" :class="[`visual-${visual}`, `project-${project}`]">
     <!-- title and text always stay together in one column -->
-    <div class="f-main">
+    <!-- the text is drawn at a calmer pace than the rest, so it can be read along -->
+    <div class="f-main" data-build-pace="0.7">
       <h2 :id="`project-${project}`" data-build="type">{{ p.title }}</h2>
       <p class="f-tagline" data-build="print">{{ p.tagline }}</p>
       <span class="rule" data-build="line" />

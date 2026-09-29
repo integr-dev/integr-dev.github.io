@@ -67,6 +67,8 @@ function frames(duration: number, signal: AbortSignal, tick: (p: number) => void
 }
 
 const kindOf = (el: Element) => (el.getAttribute('data-build') ?? 'fade') as Kind
+/** data-build-pace on a container: its parts are drawn at that fraction of the speed (0.6 = slower) */
+const paceOf = (el: Element) => Number(el.closest('[data-build-pace]')?.getAttribute('data-build-pace')) || 1
 
 // ---------- typing ----------
 
@@ -410,12 +412,12 @@ export const builder: Builder = {
           el.classList.add('on')
           // e.g. the number in "473 commits" starts counting as soon as its item appears
           for (const inner of el.querySelectorAll<HTMLElement>('[data-build]')) {
-            running.push(runEffect(inner, kindOf(inner), signal, speed).catch(quiet))
+            running.push(runEffect(inner, kindOf(inner), signal, speed * paceOf(inner)).catch(quiet))
           }
           finished()
         }
         else {
-          const effect = runEffect(el, kind, signal, speed).then(finished, quiet)
+          const effect = runEffect(el, kind, signal, speed * paceOf(el)).then(finished, quiet)
           running.push(effect)
           // data-build-wait: the pen stays on this part until it is fully drawn (e.g. a code block)
           if (el.hasAttribute('data-build-wait')) {
@@ -424,7 +426,7 @@ export const builder: Builder = {
             continue
           }
         }
-        await sleep(leads[i]! * scale, signal)
+        await sleep(leads[i]! * scale / paceOf(el), signal)
       }
       for (const list of lists) {
         list.classList.remove('b-run')
