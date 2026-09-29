@@ -25,7 +25,7 @@ const slug = props.path.split('/').pop()!
   <article v-if="post" class="sheet post-slide">
     <header class="ps-head">
       <button type="button" class="ps-back mono" data-build="fade" @click="backToList">
-        <FontAwesomeIcon icon="angles-up" /> {{ $t('posts.all') }}
+        <Icon icon="angles-up" /> {{ $t('posts.all') }}
       </button>
       <p class="ps-meta mono" data-build="type">
         <time :datetime="post.date">{{ formatDate(post.date, true, $i18n.locale) }}</time>
@@ -160,7 +160,7 @@ const slug = props.path.split('/').pop()!
 .ps-body :deep(th) {
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--line);
 }
 

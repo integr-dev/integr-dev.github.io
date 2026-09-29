@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { theme } from '~/themes/active'
 import { useLightbox } from '~/composables/useLightbox'
-import ImageLightbox from '~/components/ImageLightbox.vue'
-import ContactForm from '~/components/ContactForm.vue'
 import { sheetComponents } from '~/sheets'
 import SearchBar from './SearchBar.vue'
 import { useDeckNav } from './useDeckNav'
@@ -18,6 +16,26 @@ const { profile } = await useSiteContent()
 const searchOpen = useState('search-open', () => false)
 const lightbox = useLightbox()
 const contactForm = useContactForm()
+
+// The screenshot preview and the contact form are loaded on first use (rendered from then on, so
+// their closing animations run), and fetched in the background once the first sheet is drawn.
+const loadLightbox = () => import('~/components/ImageLightbox.vue')
+const loadContactForm = () => import('~/components/ContactForm.vue')
+const ImageLightbox = defineAsyncComponent(loadLightbox)
+const ContactForm = defineAsyncComponent(loadContactForm)
+const lightboxUsed = ref(false)
+const contactFormUsed = ref(false)
+watch(lightbox.isOpen, o => o && (lightboxUsed.value = true))
+watch(contactForm.isOpen, o => o && (contactFormUsed.value = true))
+onMounted(() => onDrawingStarted(() => {
+  const idle = (fn: () => void) => ('requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 4000 }) : setTimeout(fn, 800))
+  idle(() => {
+    loadLightbox()
+    loadContactForm()
+    // the theme's search skin, when it is loaded lazily (Vue keeps the loader on the component)
+    ;(theme.SearchSkin as { __asyncLoader?: () => Promise<unknown> }).__asyncLoader?.()
+  })
+}))
 const highlight = useState<{ anchor: string, nonce: number } | null>('deck-highlight', () => null)
 const narrow = ref(false)
 // true for the first frames after load: a deep link jumps straight to its sheet, no slide from the intro
@@ -66,11 +84,12 @@ function feedEl(): HTMLElement | undefined {
 const hasBelow = computed(() => nav.sheet.value.mode === 'stack' && nav.y.value < nav.yTotal.value - 1)
 // any page below another one (readme, More, a post) has a way back up as well
 const hasAbove = computed(() => nav.sheet.value.mode === 'stack' && nav.y.value > 0)
-// The arrows fade in once, on first load, as the first bush flowers open (the bottom-left bush:
-// 900ms delay + 1400ms growing + 200ms, PixelBush.vue); arrows that appear later show at once.
-const ARROWS_IN_MS = 2500
+// The arrows fade in once, on first load, as the first bush flowers open (the bottom-left bush
+// grows for 1400ms + 200ms from the start of drawing, PixelBush.vue); arrows that appear later show
+// at once.
+const ARROWS_IN_MS = 1600
 const arrowsIn = ref(false)
-onMounted(() => setTimeout(() => (arrowsIn.value = true), ARROWS_IN_MS))
+onMounted(() => onDrawingStarted(() => setTimeout(() => (arrowsIn.value = true), ARROWS_IN_MS)))
 
 // a post page (below the post list)
 const onPost = computed(() => nav.sheet.value.slidesFrom === 'posts' && nav.y.value > 0)
@@ -348,6 +367,7 @@ function setFeed(id: string, el: unknown) {
       :visited="nav.visited.value"
       :handle="profile?.handle ?? ''"
       :progress="build.progress.value"
+      :waiting="build.waiting.value"
       @go="(i: number) => nav.go(i)"
       @prev="nav.prevSheet()"
       @next="nav.nextSheet()"
@@ -358,7 +378,7 @@ function setFeed(id: string, el: unknown) {
 
     <!-- left / right to the neighbouring sheets -->
     <button v-if="nav.x.value > 0 && !narrow" type="button" class="deck-prev" :aria-label="t('titleBlock.prev')" @click="nav.prevSheet()">
-      <FontAwesomeIcon icon="arrow-left" />
+      <Icon icon="arrow-left" />
     </button>
     <button
       v-if="nav.x.value < nav.sheets.length - 1 && !narrow"
@@ -367,7 +387,7 @@ function setFeed(id: string, el: unknown) {
       :aria-label="nav.x.value === 0 ? t('deck.nextSheet') : t('titleBlock.next')"
       @click="nav.nextSheet()"
     >
-      <FontAwesomeIcon icon="arrow-right" />
+      <Icon icon="arrow-right" />
     </button>
 
     <!-- top centre: the way up, and on a post also straight back to the list, left of it -->
@@ -375,22 +395,22 @@ function setFeed(id: string, el: unknown) {
       <!-- a double arrow and a label, set apart by a rule: all the way up, not one page -->
       <template v-if="onPost">
         <button type="button" class="deck-posts mono" :title="t('posts.all')" @click="nav.goTo('posts', 'list')">
-          <FontAwesomeIcon icon="angles-up" /> {{ t('posts.all') }}
+          <Icon icon="angles-up" /> {{ t('posts.all') }}
         </button>
         <span class="deck-up-sep" aria-hidden="true" />
       </template>
       <button type="button" class="deck-up" :aria-label="t('deck.above')" :title="t('deck.above')" @click="up()">
-        <FontAwesomeIcon icon="arrow-up" />
+        <Icon icon="arrow-up" />
       </button>
     </div>
 
     <button v-if="hasBelow && !narrow" type="button" class="deck-down" :aria-label="t('deck.below')" @click="down()">
-      <FontAwesomeIcon icon="arrow-down" />
+      <Icon icon="arrow-down" />
     </button>
 
     <SearchBar />
-    <ImageLightbox />
-    <ContactForm />
+    <ImageLightbox v-if="lightboxUsed" />
+    <ContactForm v-if="contactFormUsed" />
     <ClientOnly>
       <component :is="theme.BuildOverlay" v-if="theme.BuildOverlay" />
       <component :is="theme.Ornament" v-if="theme.Ornament" :target="highlight" />

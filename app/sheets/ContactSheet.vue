@@ -18,7 +18,7 @@ const iconFor = (name: string) => (name === 'github' ? ['fab', 'github'] : ['fas
       <p class="c-lead" data-build="print">
         {{ $t('contact.lead') }}<br>
         <button type="button" class="c-write" @click="form.open()">
-          {{ $t('contact.form.write') }} <FontAwesomeIcon icon="arrow-right" />
+          {{ $t('contact.form.write') }} <Icon icon="arrow-right" />
         </button>
       </p>
       <div class="c-mail">
@@ -28,7 +28,7 @@ const iconFor = (name: string) => (name === 'github' ? ['fab', 'github'] : ['fas
       <ul class="c-links" data-build="chips">
         <li v-for="l in profile.links" :key="l.href">
           <a :href="l.href" target="_blank" rel="noopener">
-            <FontAwesomeIcon :icon="iconFor(l.icon)" />
+            <Icon :icon="iconFor(l.icon)" />
             {{ l.label }}
           </a>
         </li>

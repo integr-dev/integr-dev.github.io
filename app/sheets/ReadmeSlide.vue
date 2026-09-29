@@ -80,7 +80,7 @@ const built = computed(() => findProject(props.project)?.built)
 
 .rd-built strong {
   color: var(--accent);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 .rd-head h2 {
@@ -155,7 +155,7 @@ const built = computed(() => findProject(props.project)?.built)
 .rd-body :deep(th) {
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--line);
 }
 

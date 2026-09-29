@@ -99,7 +99,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', fit))
                 </svg>
               </span>
               <span class="s-icon" aria-hidden="true">
-                <FontAwesomeIcon v-if="'fa' in icon(item.name)" :icon="(icon(item.name) as { fa: [string, string] }).fa" />
+                <Icon v-if="'fa' in icon(item.name)" :icon="(icon(item.name) as { fa: [string, string] }).fa" />
                 <svg v-else viewBox="0 0 24 24"><path :d="(icon(item.name) as { path: string }).path" /></svg>
               </span>
               {{ item.name }}
@@ -202,7 +202,7 @@ kbd {
 
 h3 {
   font-size: 0.8rem;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--line);
   margin-bottom: 10px;
   padding: 0 var(--px) 0 var(--pl);

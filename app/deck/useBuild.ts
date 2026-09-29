@@ -1,5 +1,6 @@
 import type { Ref } from 'vue'
 import { theme } from '~/themes/active'
+import { deckRoot, isHydrated, requestHydration } from './hydration'
 import type { useDeckNav } from './useDeckNav'
 
 /**
@@ -21,6 +22,9 @@ function cssTime(value: string) {
 export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean>) {
   const progress = useState('build-progress', () => 0)
   const building = ref(false)
+  // the sheet whose code is still on its way, once that takes longer than LOADING_GRACE (the title
+  // block turns its marker into a spinner)
+  const waiting = useState<string | null>('sheet-waiting', () => null)
   const builder = theme.builder
   const controllers = new Map<HTMLElement, AbortController>()
   let active: HTMLElement | null = null
@@ -35,9 +39,45 @@ export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean
   const transitionMs = () =>
     cssTime(getComputedStyle(document.documentElement).getPropertyValue('--transition-duration')) || 700
 
-  function rootFor(sheetId: string, slideId: string | null) {
-    if (slideId) return document.getElementById(`slide-${sheetId}-${slideId}`)
-    return document.getElementById(`sheet-${sheetId}`)?.querySelector<HTMLElement>('[data-build-root]') ?? null
+  const rootFor = deckRoot
+
+  // ---------- lazy hydration (hydration.ts) ----------
+
+  const idle = (fn: () => void) =>
+    'requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 2000 }) : setTimeout(fn, 300)
+
+  /** The positions one step away: the sheets left and right, and the pages above and below. */
+  function neighbours() {
+    const roots: (HTMLElement | null)[] = []
+    for (const i of [nav.x.value + 1, nav.x.value - 1]) {
+      const s = nav.sheets[i]
+      if (s) roots.push(rootFor(s.id, s.mode === 'stack' ? nav.slidesOf(s)[0]?.id ?? null : null))
+    }
+    const sheet = nav.sheet.value
+    if (sheet.mode === 'stack') {
+      const slides = nav.slidesOf(sheet)
+      for (const j of [nav.y.value + 1, nav.y.value - 1]) {
+        const slide = slides[j]
+        if (slide) roots.push(rootFor(sheet.id, slide.id))
+      }
+    }
+    return roots.filter((r): r is HTMLElement => !!r)
+  }
+
+  /**
+   * Images in the sheets load lazily (every sheet is in the page, but only the one on screen needs
+   * its pictures): a sheet about to be shown or drawn fetches its own now.
+   */
+  function loadImages(root: HTMLElement) {
+    root.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach(img => (img.loading = 'eager'))
+  }
+
+  /** Once a sheet is live and the browser has nothing else to do, get its neighbours ready. */
+  function prepareNeighbours() {
+    idle(() => neighbours().forEach((r) => {
+      requestHydration(r)
+      loadImages(r)
+    }))
   }
 
   /**
@@ -63,16 +103,33 @@ export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean
     const ctrl = new AbortController()
     controllers.set(root, ctrl)
     builder.reset(root)
+    loadImages(root)
     if (track) progress.value = 0
     if (reduced()) {
+      // nothing is drawn, so nothing to wait for: shown at once, made live alongside
+      requestHydration(root)
+      markDrawingStarted()
       builder.finish(root)
       if (track) progress.value = 1
       window.dispatchEvent(new CustomEvent('deck:built', { detail: root }))
+      if (track) prepareNeighbours()
       return
     }
     if (delay === 'motion') await motionSettled()
     else await new Promise(r => setTimeout(r, delay))
     if (ctrl.signal.aborted) return
+    // drawn only once live (usually it is: it was got ready as a neighbour)
+    if (!isHydrated(root)) {
+      const sheetId = nav.sheet.value.id
+      const slow = track ? setTimeout(() => (waiting.value = sheetId), LOADING_GRACE) : undefined
+      await requestHydration(root)
+      clearTimeout(slow)
+      if (waiting.value === sheetId) waiting.value = null
+    }
+    if (ctrl.signal.aborted) return
+    // live: the sheets a click away can start loading while this one is drawn
+    if (track) prepareNeighbours()
+    markDrawingStarted()
     const speed = seen.has(root) ? REVISIT : FIRST_VISIT
     seen.add(root)
     if (track) building.value = true
@@ -96,6 +153,7 @@ export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean
     building.value = false
     progress.value = 1
     window.dispatchEvent(new CustomEvent('deck:built', { detail: root }))
+    prepareNeighbours()
   }
 
   function leave(root: HTMLElement, after: number) {
@@ -118,8 +176,22 @@ export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean
 
   // ---------- narrow layout: build what scrolls into view ----------
 
+  let near: IntersectionObserver | undefined
+
   function observeAll() {
     observer?.disconnect()
+    // sheets get ready a screen and a half before they scroll into view
+    near?.disconnect()
+    near = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          requestHydration(e.target)
+          loadImages(e.target as HTMLElement)
+          near!.unobserve(e.target)
+        }
+      }
+    }, { rootMargin: '150% 0px' })
+    document.querySelectorAll<HTMLElement>('[data-build-root]').forEach(el => near!.observe(el))
     observer = new IntersectionObserver((entries) => {
       for (const e of entries) {
         const root = e.target as HTMLElement
@@ -142,6 +214,7 @@ export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean
     if (narrow.value) observeAll()
     else {
       observer?.disconnect()
+      near?.disconnect()
       document.querySelectorAll<HTMLElement>('[data-build-root]').forEach(el => builder.reset(el))
       onPositionChange(0)
     }
@@ -154,10 +227,15 @@ export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean
   return {
     progress,
     building,
+    waiting,
     skip,
     /** Call once after mount: the first sheet is drawn after the frame has been traced. */
     start(delay: number) {
       started = true
+      // the sheet on screen is fetched and made live at once, while the frame is still traced
+      const sheet = nav.sheet.value
+      const first = rootFor(sheet.id, sheet.mode === 'stack' ? nav.slideId.value : null)
+      if (first && !narrow.value) requestHydration(first)
       if (narrow.value) observeAll()
       else onPositionChange(delay)
     },
@@ -167,6 +245,7 @@ export function useBuild(nav: ReturnType<typeof useDeckNav>, narrow: Ref<boolean
     },
     stop() {
       observer?.disconnect()
+      near?.disconnect()
       for (const c of controllers.values()) c.abort()
     },
   }

@@ -18,6 +18,7 @@ export function usePageBuild(delay = 300) {
     const root = queue.shift()!
     const ctrl = new AbortController()
     current = { root, ctrl }
+    markDrawingStarted()
     await builder.run(root, { signal: ctrl.signal, speed: 1, onProgress: () => {} })
     if (!ctrl.signal.aborted) window.dispatchEvent(new CustomEvent('deck:built', { detail: root }))
     if (current?.ctrl === ctrl) current = null
@@ -49,6 +50,7 @@ export function usePageBuild(delay = 300) {
   onMounted(() => {
     const roots = [...document.querySelectorAll<HTMLElement>('[data-build-root]')]
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      markDrawingStarted()
       roots.forEach(r => builder.finish(r))
       return
     }

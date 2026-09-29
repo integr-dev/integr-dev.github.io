@@ -124,7 +124,7 @@ const asOf = computed(() => {
       </ul>
       <p class="f-links" data-build="chips">
         <a v-for="l in p.links" :key="l.href" :href="l.href" target="_blank" rel="noopener">
-          {{ label('link', l.label) }} <FontAwesomeIcon icon="arrow-up-right-from-square" class="ext" />
+          {{ label('link', l.label) }} <Icon icon="arrow-up-right-from-square" class="ext" />
         </a>
       </p>
     </div>
@@ -182,6 +182,7 @@ const asOf = computed(() => {
                     :alt="v.images[n]!.alt"
                     :width="v.images[n]!.width"
                     :height="v.images[n]!.height"
+                    loading="lazy"
                     data-build="image"
                   >
                   <span class="f-frame" aria-hidden="true" />
@@ -195,7 +196,7 @@ const asOf = computed(() => {
 
       <div v-if="count > 1" class="f-nav mono" data-build="fade" data-nopen>
         <button type="button" class="f-arrow" :aria-label="t('flagship.prevView')" @click="show(active - 1)">
-          <FontAwesomeIcon icon="arrow-left" />
+          <Icon icon="arrow-left" />
         </button>
         <button
           v-for="(v, i) in visuals"
@@ -211,7 +212,7 @@ const asOf = computed(() => {
           <span class="f-dot-label">{{ label('visual', v.label ?? v.kind) }}</span>
         </button>
         <button type="button" class="f-arrow" :aria-label="t('flagship.nextView')" @click="show(active + 1)">
-          <FontAwesomeIcon icon="arrow-right" />
+          <Icon icon="arrow-right" />
         </button>
       </div>
     </div>

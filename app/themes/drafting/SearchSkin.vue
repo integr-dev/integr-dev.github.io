@@ -7,6 +7,8 @@ const props = defineProps<{
   query: string
   results: SearchEntry[]
   activeIndex: number
+  /** the chosen result's sheet is still being made live: a spinner shows until it is */
+  busy?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -24,6 +26,7 @@ let ctrl: AbortController | undefined
 
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+// immediate: the skin is loaded on first use, so it appears already open
 watch(() => props.open, async (open) => {
   ctrl?.abort()
   ctrl = new AbortController()
@@ -41,7 +44,7 @@ watch(() => props.open, async (open) => {
     if (panel.value && !reduced()) await builder.unbuild(panel.value, { signal })
     if (!signal.aborted) shown.value = false
   }
-})
+}, { immediate: true })
 
 function onKey(e: KeyboardEvent) {
   if (e.key === 'ArrowDown') { e.preventDefault(); emit('move', 1) }
@@ -69,7 +72,7 @@ function onKey(e: KeyboardEvent) {
       </header>
 
       <label class="s-field">
-        <FontAwesomeIcon icon="magnifying-glass" class="s-icon" />
+        <Icon icon="magnifying-glass" class="s-icon" />
         <input
           ref="input"
           :value="query"
@@ -84,6 +87,7 @@ function onKey(e: KeyboardEvent) {
           @input="emit('update:query', ($event.target as HTMLInputElement).value)"
           @keydown="onKey"
         >
+        <PixelSpinner v-if="busy" />
       </label>
       <span class="rule" data-build="line" />
 
@@ -239,7 +243,6 @@ input::placeholder {
 
 .r-label {
   color: var(--fg);
-  font-weight: 500;
 }
 
 .r-kind {

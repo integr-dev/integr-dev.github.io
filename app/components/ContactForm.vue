@@ -45,6 +45,7 @@ const sprig = pixels(SPRIG)
 // petals drifting past on the wind while the card flies in or out
 const petals = Array.from({ length: 9 }, (_, i) => ({ top: 12 + ((i * 37) % 70), delay: (i * 97) % 520, size: i % 3 === 0 ? 6 : 4 }))
 
+// immediate: the component is loaded on first use, so it appears already open
 watch(form.isOpen, async (open) => {
   if (!open) {
     timers.splice(0).forEach(clearTimeout)
@@ -71,7 +72,7 @@ watch(form.isOpen, async (open) => {
   catch {
     // no Turnstile (blocked or offline): sending fails and the error names the address instead
   }
-})
+}, { immediate: true })
 
 async function send() {
   if (state.value === 'sending' || state.value === 'stamped' || state.value === 'gone') return
@@ -110,7 +111,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <Transition name="pc" :duration="{ enter: 1200, leave: 800 }">
+  <Transition name="pc" appear :duration="{ enter: 1200, leave: 800 }">
     <div v-if="form.isOpen.value" class="pc" role="dialog" aria-modal="true" :aria-label="$t('contact.form.title')" @click.self="form.close()">
       <div class="pc-wind" aria-hidden="true">
         <span v-for="(p, i) in petals" :key="i" class="pc-petal" :style="{ top: `${p.top}%`, animationDelay: `${p.delay}ms`, width: `${p.size}px`, height: `${p.size}px` }" />
@@ -169,10 +170,10 @@ onBeforeUnmount(() => {
           <div class="pc-foot">
             <button type="submit" class="pc-send mono" :disabled="state !== 'idle' && state !== 'error'">
               <template v-if="state === 'sending'">
-                {{ $t('contact.form.sending') }} <span class="pc-spin" aria-hidden="true" />
+                {{ $t('contact.form.sending') }} <PixelSpinner />
               </template>
               <template v-else>
-                {{ $t('contact.form.send') }} <FontAwesomeIcon icon="arrow-right" />
+                {{ $t('contact.form.send') }} <Icon icon="arrow-right" />
               </template>
             </button>
           </div>
@@ -398,42 +399,6 @@ onBeforeUnmount(() => {
   border: 2px solid var(--line-strong);
   padding: 7px 14px;
   cursor: pointer;
-}
-
-/* a pixel spinner: four pixels in a square, the lit one stepping round */
-.pc-spin {
-  --p: 4px;
-
-  position: relative;
-  width: calc(var(--p) * 2);
-  height: calc(var(--p) * 2);
-  color: var(--accent);
-}
-
-.pc-spin::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--p);
-  height: var(--p);
-  background: currentColor;
-  box-shadow:
-    var(--p) 0 0 color-mix(in srgb, currentColor 30%, transparent),
-    var(--p) var(--p) 0 color-mix(in srgb, currentColor 30%, transparent),
-    0 var(--p) 0 color-mix(in srgb, currentColor 30%, transparent);
-  transform-origin: var(--p) var(--p);
-  animation: pc-spin 640ms steps(4, end) infinite;
-}
-
-@keyframes pc-spin {
-  to { transform: rotate(360deg); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pc-spin::before {
-    animation-duration: 2400ms;
-  }
 }
 
 .pc-send:disabled {

@@ -3,11 +3,19 @@ import { theme } from '~/themes/active'
 import type { SearchEntry } from './types'
 import { searchEntries, useSearchIndex } from './useSearch'
 import { useDeckNav } from './useDeckNav'
+import { deckRoot, isHydrated, requestHydration } from './hydration'
 
 const open = useState('search-open', () => false)
 const highlight = useState<{ anchor: string, nonce: number } | null>('deck-highlight', () => null)
 const query = ref('')
 const active = ref(0)
+// the skin is only rendered (and so loaded) once search has been opened
+const used = ref(false)
+watch(open, (o) => {
+  if (o) used.value = true
+}, { immediate: true })
+// waiting for the chosen result's sheet to be made live (hydration.ts)
+const busy = ref(false)
 
 const nav = useDeckNav()
 const index = await useSearchIndex()
@@ -25,7 +33,22 @@ function move(delta: number) {
 
 const isNarrow = () => window.matchMedia('(max-width: 767px)').matches
 
+let waiting = false
+
 async function select(entry: SearchEntry) {
+  if (waiting) return
+  // a sheet that is not live yet is loaded first, with the spinner in the box, so the jump lands
+  // on a sheet that can be drawn and pointed at straight away
+  const sheet = nav.sheets.find(s => s.id === entry.sheetId)
+  const root = sheet && !entry.to ? deckRoot(sheet.id, entry.slideId ?? (sheet.mode === 'stack' ? nav.slidesOf(sheet)[0]?.id : null)) : null
+  if (root && !isHydrated(root)) {
+    const slow = setTimeout(() => (busy.value = true), LOADING_GRACE)
+    waiting = true
+    await requestHydration(root)
+    clearTimeout(slow)
+    waiting = false
+    busy.value = false
+  }
   open.value = false
   if (entry.to) {
     await navigateTo(entry.to)
@@ -61,10 +84,12 @@ function builtOnce(timeout: number) {
 <template>
   <component
     :is="theme.SearchSkin"
+    v-if="used"
     :open="open"
     :query="query"
     :results="results"
     :active-index="active"
+    :busy="busy"
     @update:query="query = $event"
     @move="move"
     @select="select"

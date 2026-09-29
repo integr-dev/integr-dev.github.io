@@ -82,7 +82,7 @@ onBeforeUnmount(() => cancelAnimationFrame(raf))
   <!-- the builder owns this element's classes, so Vue-bound state lives on the inner frame -->
   <div ref="wrap" class="avatar" data-build="custom">
     <div class="frame" :class="{ 'is-drawing': drawing }">
-      <img src="/img/avatar.webp" :alt="$t('intro.avatarAlt')" width="184" height="184">
+      <img src="/img/avatar.webp" :alt="$t('intro.avatarAlt')" width="184" height="184" loading="lazy">
       <canvas ref="canvas" aria-hidden="true" />
     </div>
     <span class="corner tl" aria-hidden="true" />

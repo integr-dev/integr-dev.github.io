@@ -8,7 +8,8 @@ const props = withDefaults(defineProps<{
   /** patches only: where along the edge, from the left (top, bottom) or the top (left, right) */
   at?: string
   seed?: number
-  /** ms before it starts growing */
+  /** ms before it starts growing, on the old page clock: 900 is the moment the first sheet starts
+   *  to be drawn (html.is-drawing), which is when the bushes' clock now starts */
   delay?: number
   /** size in bush pixels: the arm along the horizontal edge, the arm along the vertical edge */
   width?: number
@@ -123,7 +124,7 @@ function grow(rand: () => number, clumps: { x: number, y: number, r: number }[])
     :viewBox="`0 0 ${W} ${H}`"
     :width="W * PX"
     :height="H * PX"
-    :style="{ '--delay': `${delay}ms`, '--at': at }"
+    :style="{ '--delay': `${delay - 900}ms`, '--at': at }"
     aria-hidden="true"
     shape-rendering="crispEdges"
   >
@@ -210,9 +211,20 @@ function grow(rand: () => number, clumps: { x: number, y: number, r: number }[])
   transform: rotate(-90deg) translateY(-100%);
 }
 
-/* leaves appear one by one, outward from the corner */
-html.js .leaf {
+/* leaves appear one by one, outward from the corner, once the first sheet starts to be drawn */
+html.is-drawing .leaf {
   animation: leaf 220ms steps(2, end) both;
+}
+
+/* before that: nothing yet (only where it will be animated in) */
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.is-drawing) .leaf {
+    opacity: 0;
+  }
+
+  html.js:not(.is-drawing) .flower {
+    transform: scale(0);
+  }
 }
 
 @keyframes leaf {
@@ -228,7 +240,7 @@ html.js .leaf {
 }
 
 /* flowers open from their centre */
-html.js .flower {
+html.is-drawing .flower {
   animation: bloom 360ms steps(3, end) both;
 }
 
@@ -244,8 +256,8 @@ html.js .flower {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.js .leaf,
-  html.js .flower {
+  html.is-drawing .leaf,
+  html.is-drawing .flower {
     animation: none;
   }
 }

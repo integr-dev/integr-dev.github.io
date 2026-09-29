@@ -14,15 +14,46 @@ export default defineNuxtConfig({
     },
   },
 
+  experimental: {
+    // Every path is the same deck, and its data comes with the first page. Without this, Nuxt fetches
+    // the path's _payload.json on every move and every language switch, and waits for it.
+    payloadExtraction: false,
+  },
+
+  hooks: {
+    // The sheets are hydrated lazily (app/deck/hydration.ts), so their code must not be preloaded
+    // with the page either: the server renders every sheet, and would otherwise hint them all.
+    'build:manifest'(manifest) {
+      for (const [key, chunk] of Object.entries(manifest)) {
+        if (/(^|\/)sheets\//.test(chunk.src ?? key)) {
+          chunk.preload = false
+          chunk.prefetch = false
+        }
+      }
+      // Studio's editor (hundreds of KB) and Nuxt Content's in-browser database are for me while
+      // editing, not for visitors: never fetched ahead, nor anything only they load
+      const noPrefetch = (key: string, seen = new Set<string>()) => {
+        const chunk = manifest[key]
+        if (!chunk || seen.has(key)) return
+        seen.add(key)
+        chunk.prefetch = false
+        for (const k of [...(chunk.imports ?? []), ...(chunk.dynamicImports ?? [])]) noPrefetch(k, seen)
+      }
+      for (const key of Object.keys(manifest)) {
+        if (/nuxt-studio|database\.client|sqlite/.test(key)) noPrefetch(key)
+      }
+    },
+  },
+
   // no source maps for the Worker: nobody reads them in production, and they slow the build down
   sourcemap: { server: false, client: false },
 
-  // one shared Font Awesome instance on server and client, so icons render in SSR
+  // icons: only their path data, drawn by components/Icon.vue
   build: {
-    transpile: ['@fortawesome/fontawesome-svg-core', '@fortawesome/free-solid-svg-icons', '@fortawesome/free-brands-svg-icons', '@fortawesome/vue-fontawesome'],
+    transpile: ['@fortawesome/free-solid-svg-icons', '@fortawesome/free-brands-svg-icons'],
   },
 
-  css: ['@fortawesome/fontawesome-svg-core/styles.css', '~/assets/base.css'],
+  css: ['~/assets/base.css'],
 
   content: {
     experimental: { sqliteConnector: 'native' },
@@ -51,8 +82,9 @@ export default defineNuxtConfig({
   fonts: {
     providers: { bunny: false, fontshare: false, fontsource: false, adobe: false },
     families: [
-      { name: 'Schibsted Grotesk', provider: 'google', weights: [400, 500, 700] },
-      { name: 'JetBrains Mono', provider: 'google', weights: [400, 500, 700] },
+      // only the weights in use: every weight is one more font file to download
+      { name: 'Schibsted Grotesk', provider: 'google', weights: [400, 700] },
+      { name: 'JetBrains Mono', provider: 'google', weights: [400, 700] },
       // pixel font for the big titles, like the avatar
       { name: 'Jersey 10', provider: 'google', weights: [400] },
     ],

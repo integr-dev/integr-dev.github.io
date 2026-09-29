@@ -32,7 +32,7 @@ const slug = (stem: string) => stem.split('/').pop()!
           </ul>
           <p class="r-links" data-build="chips">
             <a v-for="l in p.links" :key="l.href" :href="l.href" target="_blank" rel="noopener">
-              {{ linkLabel(l.label) }} <FontAwesomeIcon icon="arrow-up-right-from-square" class="ext" />
+              {{ linkLabel(l.label) }} <Icon icon="arrow-up-right-from-square" class="ext" />
             </a>
           </p>
         </div>

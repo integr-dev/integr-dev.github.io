@@ -15,7 +15,7 @@ const tricking = ref(false)
 let away = false
 const enabled = ref(false)
 // it fades in on first load together with the arrows, as the first flowers open (Deck.vue)
-const SHOW_MS = 2500
+const SHOW_MS = 1600
 const shown = ref(false)
 let showTimer: ReturnType<typeof setTimeout> | undefined
 let pos = { x: 0, y: 0 }
@@ -216,7 +216,7 @@ onMounted(() => {
   const narrow = window.matchMedia('(max-width: 767px)').matches
   if (reduced || narrow) return
   enabled.value = true
-  showTimer = setTimeout(() => (shown.value = true), SHOW_MS)
+  onDrawingStarted(() => (showTimer = setTimeout(() => (shown.value = true), SHOW_MS)))
   const p = perch()
   if (p) place(p.x, p.y)
   window.addEventListener('resize', onResize)

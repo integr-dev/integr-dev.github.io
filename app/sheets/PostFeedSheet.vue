@@ -33,7 +33,7 @@ function scrollToPost(id: string) {
     <header class="p-head">
       <div class="p-title">
         <h2 data-build="type">{{ $t('sheets.posts') }}</h2>
-        <a class="p-rss mono" href="/feed.xml" data-build="fade" data-nopen><FontAwesomeIcon icon="rss" /> {{ $t('posts.rss') }}</a>
+        <a class="p-rss mono" href="/feed.xml" data-build="fade" data-nopen><Icon icon="rss" /> {{ $t('posts.rss') }}</a>
       </div>
       <span class="rule" data-build="line" />
     </header>
@@ -51,7 +51,7 @@ function scrollToPost(id: string) {
         </div>
         <p class="p-read mono" data-build="fade" data-nopen>
           <a :href="href(p.path)" @click.prevent="open(p.path)">
-            {{ $t('posts.read') }} <FontAwesomeIcon icon="arrow-down" />
+            {{ $t('posts.read') }} <Icon icon="arrow-down" />
           </a>
         </p>
       </li>

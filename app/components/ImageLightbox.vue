@@ -27,9 +27,10 @@ function onKey(e: KeyboardEvent) {
   e.stopImmediatePropagation()
 }
 
+// immediate: the component is loaded on first use, so it may appear already open
 watch(lightbox.isOpen, (open) => {
   if (open) nextTick(() => closeBtn.value?.focus())
-})
+}, { immediate: true })
 
 /** Draw the picture with the page's builder; on opening once the first edges are ruled. */
 function draw(delay: number) {
@@ -50,14 +51,14 @@ function draw(delay: number) {
 watch(() => current.value?.src, (src, old) => {
   if (!src) ctrl?.abort()
   else nextTick(() => draw(old ? 0 : 200))
-})
+}, { immediate: true })
 
 onMounted(() => window.addEventListener('keydown', onKey, { capture: true }))
 onBeforeUnmount(() => window.removeEventListener('keydown', onKey, { capture: true }))
 </script>
 
 <template>
-  <Transition name="lb" :duration="{ enter: 760, leave: 560 }">
+  <Transition name="lb" appear :duration="{ enter: 760, leave: 560 }">
     <div v-if="current" class="lb" role="dialog" aria-modal="true" :aria-label="current.alt" @click.self="lightbox.close()">
       <figure class="lb-frame">
         <!-- its own build root, drawn without the pen (data-nopen) -->
@@ -83,10 +84,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, { capture: tr
       </figure>
 
       <button v-if="count > 1" type="button" class="lb-btn lb-prev" :aria-label="$t('lightbox.prev')" @click="lightbox.step(-1)">
-        <FontAwesomeIcon icon="arrow-left" />
+        <Icon icon="arrow-left" />
       </button>
       <button v-if="count > 1" type="button" class="lb-btn lb-next" :aria-label="$t('lightbox.next')" @click="lightbox.step(1)">
-        <FontAwesomeIcon icon="arrow-right" />
+        <Icon icon="arrow-right" />
       </button>
       <button ref="closeBtn" type="button" class="lb-btn lb-close mono" :aria-label="$t('lightbox.close')" @click="lightbox.close()">
         esc
