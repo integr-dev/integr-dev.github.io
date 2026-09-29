@@ -66,9 +66,24 @@
     "all": "All posts"
   },
   "contact": {
-    "lead": "Email is the fastest way to reach me.",
+    "lead": "Email is the fastest way to reach me,",
     "done": "Done.",
-    "updated": "Last updated {date}."
+    "updated": "Last updated {date}.",
+    "form": {
+      "write": "or just write me a message here",
+      "title": "Postcard to Erik",
+      "greeting": "Hi Erik,",
+      "placeholder": "write something …",
+      "to": "to",
+      "name": "from",
+      "email": "reply to",
+      "message": "message",
+      "send": "send",
+      "sending": "sending …",
+      "sent": "Sent. I'll answer by email.",
+      "error": "That didn't work. Try again, or write to {email}.",
+      "close": "close"
+    }
   },
   "deck": {
     "nextSheet": "Next sheet: projects",

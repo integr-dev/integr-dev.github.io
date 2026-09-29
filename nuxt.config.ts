@@ -6,6 +6,14 @@ export default defineNuxtConfig({
 
   ssr: true,
 
+  runtimeConfig: {
+    public: {
+      // Cloudflare Turnstile for the contact form; the default is Cloudflare's test key, which always
+      // passes (dev). Production sets NUXT_PUBLIC_TURNSTILE_SITE_KEY as a build variable.
+      turnstileSiteKey: '1x00000000000000000000AA',
+    },
+  },
+
   // no source maps for the Worker: nobody reads them in production, and they slow the build down
   sourcemap: { server: false, client: false },
 
@@ -114,11 +122,14 @@ export default defineNuxtConfig({
         triggers: { crons: ['0 4 * * *'] },
         // Cloudflare serves the prerendered pages itself, and 404.html for any path it has no file
         // for, without starting the Worker. The Worker only runs for Nuxt Studio (the editor, its
-        // login and API, its service worker) and for Nuxt Content's queries while editing.
+        // login and API, its service worker), Nuxt Content's queries while editing, and /api/*
+        // (the contact form).
         assets: {
           not_found_handling: '404-page',
-          run_worker_first: ['/admin', '/__nuxt_studio/*', '/__nuxt_content/*', '/sw.js'],
+          run_worker_first: ['/admin', '/__nuxt_studio/*', '/__nuxt_content/*', '/sw.js', '/api/*'],
         },
+        // the contact form mails through Email Routing (server/api/contact.post.ts)
+        send_email: [{ name: 'EMAIL' }],
         d1_databases: [{ binding: 'DB', database_name: 'portfolio', database_id: 'a53ffdd4-ff4e-4ebc-8de2-c94b793abf05' }],
       },
     },

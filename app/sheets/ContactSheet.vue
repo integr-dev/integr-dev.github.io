@@ -5,6 +5,8 @@ const { profile } = await useSiteContent()
 // when the site was last built (every day at the latest, see modules/live-stats.ts)
 const updated = buildInfo.builtAt.slice(0, 10)
 
+const form = useContactForm()
+
 const iconFor = (name: string) => (name === 'github' ? ['fab', 'github'] : ['fas', name])
 </script>
 
@@ -12,7 +14,13 @@ const iconFor = (name: string) => (name === 'github' ? ['fab', 'github'] : ['fas
   <div v-if="profile" class="sheet contact">
     <div class="c-main">
       <h2 data-build="type">{{ $t('sheets.contact') }}</h2>
-      <p class="c-lead" data-build="print">{{ $t('contact.lead') }}</p>
+      <!-- the second line opens ContactForm.vue over the page (mounted in Deck.vue) -->
+      <p class="c-lead" data-build="print">
+        {{ $t('contact.lead') }}<br>
+        <button type="button" class="c-write" @click="form.open()">
+          {{ $t('contact.form.write') }} <FontAwesomeIcon icon="arrow-right" />
+        </button>
+      </p>
       <div class="c-mail">
         <a class="c-address" :href="`mailto:${profile.email}`" data-build="type">{{ profile.email }}</a>
       </div>
@@ -72,6 +80,28 @@ const iconFor = (name: string) => (name === 'github' ? ['fab', 'github'] : ['fas
 
 .c-address:hover {
   color: var(--line);
+}
+
+/* a link in the sentence, not a button box */
+.c-write {
+  font: inherit;
+  color: var(--accent);
+  background: none;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.c-write svg {
+  font-size: 0.85em;
+}
+
+.c-write:hover {
+  color: var(--fg);
 }
 
 .rule {

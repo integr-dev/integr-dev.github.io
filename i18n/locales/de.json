@@ -66,9 +66,24 @@
     "all": "Alle Beiträge"
   },
   "contact": {
-    "lead": "Per E-Mail erreichst du mich am schnellsten.",
+    "lead": "Per E-Mail erreichst du mich am schnellsten,",
     "done": "Fertig.",
-    "updated": "Zuletzt aktualisiert: {date}."
+    "updated": "Zuletzt aktualisiert: {date}.",
+    "form": {
+      "write": "oder schreib mir einfach hier eine Nachricht",
+      "title": "Postkarte an Erik",
+      "greeting": "Hallo Erik,",
+      "placeholder": "schreib etwas …",
+      "to": "an",
+      "name": "von",
+      "email": "Antwort an",
+      "message": "Nachricht",
+      "send": "senden",
+      "sending": "wird gesendet …",
+      "sent": "Gesendet. Ich antworte per E-Mail.",
+      "error": "Das hat nicht geklappt. Versuch es noch einmal oder schreib an {email}.",
+      "close": "schließen"
+    }
   },
   "deck": {
     "nextSheet": "Nächstes Blatt: Projekte",

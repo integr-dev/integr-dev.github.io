@@ -2,6 +2,7 @@
 import { theme } from '~/themes/active'
 import { useLightbox } from '~/composables/useLightbox'
 import ImageLightbox from '~/components/ImageLightbox.vue'
+import ContactForm from '~/components/ContactForm.vue'
 import { sheetComponents } from '~/sheets'
 import SearchBar from './SearchBar.vue'
 import { useDeckNav } from './useDeckNav'
@@ -16,6 +17,7 @@ const router = useRouter()
 const { profile } = await useSiteContent()
 const searchOpen = useState('search-open', () => false)
 const lightbox = useLightbox()
+const contactForm = useContactForm()
 const highlight = useState<{ anchor: string, nonce: number } | null>('deck-highlight', () => null)
 const narrow = ref(false)
 // true for the first frames after load: a deep link jumps straight to its sheet, no slide from the intro
@@ -95,7 +97,7 @@ function isTyping(e: Event) {
 }
 
 function onKey(e: KeyboardEvent) {
-  if (lightbox.isOpen.value || fromStudio(e)) return
+  if (lightbox.isOpen.value || contactForm.isOpen.value || fromStudio(e)) return
   // Space, Enter or Escape while a sheet is being drawn: show it at once
   if (build.building.value && !isTyping(e) && !searchOpen.value && [' ', 'Enter', 'Escape'].includes(e.key)) {
     e.preventDefault()
@@ -153,7 +155,7 @@ let lastWheel = 0
 let acc = 0
 
 function onWheel(e: WheelEvent) {
-  if (narrow.value || searchOpen.value || lightbox.isOpen.value || fromStudio(e)) return
+  if (narrow.value || searchOpen.value || lightbox.isOpen.value || contactForm.isOpen.value || fromStudio(e)) return
   const now = performance.now()
   const gap = now - lastWheel
   lastWheel = now
@@ -388,6 +390,7 @@ function setFeed(id: string, el: unknown) {
 
     <SearchBar />
     <ImageLightbox />
+    <ContactForm />
     <ClientOnly>
       <component :is="theme.BuildOverlay" v-if="theme.BuildOverlay" />
       <component :is="theme.Ornament" v-if="theme.Ornament" :target="highlight" />
