@@ -6,6 +6,9 @@ export default defineNuxtConfig({
 
   ssr: true,
 
+  // no source maps for the Worker: nobody reads them in production, and they slow the build down
+  sourcemap: { server: false, client: false },
+
   // one shared Font Awesome instance on server and client, so icons render in SSR
   build: {
     transpile: ['@fortawesome/fontawesome-svg-core', '@fortawesome/free-solid-svg-icons', '@fortawesome/free-brands-svg-icons', '@fortawesome/vue-fontawesome'],
