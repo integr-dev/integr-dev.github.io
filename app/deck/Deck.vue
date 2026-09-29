@@ -64,6 +64,14 @@ function feedEl(): HTMLElement | undefined {
 const hasBelow = computed(() => nav.sheet.value.mode === 'stack' && nav.y.value < nav.yTotal.value - 1)
 // any page below another one (readme, More, a post) has a way back up as well
 const hasAbove = computed(() => nav.sheet.value.mode === 'stack' && nav.y.value > 0)
+// The arrows fade in once, on first load, as the first bush flowers open (the bottom-left bush:
+// 900ms delay + 1400ms growing + 200ms, PixelBush.vue); arrows that appear later show at once.
+const ARROWS_IN_MS = 2500
+const arrowsIn = ref(false)
+onMounted(() => setTimeout(() => (arrowsIn.value = true), ARROWS_IN_MS))
+
+// a post page (below the post list)
+const onPost = computed(() => nav.sheet.value.slidesFrom === 'posts' && nav.y.value > 0)
 
 function canScroll(el: HTMLElement | undefined, dy: number) {
   if (!el) return false
@@ -287,7 +295,7 @@ function setFeed(id: string, el: unknown) {
 </script>
 
 <template>
-  <div class="deck" :class="{ 'is-instant': instant }" :style="{ '--x': nav.x.value }">
+  <div class="deck" :class="{ 'is-instant': instant, 'arrows-in': arrowsIn }" :style="{ '--x': nav.x.value }">
     <component :is="theme.ThemeBackground" :x="narrow ? 0 : nav.x.value" :total="nav.sheets.length" />
     <component :is="theme.ViewportFrame" />
 
@@ -346,13 +354,33 @@ function setFeed(id: string, el: unknown) {
       @search="searchOpen = true"
     />
 
-    <button v-if="nav.x.value === 0 && !narrow" type="button" class="deck-next" :aria-label="t('deck.nextSheet')" @click="nav.nextSheet()">
+    <!-- left / right to the neighbouring sheets -->
+    <button v-if="nav.x.value > 0 && !narrow" type="button" class="deck-prev" :aria-label="t('titleBlock.prev')" @click="nav.prevSheet()">
+      <FontAwesomeIcon icon="arrow-left" />
+    </button>
+    <button
+      v-if="nav.x.value < nav.sheets.length - 1 && !narrow"
+      type="button"
+      class="deck-next"
+      :aria-label="nav.x.value === 0 ? t('deck.nextSheet') : t('titleBlock.next')"
+      @click="nav.nextSheet()"
+    >
       <FontAwesomeIcon icon="arrow-right" />
     </button>
 
-    <button v-if="hasAbove && !narrow" type="button" class="deck-up" :aria-label="t('deck.above')" @click="up()">
-      <FontAwesomeIcon icon="arrow-up" />
-    </button>
+    <!-- top centre: the way up, and on a post also straight back to the list, left of it -->
+    <div v-if="hasAbove && !narrow" class="deck-up-group">
+      <!-- a double arrow and a label, set apart by a rule: all the way up, not one page -->
+      <template v-if="onPost">
+        <button type="button" class="deck-posts mono" :title="t('posts.all')" @click="nav.goTo('posts', 'list')">
+          <FontAwesomeIcon icon="angles-up" /> {{ t('posts.all') }}
+        </button>
+        <span class="deck-up-sep" aria-hidden="true" />
+      </template>
+      <button type="button" class="deck-up" :aria-label="t('deck.above')" :title="t('deck.above')" @click="up()">
+        <FontAwesomeIcon icon="arrow-up" />
+      </button>
+    </div>
 
     <button v-if="hasBelow && !narrow" type="button" class="deck-down" :aria-label="t('deck.below')" @click="down()">
       <FontAwesomeIcon icon="arrow-down" />

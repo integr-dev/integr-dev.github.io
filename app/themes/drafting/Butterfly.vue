@@ -14,6 +14,10 @@ const flying = ref(false)
 const tricking = ref(false)
 let away = false
 const enabled = ref(false)
+// it fades in on first load together with the arrows, as the first flowers open (Deck.vue)
+const SHOW_MS = 2500
+const shown = ref(false)
+let showTimer: ReturnType<typeof setTimeout> | undefined
 let pos = { x: 0, y: 0 }
 // the direction it faces, in degrees (0 = upright); kept between flights until it lands
 let rot = 0
@@ -212,6 +216,7 @@ onMounted(() => {
   const narrow = window.matchMedia('(max-width: 767px)').matches
   if (reduced || narrow) return
   enabled.value = true
+  showTimer = setTimeout(() => (shown.value = true), SHOW_MS)
   const p = perch()
   if (p) place(p.x, p.y)
   window.addEventListener('resize', onResize)
@@ -221,6 +226,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   clearTimeout(returnTimer)
+  clearTimeout(showTimer)
   current?.cancel()
   window.removeEventListener('resize', onResize)
   window.removeEventListener('titleblock:expand', flyAway)
@@ -233,7 +239,7 @@ onBeforeUnmount(() => {
     v-show="enabled"
     ref="el"
     class="butterfly"
-    :class="{ 'is-hidden': pen.visible }"
+    :class="{ 'is-hidden': pen.visible || !shown }"
     aria-hidden="true"
     @mouseenter="trick"
     @click="trick"
@@ -252,7 +258,7 @@ onBeforeUnmount(() => {
   z-index: 60;
   cursor: pointer;
   transform: translate(-100px, -100px);
-  transition: opacity 200ms ease;
+  transition: opacity 420ms ease;
 }
 
 .butterfly.is-hidden {

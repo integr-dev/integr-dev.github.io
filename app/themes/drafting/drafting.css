@@ -223,84 +223,111 @@ pre code .line {
   letter-spacing: 0;
 }
 
-/* ---------- down / up arrows: there is a page below / above ---------- */
+/* ---------- the four arrows: pages above / below, sheets left / right ----------
+   Bare arrows, all the same size, standing still. */
 
+.deck-up-group,
 .deck-down,
-.deck-up {
-  position: fixed;
-  left: 50%;
-  bottom: calc(var(--frame-gap) + 14px);
-  z-index: 20;
-  translate: -50% 0;
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  color: var(--accent);
-  background: var(--bg);
-  border: 1px solid var(--line-strong);
-  cursor: pointer;
-  animation: nudge 1.6s var(--transition-ease) infinite;
-}
-
-.deck-up {
-  bottom: auto;
-  top: calc(var(--frame-gap) + 14px);
-  animation-name: nudge-up;
-}
-
-.deck-down:hover,
-.deck-up:hover {
-  border-color: var(--accent);
-}
-
-@keyframes nudge-up {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-@keyframes nudge {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(6px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .deck-down,
-  .deck-up {
-    animation: none;
-  }
-}
-
-/* ---------- next arrow on the first sheet ---------- */
-
+.deck-prev,
 .deck-next {
   position: fixed;
-  right: calc(var(--frame-gap) + 18px);
-  top: 50%;
   z-index: 20;
-  translate: 0 -50%;
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
+  transition: opacity 420ms ease;
+}
+
+/* hidden until the first flowers open (Deck.vue, arrowsIn) */
+html.js .deck:not(.arrows-in) :is(.deck-up-group, .deck-down, .deck-prev, .deck-next) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.deck-up,
+.deck-down,
+.deck-prev,
+.deck-next,
+.deck-posts {
+  height: 36px;
+  min-width: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0;
+  font-size: 1.1rem;
   color: var(--accent);
-  background: var(--bg);
-  border: 1px solid var(--line-strong);
+  background: none;
+  border: 0;
   cursor: pointer;
-  animation: nudge-x 1.6s var(--transition-ease) infinite;
 }
 
-.deck-next:hover {
-  border-color: var(--accent);
+.deck-up-group,
+.deck-down {
+  left: 50%;
+  translate: -50% 0;
 }
 
-@keyframes nudge-x {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(6px); }
+/* top centre: the up arrow, with "All posts" left of it on a post */
+.deck-up-group {
+  top: calc(var(--frame-gap) + 14px);
+  display: flex;
+  gap: 16px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .deck-next {
-    animation: none;
-  }
+
+/* double arrow and label, in the small type of the other labels, so "all posts" and
+   "one page up" read as two things */
+.deck-posts {
+  font-size: 0.8rem;
 }
+
+.deck-up-group {
+  align-items: center;
+}
+
+.deck-up-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--line-strong);
+}
+
+.deck-posts svg {
+  font-size: 1.1rem;
+}
+
+.deck-down {
+  bottom: calc(var(--frame-gap) + 14px);
+}
+
+.deck-prev,
+.deck-next {
+  top: 50%;
+  translate: 0 -50%;
+}
+
+.deck-prev {
+  left: calc(var(--frame-gap) + 18px);
+}
+
+.deck-next {
+  right: calc(var(--frame-gap) + 18px);
+}
+
+.deck-up:hover,
+.deck-down:hover,
+.deck-prev:hover,
+.deck-next:hover,
+.deck-posts:hover {
+  color: var(--fg);
+}
+
+/* buttons that fill block by block on hover (pixelFill.ts): the label turns to the contrast
+   colour once most of the fill is in */
+[data-fill] {
+  transition: color 80ms steps(1);
+}
+
+[data-fill].is-filled {
+  color: var(--accent-contrast) !important;
+  border-color: var(--accent) !important;
+}
+

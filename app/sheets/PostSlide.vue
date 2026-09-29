@@ -24,8 +24,8 @@ const slug = props.path.split('/').pop()!
 <template>
   <article v-if="post" class="sheet post-slide">
     <header class="ps-head">
-      <button type="button" class="ps-back mono" data-build="fade" @click="backToList">
-        <FontAwesomeIcon icon="arrow-up" /> {{ $t('posts.all') }}
+      <button type="button" class="ps-back mono" data-build="fade" data-fill @click="backToList">
+        <FontAwesomeIcon icon="angles-up" /> {{ $t('posts.all') }}
       </button>
       <p class="ps-meta mono" data-build="type">
         <time :datetime="post.date">{{ formatDate(post.date, true, $i18n.locale) }}</time>
@@ -65,6 +65,13 @@ const slug = props.path.split('/').pop()!
   border-radius: var(--radius);
   padding: 6px 12px;
   cursor: pointer;
+}
+
+/* on wider screens "All posts" sits next to the up arrow at the top (Deck.vue) */
+@media (min-width: 768px) {
+  .ps-back {
+    display: none;
+  }
 }
 
 .ps-back:hover {

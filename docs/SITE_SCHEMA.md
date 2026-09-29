@@ -147,7 +147,7 @@ Draft "why" lines (to edit):
 ### Flagship README pages
 Every flagship sheet is a `stack`: the flagship page, and below it a README page (`ReadmeSlide`) with long form text from `content/readmes/<slug>.md`, headed by the project's `built` note (the problem and how it's solved). The text scrolls inside the page; the wheel and ↑/↓ scroll it first and move to the next page once the end is reached. Any element marked `data-scroll` inside a stack slide behaves this way.
 
-Whenever there is a page below the current one, an animated down arrow sits at the bottom centre (`.deck-down`, styled by the theme).
+Whenever there is a page below the current one, a down arrow sits at the bottom centre (`.deck-down`, styled by the theme). A page above gets an up arrow at the top centre; on a post, "All posts" (a double arrow and label, set off from the single arrow by a short rule) sits left of it (back to the list; on phones the button stays in the post's header). Left and right arrows at the middle of the side edges lead to the neighbouring sheets on every sheet. All four arrows are bare accent-coloured arrows of one size, without any movement. On first load they fade in as the first bush flowers open (2.5s), and the resting butterfly with them. The intro shortcuts, the post's back button and the lightbox buttons (`data-fill`) fill with the accent colour block by block on hover, rows sweeping down like a screenshot being drawn, in about a third of a second, and empty the same way (`pixelFill.ts`).
 
 ### 06 · Projects (`stack`)
 - **Slide `main`:** columns for **Granum, Scry, Castl3d**. The page below it holds the rest, reached like any page below (down arrow, wheel, ↓).

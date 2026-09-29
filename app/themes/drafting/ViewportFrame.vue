@@ -40,13 +40,6 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure))
   <svg ref="svg" class="frame" :class="{ 'is-drawn': drawn }" aria-hidden="true">
     <template v-if="size.w">
       <path class="frame-line" :d="path" pathLength="1" />
-      <!-- tick marks at the edge midpoints, like registration marks -->
-      <g class="frame-ticks">
-        <line :x1="size.w / 2" y1="0" :x2="size.w / 2" y2="8" />
-        <line :x1="size.w / 2" :y1="size.h" :x2="size.w / 2" :y2="size.h - 8" />
-        <line x1="0" :y1="size.h / 2" x2="8" :y2="size.h / 2" />
-        <line :x1="size.w" :y1="size.h / 2" :x2="size.w - 8" :y2="size.h / 2" />
-      </g>
       <circle v-if="!drawn" class="pen" r="3.5">
         <animateMotion ref="motion" :path="path" dur="1.1s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.65 0 0.35 1" />
       </circle>
@@ -73,17 +66,6 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure))
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   animation: trace 1.1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-}
-
-.frame-ticks line {
-  stroke: var(--line-strong);
-  stroke-width: 1;
-  opacity: 0;
-  transition: opacity 300ms ease;
-}
-
-.is-drawn .frame-ticks line {
-  opacity: 1;
 }
 
 .pen {
