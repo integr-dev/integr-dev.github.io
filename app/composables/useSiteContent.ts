@@ -1,6 +1,22 @@
 import type { ProjectsCollectionItem as Project, ProjectsDeCollectionItem as ProjectDe } from '@nuxt/content'
+import live from '#build/live-stats.mjs'
 
 const baseName = (stem: string) => stem.split('/').pop()!
+
+/** The numbers the build fetched (modules/live-stats.ts) over the ones in the file. */
+function withLiveStats(p: Project): Project {
+  const fresh = live[baseName(p.stem)]
+  if (!fresh) return p
+  return {
+    ...p,
+    stats: p.stats && {
+      ...p.stats,
+      asOf: fresh.asOf,
+      items: p.stats.items.map(i => ({ ...i, value: fresh.items[i.label] ?? i.value })),
+    },
+    badge: p.badge && { ...p.badge, value: fresh.badge ?? p.badge.value },
+  }
+}
 
 /** The English project with the German text laid over it (content/de/projects/<same name>.md). */
 function localizeProject(p: Project, de?: ProjectDe): Project {
@@ -44,7 +60,7 @@ function localizeSkills<T extends { categories: { category: string, items: { nam
 export async function useSiteContent() {
   const { locale } = useI18n()
   const { data } = await useAsyncData('site-content', async () => {
-    const [projects, posts, timeline, skills, profile, projectsDe, timelineDe, skillsDe, profileDe] = await Promise.all([
+    const [rawProjects, posts, timeline, skills, profile, projectsDe, timelineDe, skillsDe, profileDe] = await Promise.all([
       queryCollection('projects').order('order', 'ASC').all(),
       queryCollection('posts').where('draft', '=', false).order('date', 'DESC').all(),
       queryCollection('timeline').first(),
@@ -55,6 +71,7 @@ export async function useSiteContent() {
       queryCollection('skills_de').first(),
       queryCollection('profile_de').first(),
     ])
+    const projects = rawProjects.map(withLiveStats)
     const deBy = new Map(projectsDe.map(x => [baseName(x.stem), x]))
     const profileOverrides = profileDe
       ? Object.fromEntries(Object.entries(profileDe).filter(([k, v]) => v != null && ['role', 'location', 'lookingFor', 'pitch', 'cvNote'].includes(k)))

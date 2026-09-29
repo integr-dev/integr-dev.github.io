@@ -11,9 +11,9 @@ stats:
   asOf: "2026-09-27"
   source: https://github.com/e-reitbauer/forkcast/graphs/contributors
   items:
-    - { label: commits, value: "473" }
-    - { label: of them mine, value: "196" }
-    - { label: people, value: "4" }
+    - { label: commits, value: "473", live: "github:commits:e-reitbauer/forkcast" }
+    - { label: of them mine, value: "196", live: "github:commits-by:e-reitbauer/forkcast@e-reitbauer" }
+    - { label: people, value: "4", live: "github:contributors:e-reitbauer/forkcast" }
     - { label: languages, value: "9" }
 stack: [Nuxt, Vue, Pinia, TypeScript, Express, SQLite]
 links:

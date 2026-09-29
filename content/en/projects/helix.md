@@ -7,14 +7,14 @@ why: Shipped to real players and still downloaded.
 built:
   problem: "Server owners need a way to switch off modules they don't allow, without players changing their install."
   solution: "The server sends a plugin message on the helix:config channel with a JSON list of module ids; Helix disables those modules until the player rejoins. Invalid JSON and unknown ids are ignored."
-badge: { value: "1,400+", label: downloads on Modrinth, href: https://modrinth.com/mod/helix }
+badge: { value: "1,400+", label: downloads on Modrinth, href: https://modrinth.com/mod/helix, live: "modrinth:downloads:helix" }
 stats:
   asOf: "2026-09-27"
   source: https://modrinth.com/mod/helix
   items:
-    - { label: downloads, value: "1,454" }
-    - { label: followers, value: "16" }
-    - { label: commits, value: "25" }
+    - { label: downloads, value: "1,454", live: "modrinth:downloads:helix" }
+    - { label: followers, value: "16", live: "modrinth:followers:helix" }
+    - { label: commits, value: "25", live: "github:commits:integr-dev/helix" }
 stack: [Kotlin, Java, Fabric]
 links:
   - { label: Source, href: https://github.com/integr-dev/helix }

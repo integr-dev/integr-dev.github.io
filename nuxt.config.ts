@@ -107,6 +107,8 @@ export default defineNuxtConfig({
         workers_dev: false,
         preview_urls: false,
         routes: [{ pattern: 'integr.cc', custom_domain: true }],
+        // a daily rebuild for fresh project numbers (server/plugins/daily-rebuild.ts)
+        triggers: { crons: ['0 4 * * *'] },
         // Cloudflare serves the prerendered pages itself, and 404.html for any path it has no file
         // for, without starting the Worker. The Worker only runs for Nuxt Studio (the editor, its
         // login and API, its service worker) and for Nuxt Content's queries while editing.

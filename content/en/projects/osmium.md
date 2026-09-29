@@ -11,8 +11,8 @@ stats:
   asOf: "2026-09-27"
   source: https://github.com/integr-dev/osmium
   items:
-    - { label: commits, value: "352" }
-    - { label: of them mine, value: "341" }
+    - { label: commits, value: "352", live: "github:commits:integr-dev/osmium" }
+    - { label: of them mine, value: "341", live: "github:commits-by:integr-dev/osmium@integr-dev" }
     - { label: first commit, value: "2026-08" }
 stack: [TypeScript, Kotlin, Vue, Spring Boot, PostgreSQL, mineflayer]
 links:

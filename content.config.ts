@@ -18,12 +18,14 @@ export default defineContentConfig({
         why: z.string().optional(),
         // one problem the project had to solve and how it was solved, for the project page and readme
         built: z.object({ problem: z.string(), solution: z.string() }).optional(),
-        badge: z.object({ value: z.string(), label: z.string(), href: z.string() }).optional(),
+        // `live`: where the build fetches a fresh number from (modules/live-stats.ts); value and
+        // asOf are what shows when it can't
+        badge: z.object({ value: z.string(), label: z.string(), href: z.string(), live: z.string().optional() }).optional(),
         stats: z
           .object({
             asOf: z.string(),
             source: z.string(),
-            items: z.array(z.object({ label: z.string(), value: z.string() })),
+            items: z.array(z.object({ label: z.string(), value: z.string(), live: z.string().optional() })),
           })
           .optional(),
         stack: z.array(z.string()),

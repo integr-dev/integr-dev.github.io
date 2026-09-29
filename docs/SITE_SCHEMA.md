@@ -233,12 +233,12 @@ why: Shipped to real players and still downloaded.       # flagships only
 built:                                                    # optional: one problem and how it's solved
   problem: "…"
   solution: "…"
-badge: { value: "1,400+", label: downloads on Modrinth, href: https://modrinth.com/mod/helix }
-stats:                    # static numbers, always with a date and a source
+badge: { value: "1,400+", label: downloads on Modrinth, href: https://modrinth.com/mod/helix, live: "modrinth:downloads:helix" }
+stats:                    # numbers, always with a date and a source
   asOf: "2026-09-27"
   source: https://modrinth.com/mod/helix
   items:
-    - { label: downloads, value: "1,454" }   # numbers with English commas; a month as "2026-08"
+    - { label: downloads, value: "1,454", live: "modrinth:downloads:helix" }   # numbers with English commas; a month as "2026-08"
 stack: [Kotlin, Java, Fabric]
 links:
   - { label: Source, href: https://github.com/integr-dev/helix }
@@ -256,6 +256,7 @@ Longer description (Markdown). For `kind: code` the body is the code block shown
 ```
 
 - `tier: flagship`: own sheet (listed in `sheets.config.ts`). `kind: diagram` picks a component from `app/sheets/diagrams/` by name. With more than one entry in `visuals` the sheet shows a carousel (arrows plus labelled dots). Pages share one spot: the current one fades out, then the next is drawn in its place. Adding screenshots later never replaces a diagram, it adds a page. A screenshot page lays its images out in rows, none overlapping, in their order: the images of a row are equally tall and fill its width, and the rows are chosen so the whole block is about 1.3:1 and as large as the sheet's height allows (`shotLayout`). Each sits in a drafting frame (outline, accent corner ticks, a typed `fig.01` label). A click opens the large preview, which is drawn in (edges ruled round the frame, the picture drawn block by block like on the page) and its frame drawn out backwards when closed.
+- `live` (optional, on a stats item or the badge): where the production build fetches a fresh number from, e.g. `github:commits:integr-dev/osmium`, `github:commits:clay-doc/*` (summed over an owner's repositories), `github:stars:…`, `github:repos:<owner>`, `github:contributors:…`, `github:commits-by:<repo>@<login>`, `modrinth:downloads:<slug>`, `modrinth:followers:<slug>` (full list in `modules/live-stats.ts`). The fetched numbers replace the file's, with the build date as `asOf`; a badge shows its number rounded down to the hundred with a "+". If a project's numbers can't all be fetched, it keeps the file's numbers and date. Only the production build fetches (`LIVE_STATS=1` in dev); an optional `GITHUB_TOKEN` build variable lifts GitHub's limit of 60 requests an hour. The Worker rebuilds the site every day at 04:00 UTC (a cron trigger calls the build's Deploy Hook, the `DEPLOY_HOOK_URL` secret; `server/plugins/daily-rebuild.ts`), so the numbers stay current.
 - `tier: featured`: a row on Projects/main.
 - `tier: more`: a row on Projects/more.
 

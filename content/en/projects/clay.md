@@ -11,9 +11,9 @@ stats:
   asOf: "2026-09-27"
   source: https://github.com/clay-doc
   items:
-    - { label: repositories, value: "3" }
-    - { label: commits, value: "51" }
-    - { label: stars, value: "5" }
+    - { label: repositories, value: "3", live: "github:repos:clay-doc" }
+    - { label: commits, value: "51", live: "github:commits:clay-doc/*" }
+    - { label: stars, value: "5", live: "github:stars:clay-doc/*" }
 stack: [Vue, Nuxt, TypeScript, Go, Shiki]
 links:
   - { label: Live demo, href: https://clay-doc.github.io/clay-example-repo/ }

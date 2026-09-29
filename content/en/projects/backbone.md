@@ -11,9 +11,9 @@ stats:
   asOf: "2026-09-27"
   source: https://modrinth.com/plugin/backbone-lib
   items:
-    - { label: commits, value: "118" }
-    - { label: stars, value: "6" }
-    - { label: downloads, value: "123" }
+    - { label: commits, value: "118", live: "github:commits:integr-dev/backbone" }
+    - { label: stars, value: "6", live: "github:stars:integr-dev/backbone" }
+    - { label: downloads, value: "123", live: "modrinth:downloads:backbone-lib" }
 stack: [Kotlin, Kotlin Scripting, Coroutines, Spigot, SQLite]
 links:
   - { label: Source, href: https://github.com/integr-dev/backbone }
