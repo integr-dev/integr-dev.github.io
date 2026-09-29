@@ -23,7 +23,7 @@ Rules:
 
 - **Nuxt 4 + Vue 3 + TypeScript**
 - **@nuxt/content** holds projects, posts, timeline, skills and profile as files
-- A Cloudflare Worker (`cloudflare_module` preset) on `integr.cc`, deployed by Cloudflare Workers Builds on every push to master (`npm run build`, then `npx wrangler deploy`). Every page is prerendered and served as a static file; the Worker only answers the rest: Nuxt Studio (`/admin`, its login and API) and unknown paths (the 404 page). Nuxt Content reads from the D1 database bound as `DB` there.
+- A Cloudflare Worker (`cloudflare_module` preset) on `integr.cc`, deployed by Cloudflare Workers Builds on every push to master (`npm run build`, then `npx wrangler deploy`). Every page is prerendered and served as a static file; the Worker only answers the rest: Nuxt Studio (`/admin`, its login and API) and unknown paths (the 404 page). Nuxt Content reads from the D1 database bound as `DB` there. The Worker's variables and secrets (Studio's `STUDIO_GITHUB_*` login settings, `NUXT_STUDIO_AUTH_SESSION_SECRET`) are set in the Cloudflare dashboard and copied into `process.env` on each request (`server/plugins/cloudflare-env.ts`); `keep_vars` keeps them when a build deploys. The Worker answers only on `integr.cc` (no `workers.dev` address).
 
 ---
 

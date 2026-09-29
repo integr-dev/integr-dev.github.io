@@ -101,6 +101,11 @@ export default defineNuxtConfig({
       nodeCompat: true,
       wrangler: {
         name: 'portfolio',
+        // keep the variables set in the dashboard when a build deploys
+        keep_vars: true,
+        // only integr.cc: no second copy of the site on portfolio.<account>.workers.dev
+        workers_dev: false,
+        preview_urls: false,
         d1_databases: [{ binding: 'DB', database_name: 'portfolio', database_id: 'a53ffdd4-ff4e-4ebc-8de2-c94b793abf05' }],
       },
     },
