@@ -7,29 +7,13 @@ const { skills } = await useSiteContent()
 const { t } = useI18n()
 const icon = (name: string): SkillIcon => skillIcons[name] ?? fallbackIcon
 
-// A skill opens a small box after the pointer rests on it for a moment (or on focus, or a tap):
-// what it is, a rating from 0 to 5 and why. The box hangs over the skills below; nothing moves.
-const HOVER_MS = 500
+// A click (or Enter / Space) opens a skill: what it is, a rating from 0 to 5 and why. One at a
+// time: opening another closes the open one, clicking it again closes it.
 const open = ref<string | null>(null)
-let timer: ReturnType<typeof setTimeout> | undefined
 
-function rest(name: string) {
-  clearTimeout(timer)
-  timer = setTimeout(() => (open.value = name), HOVER_MS)
-}
-function leave(name: string) {
-  clearTimeout(timer)
-  if (open.value === name) open.value = null
-}
-// only focus from the keyboard opens it; a tap focuses too, and its click toggles
-function focus(e: FocusEvent, name: string) {
-  if ((e.target as HTMLElement).matches(':focus-visible')) open.value = name
-}
 function toggle(name: string) {
-  clearTimeout(timer)
   open.value = open.value === name ? null : name
 }
-onBeforeUnmount(() => clearTimeout(timer))
 
 // An opened skill pushes the ones below it down. What runs past the bottom of its column fades out
 // into it (data-overflow); an opened skill itself never does: its list moves up (--shift) until it
@@ -57,7 +41,7 @@ function fit() {
       extra = li.querySelector<HTMLElement>('.s-more-inner')?.scrollHeight ?? 0
       const top = rows.slice(0, at).reduce((sum, r) => sum + folded(r), 0)
       const bottom = top + folded(li) + extra
-      // no further than the unfolded part, so the row stays under the pointer (else it would close)
+      // no further than the unfolded part, so the clicked row stays under the pointer
       shift = Math.max(0, Math.min(top, extra, bottom + FADE - ul.clientHeight))
     }
     shifts.value[i] = shift
@@ -76,7 +60,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', fit))
   <div class="sheet skills">
     <h2 data-build="type">{{ $t('sheets.skills') }}</h2>
     <p class="s-hint mono muted" data-build="fade" data-nopen>
-      <span class="s-hint-hover"><kbd>{{ t('skills.hoverKey') }}</kbd> {{ t('skills.hoverHint') }}</span>
+      <span class="s-hint-click"><kbd>{{ t('skills.clickKey') }}</kbd> {{ t('skills.clickHint') }}</span>
       <span class="s-hint-tap"><kbd>{{ t('skills.tapKey') }}</kbd> {{ t('skills.tapHint') }}</span>
     </p>
     <span class="rule rule-strong" data-build="line" />
@@ -102,11 +86,9 @@ onBeforeUnmount(() => window.removeEventListener('resize', fit))
             tabindex="0"
             :data-open="open === item.name ? '' : undefined"
             :aria-expanded="open === item.name"
-            @mouseenter="rest(item.name)"
-            @mouseleave="leave(item.name)"
-            @focus="focus($event, item.name)"
-            @blur="leave(item.name)"
             @click="toggle(item.name)"
+            @keydown.enter.prevent="toggle(item.name)"
+            @keydown.space.prevent="toggle(item.name)"
             @keydown.esc="open = null"
           >
             <span class="s-row">
@@ -153,7 +135,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', fit))
   font-size: clamp(2.2rem, calc(var(--vw) * 5), 4rem);
 }
 
-/* how to open a skill, as a subheading: hover with a mouse, tap on touch screens */
+/* how to open a skill, as a subheading: click with a mouse, tap on touch screens */
 .s-hint {
   margin-top: -14px;
   font-size: 0.8rem;
@@ -164,7 +146,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', fit))
 }
 
 @media (hover: none) {
-  .s-hint-hover {
+  .s-hint-click {
     display: none;
   }
 
@@ -253,7 +235,7 @@ ul {
 li {
   position: relative;
   font-size: 1rem;
-  cursor: default;
+  cursor: pointer;
   outline: none;
   /* moved up together with the unfolding (see fit) */
   transform: translateY(calc(-1 * var(--shift, 0px)));
@@ -281,7 +263,7 @@ li:focus-visible .s-icon {
   color: var(--accent);
 }
 
-/* on hover it turns the accent colour at once; it only unfolds after the pointer has rested (HOVER_MS) */
+/* on hover it turns the accent colour, so it reads as clickable */
 @media (hover: hover) {
   li:hover .s-row,
   li:hover .s-icon {

@@ -209,8 +209,8 @@
     }
   },
   "skills": {
-    "hoverKey": "Maus",
-    "hoverHint": "über einen Skill halten, um mehr zu sehen",
+    "clickKey": "Klick",
+    "clickHint": "auf einen Skill, um mehr zu sehen",
     "tapKey": "tippen",
     "tapHint": "auf einen Skill, um mehr zu sehen",
     "rating": "{n} von 5 Sternen",

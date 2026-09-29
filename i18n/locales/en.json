@@ -209,8 +209,8 @@
     }
   },
   "skills": {
-    "hoverKey": "hover",
-    "hoverHint": "over a skill to see more",
+    "clickKey": "click",
+    "clickHint": "a skill to see more",
     "tapKey": "tap",
     "tapHint": "a skill to see more",
     "rating": "{n} of 5 stars",
