@@ -320,14 +320,3 @@ html.js .deck:not(.arrows-in) :is(.deck-up-group, .deck-down, .deck-prev, .deck-
   color: var(--fg);
 }
 
-/* buttons that fill block by block on hover (pixelFill.ts): the label turns to the contrast
-   colour once most of the fill is in */
-[data-fill] {
-  transition: color 80ms steps(1);
-}
-
-[data-fill].is-filled {
-  color: var(--accent-contrast) !important;
-  border-color: var(--accent) !important;
-}
-
