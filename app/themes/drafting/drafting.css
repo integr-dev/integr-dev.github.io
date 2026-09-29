@@ -320,3 +320,42 @@ html.js .deck:not(.arrows-in) :is(.deck-up-group, .deck-down, .deck-prev, .deck-
   color: var(--fg);
 }
 
+
+/* ---------- loading bar on slow connections (server/plugins/boot-progress.ts) ----------
+   Along the top edge of the frame, filling as the app's files arrive. Outside the app, so not
+   zoomed: frame measures are scaled by --zoom here. */
+
+#boot-progress {
+  position: fixed;
+  z-index: 90;
+  top: calc(var(--frame-gap) * var(--zoom));
+  left: calc(var(--frame-gap) * var(--zoom));
+  right: calc(var(--frame-gap) * var(--zoom));
+  pointer-events: none;
+  animation: boot-in 300ms ease both;
+}
+
+#boot-progress i {
+  display: block;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+#boot-progress span {
+  display: block;
+  margin: 8px 0 0 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--line);
+}
+
+#boot-progress.is-done {
+  opacity: 0;
+  transition: opacity 400ms ease 100ms;
+}
+
+@keyframes boot-in {
+  from { opacity: 0; }
+}
