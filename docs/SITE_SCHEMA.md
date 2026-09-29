@@ -24,7 +24,6 @@ Rules:
 - **Nuxt 4 + Vue 3 + TypeScript**
 - **@nuxt/content** holds projects, posts, timeline, skills and profile as files
 - A Cloudflare Worker (`cloudflare_module` preset) on `integr.cc`, deployed by Cloudflare Workers Builds on every push to master (`npm run build`, then `npx wrangler deploy`). Every page is prerendered and served as a static file; the Worker only answers the rest: Nuxt Studio (`/admin`, its login and API) and unknown paths (the 404 page). Nuxt Content reads from the D1 database bound as `DB` there.
-- The old address `integr.is-a.dev` stays on GitHub Pages as a forwarding page only (`forward/index.html`, served for every path by `.github/workflows/deploy.yml`), which sends visitors to the same path on `integr.cc`.
 
 ---
 
