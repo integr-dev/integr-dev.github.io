@@ -62,7 +62,8 @@ export async function useSiteContent() {
   const { data } = await useAsyncData('site-content', async () => {
     const [rawProjects, posts, timeline, skills, profile, projectsDe, timelineDe, skillsDe, profileDe] = await Promise.all([
       queryCollection('projects').order('order', 'ASC').all(),
-      queryCollection('posts').where('draft', '=', false).order('date', 'DESC').all(),
+      // only what the list, search and meta tags show: each post slide loads its own body
+      queryCollection('posts').where('draft', '=', false).order('date', 'DESC').select('path', 'title', 'summary', 'date', 'tags').all(),
       queryCollection('timeline').first(),
       queryCollection('skills').first(),
       queryCollection('profile').first(),
