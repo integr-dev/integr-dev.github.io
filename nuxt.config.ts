@@ -17,7 +17,10 @@ export default defineNuxtConfig({
   // Cache lifetimes for the files without a hash in their name (the hashed ones in /_nuxt and
   // /_fonts are kept for a year by default; pages are always checked). Written into _headers.
   // stale-while-revalidate: a cached copy shows at once while a fresh one is fetched behind it.
+  // Every path also says: only this site may frame it, and pages it opens get no handle on it
+  // (popups still may, for sign-in windows).
   routeRules: {
+    '/**': { headers: { 'x-frame-options': 'SAMEORIGIN', 'cross-origin-opener-policy': 'same-origin-allow-popups' } },
     '/img/**': { headers: { 'cache-control': 'public, max-age=86400, stale-while-revalidate=604800' } },
     '/og.png': { headers: { 'cache-control': 'public, max-age=86400, stale-while-revalidate=604800' } },
     '/og/**': { headers: { 'cache-control': 'public, max-age=86400, stale-while-revalidate=604800' } },
