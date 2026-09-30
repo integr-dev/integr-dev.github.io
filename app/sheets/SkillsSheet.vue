@@ -100,7 +100,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', fit))
               </span>
               <span class="s-icon" aria-hidden="true">
                 <Icon v-if="'fa' in icon(item.name)" :icon="(icon(item.name) as { fa: [string, string] }).fa" />
-                <svg v-else viewBox="0 0 24 24"><path :d="(icon(item.name) as { path: string }).path" /></svg>
+                <svg v-else viewBox="0 0 24 24"><use :href="`/skill-icons.svg#${(icon(item.name) as { si: string }).si}`" /></svg>
               </span>
               {{ item.name }}
             </span>
@@ -109,11 +109,8 @@ onBeforeUnmount(() => window.removeEventListener('resize', fit))
               <span class="s-more-inner">
                 <span class="s-what">{{ item.what }}</span>
                 <!-- not class "on": the builder clears that class inside lists when it redraws -->
-                <span v-if="item.rating != null" class="s-stars" role="img" :aria-label="t('skills.rating', { n: item.rating })">
-                  <svg v-for="n in 5" :key="n" viewBox="0 0 24 24" :class="{ lit: n <= item.rating }" aria-hidden="true">
-                    <path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z" />
-                  </svg>
-                </span>
+                <!-- five stars drawn by CSS, the first --n of them lit -->
+                <span v-if="item.rating != null" class="s-stars" role="img" :aria-label="t('skills.rating', { n: item.rating })" :style="{ '--n': item.rating }" />
                 <span v-if="item.why" class="s-why">{{ item.why }}</span>
               </span>
             </span>
@@ -328,19 +325,12 @@ li[data-open] .s-more {
   color: var(--fg-muted);
 }
 
+/* a row of five 15 px stars 3 px apart: one star repeated as a mask, lit up to the --n-th */
 .s-stars {
-  display: flex;
-  gap: 3px;
-}
-
-.s-stars svg {
-  width: 15px;
+  width: 87px;
   height: 15px;
-  fill: color-mix(in srgb, var(--fg-muted) 45%, transparent);
-}
-
-.s-stars svg.lit {
-  fill: var(--accent);
+  background: linear-gradient(to right, var(--accent) calc(var(--n) * 18px), color-mix(in srgb, var(--fg-muted) 45%, transparent) 0);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28.8 24'%3E%3Cpath d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z'/%3E%3C/svg%3E") 0 0 / 18px 15px repeat-x;
 }
 
 .s-why {

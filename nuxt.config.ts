@@ -24,6 +24,7 @@ export default defineNuxtConfig({
     '/favicon-32.png': { headers: { 'cache-control': 'public, max-age=604800' } },
     '/apple-touch-icon.png': { headers: { 'cache-control': 'public, max-age=604800' } },
     '/logo.png': { headers: { 'cache-control': 'public, max-age=604800' } },
+    '/skill-icons.svg': { headers: { 'cache-control': 'public, max-age=86400, stale-while-revalidate=604800' } },
     // the path carries a hash of the messages
     '/_i18n/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
   },
@@ -183,7 +184,7 @@ export default defineNuxtConfig({
     prerender: {
       // every deck position is its own page; the post pages are found by crawling the post list
       crawlLinks: true,
-      routes: [...staticPaths(), ...staticPaths().map(p => `/de${p === '/' ? '' : p}`), '/sitemap.xml', '/feed.xml', '/404.html'],
+      routes: [...staticPaths(), ...staticPaths().map(p => `/de${p === '/' ? '' : p}`), '/sitemap.xml', '/feed.xml', '/skill-icons.svg', '/404.html'],
       // /posts.html instead of /posts/index.html: Cloudflare serves it at /posts without a trailing
       // slash redirect, so the URLs stay exactly the canonical ones
       autoSubfolderIndex: false,
