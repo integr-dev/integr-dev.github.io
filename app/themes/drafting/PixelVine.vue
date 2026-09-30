@@ -82,7 +82,7 @@ const vine = computed(() => {
 // every pixel stays on the grid. Each vine starts its swing at its own point.
 const bands = computed(() => [0, 1, 2].map((b) => {
   const inBand = (y: number) => Math.min(2, Math.floor((y / vine.value.H) * 3)) === b
-  return { cells: vine.value.cells.filter(c => inBand(c.y)), flowers: vine.value.flowers.filter(f => inBand(f.y)) }
+  return { leaves: pixelPaths(vine.value.cells.filter(c => inBand(c.y))), flowers: vine.value.flowers.filter(f => inBand(f.y)) }
 }))
 const swingDelay = `${-((props.seed * 977) % 6000)}ms`
 </script>
@@ -103,16 +103,13 @@ const swingDelay = `${-((props.seed * 977) % 6000)}ms`
       :class="`vine-band vine-band-${b}`"
       :style="{ animationDelay: swingDelay }"
     >
-      <rect
-        v-for="(c, i) in band.cells"
+      <path
+        v-for="(l, i) in band.leaves"
         :key="i"
         class="vine-leaf"
-        :x="c.x"
-        :y="c.y"
-        width="1"
-        height="1"
-        :fill="c.color"
-        :style="{ '--t': c.delay / GROW }"
+        :d="l.d"
+        :fill="l.color"
+        :style="{ '--t': l.delay / GROW }"
       />
       <g
         v-for="(f, i) in band.flowers"

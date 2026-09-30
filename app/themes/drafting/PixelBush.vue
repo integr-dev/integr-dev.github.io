@@ -115,6 +115,8 @@ function grow(rand: () => number, clumps: { x: number, y: number, r: number }[])
   }
   return { cells, flowers }
 }
+
+const leaves = computed(() => pixelPaths(bush.value.cells))
 </script>
 
 <template>
@@ -130,16 +132,13 @@ function grow(rand: () => number, clumps: { x: number, y: number, r: number }[])
   >
     <!-- y is flipped so the bush stands on the bottom edge; the top-right one is turned round by CSS -->
     <g :transform="`translate(0 ${H}) scale(1 -1)`">
-      <rect
-        v-for="(c, i) in bush.cells"
+      <path
+        v-for="(l, i) in leaves"
         :key="i"
         class="leaf"
-        :x="c.x"
-        :y="c.y"
-        width="1"
-        height="1"
-        :fill="c.color"
-        :style="{ animationDelay: `calc(var(--delay) + ${c.delay}ms)` }"
+        :d="l.d"
+        :fill="l.color"
+        :style="{ animationDelay: `calc(var(--delay) + ${l.delay}ms)` }"
       />
       <g
         v-for="(f, i) in bush.flowers"
